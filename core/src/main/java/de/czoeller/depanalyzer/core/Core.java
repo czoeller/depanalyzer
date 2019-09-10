@@ -1,7 +1,7 @@
 package de.czoeller.depanalyzer.core;
 
-import de.czoeller.depanalyzer.metamodel.Artifact;
 import de.czoeller.depanalyzer.metamodel.Version;
+import de.czoeller.depanalyzer.metamodel.Artifact;
 
 public class Core {
     public static final Artifact TEST_ARTIFACT_SPRING;
