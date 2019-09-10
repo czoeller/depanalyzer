@@ -6,10 +6,12 @@ import de.czoeller.depanalyzer.analyzer.impl.DummyAnalyzerImpl;
 import de.czoeller.depanalyzer.core.dependency.AggregatingGraphFactory;
 import de.czoeller.depanalyzer.core.dependency.DependencyNode;
 import de.czoeller.depanalyzer.core.dependency.MavenGraphAdapter;
-import de.czoeller.depanalyzer.core.input.resolver.AetherDependencyNodeResolver;
+import de.czoeller.depanalyzer.core.dependency.dot.DotGraphStyleConfigurer;
+import de.czoeller.depanalyzer.core.dependency.dot.style.StyleConfiguration;
 import de.czoeller.depanalyzer.core.dependency.text.TextGraphStyleConfigurer;
 import de.czoeller.depanalyzer.core.graph.DependencyNodeIdRenderer;
 import de.czoeller.depanalyzer.core.graph.GraphBuilder;
+import de.czoeller.depanalyzer.core.input.resolver.AetherDependencyNodeResolver;
 import de.czoeller.depanalyzer.metamodel.Artifact;
 import de.czoeller.depanalyzer.metamodel.Issue;
 import org.apache.maven.artifact.DefaultArtifact;
@@ -67,6 +69,11 @@ public class Main {
             textGraphStyleConfigurer.showArtifactIds(true);
             textGraphStyleConfigurer.configure(graphBuilder);
 
+            final DotGraphStyleConfigurer dotGraphStyleConfigurer = new DotGraphStyleConfigurer(new StyleConfiguration());
+            dotGraphStyleConfigurer.showGroupIds(true);
+            dotGraphStyleConfigurer.showArtifactIds(true);
+            dotGraphStyleConfigurer.configure(graphBuilder);
+
             final Supplier<Collection<MavenProject>> projectSupplier = () -> {
                 //TODO: populate dynamically
                 return Lists.newArrayList(project);
@@ -78,6 +85,11 @@ public class Main {
 
             String dependencyGraph = graphFactory.createGraph(project);
             this.dependencyNode = graphBuilder.getRootNode();
+
+            //Path graphFilePath = Paths.get("exm.dot");
+            //Path graphFilePathPNG = Paths.get("exm.png");
+            //writeGraphFile(dependencyGraph, graphFilePath);
+            //DotUtils.createDotGraphImage(graphFilePathPNG, dependencyGraph);
 
             System.out.println(dependencyGraph);
         } catch (IOException e) {

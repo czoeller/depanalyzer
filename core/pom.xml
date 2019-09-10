@@ -75,6 +75,11 @@
             <version>${maven.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>guru.nidi</groupId>
+            <artifactId>graphviz-java</artifactId>
+            <version>0.10.0</version>
+        </dependency>
         <!-- Aether -->
         <dependency>
             <groupId>org.eclipse.aether</groupId>
