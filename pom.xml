@@ -33,6 +33,7 @@
         <module>metamodel</module>
         <module>core</module>
         <module>analyzer</module>
+        <module>ui</module>
     </modules>
     <repositories>
         <repository>
