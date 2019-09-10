@@ -1,8 +1,7 @@
-package de.czoeller.depanalyzer.core.depgraph;
+package de.czoeller.depanalyzer.core.graph;
 
 import com.google.common.base.Joiner;
 import de.czoeller.depanalyzer.core.dependency.DependencyNode;
-import de.czoeller.depanalyzer.core.graph.NodeRenderer;
 import org.apache.maven.artifact.Artifact;
 
 import static com.google.common.base.Strings.emptyToNull;

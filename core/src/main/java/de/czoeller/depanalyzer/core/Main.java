@@ -8,7 +8,7 @@ import de.czoeller.depanalyzer.core.dependency.DependencyNode;
 import de.czoeller.depanalyzer.core.dependency.MavenGraphAdapter;
 import de.czoeller.depanalyzer.core.input.resolver.AetherDependencyNodeResolver;
 import de.czoeller.depanalyzer.core.dependency.text.TextGraphStyleConfigurer;
-import de.czoeller.depanalyzer.core.depgraph.DependencyNodeIdRenderer;
+import de.czoeller.depanalyzer.core.graph.DependencyNodeIdRenderer;
 import de.czoeller.depanalyzer.core.graph.GraphBuilder;
 import de.czoeller.depanalyzer.metamodel.Artifact;
 import de.czoeller.depanalyzer.metamodel.Issue;
