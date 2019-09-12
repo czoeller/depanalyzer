@@ -67,6 +67,7 @@ public class ScopesVisitor implements DependencyVisitor {
 
     @Override
     public boolean visitEnter(DependencyNode node) {
+
         if (root == null) {
             root = node;
         }

@@ -43,14 +43,13 @@
 package de.czoeller.depanalyzer.ui.core;
 
 import com.google.common.collect.Iterables;
+import de.czoeller.depanalyzer.core.dependency.DependencyNode;
 import edu.uci.ics.jung.graph.Graph;
-import org.eclipse.aether.graph.DependencyNode;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
-
 /**
  *
  * @author Milos Kleint 

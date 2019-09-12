@@ -43,11 +43,11 @@ package de.czoeller.depanalyzer.ui.core;
 
 import com.timboudreau.vl.jung.JungConnectionWidget;
 import com.timboudreau.vl.jung.JungScene;
+import de.czoeller.depanalyzer.core.dependency.DependencyNode;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.algorithms.layout.*;
 import edu.uci.ics.jung.graph.DelegateForest;
 import edu.uci.ics.jung.graph.ObservableGraph;
-import org.eclipse.aether.graph.DependencyNode;
 import org.netbeans.api.annotations.common.CheckForNull;
 import org.netbeans.api.visual.action.*;
 import org.netbeans.api.visual.anchor.AnchorFactory;

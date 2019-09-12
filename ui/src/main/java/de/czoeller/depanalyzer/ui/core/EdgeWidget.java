@@ -43,8 +43,8 @@
 package de.czoeller.depanalyzer.ui.core;
 
 import com.timboudreau.vl.jung.JungConnectionWidget;
+import de.czoeller.depanalyzer.core.dependency.DependencyNode;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
-import org.eclipse.aether.graph.DependencyNode;
 import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.LevelOfDetailsWidget;
 import org.netbeans.api.visual.widget.Widget;

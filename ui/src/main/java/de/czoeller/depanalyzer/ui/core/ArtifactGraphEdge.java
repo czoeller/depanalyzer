@@ -42,7 +42,7 @@
 
 package de.czoeller.depanalyzer.ui.core;
 
-import org.eclipse.aether.graph.DependencyNode;
+import de.czoeller.depanalyzer.core.dependency.DependencyNode;
 
 /**
  *

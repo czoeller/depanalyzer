@@ -42,7 +42,7 @@
 package de.czoeller.depanalyzer.ui.core;
 
 import org.apache.commons.lang3.NotImplementedException;
-import org.eclipse.aether.artifact.Artifact;
+import org.apache.maven.artifact.Artifact;
 import org.eclipse.aether.util.artifact.JavaScopes;
 import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.api.visual.action.ActionFactory;
@@ -90,7 +90,7 @@ class ArtifactWidget extends Widget implements ActionListener, SelectProvider {
     private static final @StaticResource
     String LOCK_ICON = "de/czoeller/depanalyzer/ui/core/lock.png";
     private static final @StaticResource
-    String LOCK_BROKEN_ICON = "de/czoeller/depanalyzer/core/lock-broken.png";
+    String LOCK_BROKEN_ICON = "de/czoeller/depanalyzer/ui/core/lock-broken.png";
     private static final @StaticResource
     String BULB_ICON = "de/czoeller/depanalyzer/ui/core/bulb.gif";
     private static final @StaticResource
@@ -303,8 +303,8 @@ class ArtifactWidget extends Widget implements ActionListener, SelectProvider {
         if (node.isRoot()) {
             paintBottom(g, bounds, ROOT, Color.WHITE, bounds.height / 2);
         } else {
-            if (scopes != null && scopes.size() > 0 && scopes.contains(node.getArtifact().getDependency().getScope())) {
-                Color scopeC = colorForScope(node.getArtifact().getDependency().getScope());
+            if (scopes != null && scopes.size() > 0 && scopes.contains(node.getArtifact().getArtifact().getScope())) {
+                Color scopeC = colorForScope(node.getArtifact().getArtifact().getScope());
                 paintCorner(RIGHT_BOTTOM, g, bounds, scopeC, Color.WHITE, bounds.width / 2, bounds.height / 2);
             }
             int conflictType = node.getConflictType();

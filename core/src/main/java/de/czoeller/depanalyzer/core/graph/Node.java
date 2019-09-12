@@ -6,7 +6,7 @@ public final class Node<T> {
 
     private final String nodeId;
     private final String nodeName;
-    final T nodeObject;
+    public final T nodeObject;
 
     public Node(String nodeId, String nodeName, T nodeObject) {
         this.nodeId = nodeId;

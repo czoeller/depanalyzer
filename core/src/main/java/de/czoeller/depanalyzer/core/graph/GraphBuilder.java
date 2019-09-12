@@ -3,6 +3,7 @@ package de.czoeller.depanalyzer.core.graph;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import de.czoeller.depanalyzer.core.graph.text.TextGraphFormatter;
+import lombok.Getter;
 
 import java.util.*;
 
@@ -16,7 +17,9 @@ import java.util.*;
 public final class GraphBuilder<T> {
 
     private final NodeRenderer<? super T> nodeIdRenderer;
+    @Getter
     private final Map<String, Node<T>> nodeDefinitions;
+    @Getter
     private final Set<Edge> edges;
     private final ReachabilityMap reachabilityMap;
 
