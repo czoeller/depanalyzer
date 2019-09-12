@@ -1,15 +1,18 @@
 package de.czoeller.depanalyzer.ui.components;
 
 import de.czoeller.depanalyzer.core.dependency.DependencyNode;
-import de.czoeller.depanalyzer.ui.core.DependencyGraphScene;
-import de.czoeller.depanalyzer.ui.core.ScopesVisitor;
-import de.czoeller.depanalyzer.ui.core.SearchVisitor;
+import de.czoeller.depanalyzer.ui.core.*;
+import edu.uci.ics.jung.algorithms.layout.DAGLayout;
+import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
+import edu.uci.ics.jung.algorithms.layout.Layout;
 import org.openide.util.NbBundle;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -104,6 +107,31 @@ public class TopComponent extends JComponent {
         jPanel1.add(txtFind);
         jPanel1.add(comScopesLabel);
         jPanel1.add(comScopes);
+
+        final JComboBox<Layout<ArtifactGraphNode, ArtifactGraphEdge>> layouts = new JComboBox<>(scene.getLayoutModel());
+        layouts.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> jlist, Object o, int i, boolean bln, boolean bln1) {
+                o = o.getClass().getSimpleName();
+                return super.getListCellRendererComponent(jlist, o, i, bln, bln1);
+            }
+        });
+        jPanel1.add(new JLabel(" Layout Type"));
+        jPanel1.add(layouts);
+        layouts.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                Layout layout = (Layout) layouts.getSelectedItem();
+                // These two layouts implement IterativeContext, but they do
+                // not evolve toward anything, they just randomly rearrange
+                // themselves.  So disable animation for these.
+                if (layout instanceof ISOMLayout || layout instanceof DAGLayout) {
+                    //TODO: add animate checkbox checkbox.setSelected(false);
+                }
+                scene.setGraphLayout(layout, true);
+            }
+        });
+
         add(jPanel1, BorderLayout.NORTH);
     }
 

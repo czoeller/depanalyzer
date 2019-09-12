@@ -2,8 +2,8 @@ package de.czoeller.depanalyzer.ui.visitor;
 
 import de.czoeller.depanalyzer.ui.core.ArtifactGraphEdge;
 import de.czoeller.depanalyzer.ui.core.ArtifactGraphNode;
+import edu.uci.ics.jung.graph.Forest;
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.OrderedSparseMultigraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.graph.DependencyVisitor;
@@ -18,8 +18,12 @@ import java.util.Stack;
 public class MavenConverterGraphBuilderVisitor implements DependencyVisitor {
 
     private DependencyNode rootNode;
-    private Graph<ArtifactGraphNode, ArtifactGraphEdge> graph = new OrderedSparseMultigraph<>();
+    private Graph<ArtifactGraphNode, ArtifactGraphEdge> graph;
     private Stack<DependencyNode> path = new Stack<>();
+
+    public MavenConverterGraphBuilderVisitor(Forest<ArtifactGraphNode, ArtifactGraphEdge> graph) {
+        this.graph = graph;
+    }
 
     @Override
     public boolean visitEnter(DependencyNode node) {
@@ -51,9 +55,13 @@ public class MavenConverterGraphBuilderVisitor implements DependencyVisitor {
         return graph.getVertices()
                     .stream()
                     .filter(Objects::nonNull)
-                    .filter(artifactGraphNode -> artifactGraphNode.getArtifact().equals(new de.czoeller.depanalyzer.core.dependency.DependencyNode(node)))
+                    .filter(artifactGraphNode -> artifactGraphNode.getArtifact().toString().equals(new de.czoeller.depanalyzer.core.dependency.DependencyNode(node).toString()))
                     .findFirst()
-                    .orElse(new ArtifactGraphNode(new de.czoeller.depanalyzer.core.dependency.DependencyNode(node)));
+                    .orElseGet(() -> {
+                        final ArtifactGraphNode graphNode = new ArtifactGraphNode(new de.czoeller.depanalyzer.core.dependency.DependencyNode(node));
+                        graph.addVertex(graphNode);
+                        return graphNode;
+                    });
     }
 
     @Override

@@ -4,8 +4,8 @@ import de.czoeller.depanalyzer.core.dependency.CoreDependencyNodeVisitor;
 import de.czoeller.depanalyzer.core.dependency.DependencyNode;
 import de.czoeller.depanalyzer.ui.core.ArtifactGraphEdge;
 import de.czoeller.depanalyzer.ui.core.ArtifactGraphNode;
+import edu.uci.ics.jung.graph.Forest;
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.OrderedSparseMultigraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 
 import java.util.Objects;
@@ -18,8 +18,12 @@ import java.util.Stack;
 public class GraphBuilderVisitor implements CoreDependencyNodeVisitor {
 
     private DependencyNode rootNode;
-    private Graph<ArtifactGraphNode, ArtifactGraphEdge> graph = new OrderedSparseMultigraph<>();
+    private Graph<ArtifactGraphNode, ArtifactGraphEdge> graph;
     private Stack<DependencyNode> path = new Stack<>();
+
+    public GraphBuilderVisitor(Forest<ArtifactGraphNode, ArtifactGraphEdge> graph) {
+        this.graph = graph;
+    }
 
     @Override
     public boolean visitEnter(DependencyNode node) {
@@ -50,7 +54,11 @@ public class GraphBuilderVisitor implements CoreDependencyNodeVisitor {
                     .filter(Objects::nonNull)
                     .filter(artifactGraphNode -> artifactGraphNode.getArtifact() == node)
                     .findFirst()
-                    .orElse(new ArtifactGraphNode(node));
+                    .orElseGet(() -> {
+                        final ArtifactGraphNode graphNode = new ArtifactGraphNode(node);
+                        graph.addVertex(graphNode);
+                        return graphNode;
+                    });
     }
 
     @Override

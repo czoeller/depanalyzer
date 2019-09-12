@@ -5,6 +5,7 @@ import de.czoeller.depanalyzer.ui.core.ArtifactGraphEdge;
 import de.czoeller.depanalyzer.ui.core.ArtifactGraphNode;
 import de.czoeller.depanalyzer.ui.core.DependencyGraphScene;
 import edu.uci.ics.jung.graph.DelegateForest;
+import edu.uci.ics.jung.graph.Forest;
 import edu.uci.ics.jung.graph.ObservableGraph;
 
 import javax.swing.*;
@@ -18,16 +19,16 @@ public class Application {
     private static class GraphAndForest {
 
         private final ObservableGraph<ArtifactGraphNode, ArtifactGraphEdge> graph;
-        private final DelegateForest<ArtifactGraphNode, ArtifactGraphEdge> forest;
+        private final Forest<ArtifactGraphNode, ArtifactGraphEdge> forest;
 
-        public GraphAndForest(ObservableGraph<ArtifactGraphNode, ArtifactGraphEdge> graph, DelegateForest<ArtifactGraphNode, ArtifactGraphEdge> forest) {
+        public GraphAndForest(ObservableGraph<ArtifactGraphNode, ArtifactGraphEdge> graph, Forest<ArtifactGraphNode, ArtifactGraphEdge> forest) {
             this.graph = graph;
             this.forest = forest;
         }
 
         public static GraphAndForest exampleGraph() {
-            DelegateForest<ArtifactGraphNode, ArtifactGraphEdge> forest = new DelegateForest<>();
-            ObservableGraph<ArtifactGraphNode, ArtifactGraphEdge> g = new ObservableGraph<>(ExampleGraph.realDependencyTree());
+            Forest<ArtifactGraphNode, ArtifactGraphEdge> forest = new DelegateForest<>();
+            ObservableGraph<ArtifactGraphNode, ArtifactGraphEdge> g = new ObservableGraph<>(ExampleGraph.realDependencyTree(forest));
             return new GraphAndForest(g, forest);
         }
     }
@@ -48,7 +49,7 @@ public class Application {
             sceneView.putClientProperty("print.printable", true); // NOI18N
         }
         pane.setViewportView(sceneView);
-        scene.cleanLayout(pane);
+        //scene.cleanLayout(pane);
         scene.setSelectedObjects(Collections.singleton(scene.getRootGraphNode()));
 
         jf.setLayout(new BorderLayout());
@@ -61,6 +62,7 @@ public class Application {
             public void windowOpened(WindowEvent we) {
                 //scene.relayout(true);
                 scene.validate();
+
             }
         });
         jf.setVisible(true);

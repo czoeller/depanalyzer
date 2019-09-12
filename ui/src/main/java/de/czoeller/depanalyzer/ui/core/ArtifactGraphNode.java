@@ -42,6 +42,7 @@
 
 package de.czoeller.depanalyzer.ui.core;
 
+
 import com.google.common.collect.Iterables;
 import de.czoeller.depanalyzer.core.dependency.DependencyNode;
 import edu.uci.ics.jung.graph.Graph;
@@ -75,7 +76,7 @@ public class ArtifactGraphNode {
     /** Creates a new instance of ArtifactGraphNode */
     public ArtifactGraphNode(DependencyNode art) {
         artifact = art;
-        dupl = new HashSet<DependencyNode>();
+        dupl = new HashSet<>();
     }
     
     

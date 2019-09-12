@@ -47,6 +47,7 @@ import de.czoeller.depanalyzer.core.dependency.DependencyNode;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.algorithms.layout.*;
 import edu.uci.ics.jung.graph.DelegateForest;
+import edu.uci.ics.jung.graph.Forest;
 import edu.uci.ics.jung.graph.ObservableGraph;
 import org.netbeans.api.annotations.common.CheckForNull;
 import org.netbeans.api.visual.action.*;
@@ -56,7 +57,7 @@ import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
-import org.openide.util.NbBundle.Messages;
+import org.openide.util.NbBundle;
 import org.openide.util.RequestProcessor;
 
 import javax.swing.*;
@@ -87,14 +88,14 @@ public class DependencyGraphScene extends JungScene<ArtifactGraphNode, ArtifactG
     private FitToViewLayout fitViewL;
 
     private static Set<ArtifactGraphNode> EMPTY_SELECTION = new HashSet<>();
-    private DelegateForest<ArtifactGraphNode, ArtifactGraphEdge> forest;
+    private Forest<ArtifactGraphNode, ArtifactGraphEdge> forest;
 
     public DependencyGraphScene(DelegateForest<ArtifactGraphNode, ArtifactGraphEdge> forest) {
         this(new ObservableGraph<>(forest), forest);
     }
 
-    public DependencyGraphScene(ObservableGraph<ArtifactGraphNode, ArtifactGraphEdge> graph, DelegateForest<ArtifactGraphNode, ArtifactGraphEdge> forest) {
-        super(graph, new FRLayout2<>(forest));
+    public DependencyGraphScene(ObservableGraph<ArtifactGraphNode, ArtifactGraphEdge> graph, Forest<ArtifactGraphNode, ArtifactGraphEdge> forest) {
+        super(graph, new FRLayout<>(forest));
         layoutModel = new DefaultComboBoxModel<>();
         layoutModel.addElement(layout());
         // These rarely work but look nice when they do
@@ -188,11 +189,11 @@ public class DependencyGraphScene extends JungScene<ArtifactGraphNode, ArtifactG
     
     private final DefaultComboBoxModel<Layout<ArtifactGraphNode, ArtifactGraphEdge>> layoutModel;
     
-    ComboBoxModel<Layout<ArtifactGraphNode, ArtifactGraphEdge>> getLayoutModel() {
+    public ComboBoxModel<Layout<ArtifactGraphNode, ArtifactGraphEdge>> getLayoutModel() {
         return layoutModel;
     }
     
-    ListCellRenderer createRenderer() {
+    public ListCellRenderer createRenderer() {
         return new R();
     }
     
@@ -383,7 +384,7 @@ public class DependencyGraphScene extends JungScene<ArtifactGraphNode, ArtifactG
             }
         }*/
 
-        @Messages({
+        @NbBundle.Messages({
             "ACT_Show_Graph=Show Dependency Graph",
             "ACT_Export_As_Image=Export As Image",
             "ACT_Export_As_Image_Title=Export Dependency Graph As PNG"
@@ -561,7 +562,7 @@ public class DependencyGraphScene extends JungScene<ArtifactGraphNode, ArtifactG
 
     private class SceneZoomToFitAction extends AbstractAction {
 
-        @Messages("ACT_ZoomToFit=Zoom To Fit")
+        @NbBundle.Messages("ACT_ZoomToFit=Zoom To Fit")
         SceneZoomToFitAction() {
             putValue(NAME, Bundle.ACT_ZoomToFit());
         }
