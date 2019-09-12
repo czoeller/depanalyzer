@@ -1,12 +1,12 @@
 package de.czoeller.depanalyzer.ui.visitor;
 
-import de.czoeller.depanalyzer.core.dependency.CoreDependencyNodeVisitor;
-import de.czoeller.depanalyzer.core.dependency.DependencyNode;
 import de.czoeller.depanalyzer.ui.core.ArtifactGraphEdge;
 import de.czoeller.depanalyzer.ui.core.ArtifactGraphNode;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.OrderedSparseMultigraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
+import org.eclipse.aether.graph.DependencyNode;
+import org.eclipse.aether.graph.DependencyVisitor;
 
 import java.util.Objects;
 import java.util.Stack;
@@ -15,7 +15,7 @@ import java.util.Stack;
  * Collects nodes into a graph with nodes and edges.
  * TODO: handle cycles.
  */
-public class GraphBuilderVisitor implements CoreDependencyNodeVisitor {
+public class MavenConverterGraphBuilderVisitor implements DependencyVisitor {
 
     private DependencyNode rootNode;
     private Graph<ArtifactGraphNode, ArtifactGraphEdge> graph = new OrderedSparseMultigraph<>();
@@ -36,8 +36,11 @@ public class GraphBuilderVisitor implements CoreDependencyNodeVisitor {
             .stream()
             .unordered()
             .forEach(currentNode -> {
-                final ArtifactGraphNode childGraphNode = new ArtifactGraphNode(currentNode);
-                final ArtifactGraphEdge e = new ArtifactGraphEdge(node, currentNode);
+                final de.czoeller.depanalyzer.core.dependency.DependencyNode currentDependencyNode = new de.czoeller.depanalyzer.core.dependency.DependencyNode(currentNode);
+                final de.czoeller.depanalyzer.core.dependency.DependencyNode nodeDependencyNode = new de.czoeller.depanalyzer.core.dependency.DependencyNode(node);
+
+                final ArtifactGraphNode childGraphNode = new ArtifactGraphNode(currentDependencyNode);
+                final ArtifactGraphEdge e = new ArtifactGraphEdge(nodeDependencyNode, currentDependencyNode);
                 graph.addEdge(e, graphNode, childGraphNode, EdgeType.DIRECTED);
             });
 
@@ -48,9 +51,9 @@ public class GraphBuilderVisitor implements CoreDependencyNodeVisitor {
         return graph.getVertices()
                     .stream()
                     .filter(Objects::nonNull)
-                    .filter(artifactGraphNode -> artifactGraphNode.getArtifact() == node)
+                    .filter(artifactGraphNode -> artifactGraphNode.getArtifact().equals(new de.czoeller.depanalyzer.core.dependency.DependencyNode(node)))
                     .findFirst()
-                    .orElse(new ArtifactGraphNode(node));
+                    .orElse(new ArtifactGraphNode(new de.czoeller.depanalyzer.core.dependency.DependencyNode(node)));
     }
 
     @Override

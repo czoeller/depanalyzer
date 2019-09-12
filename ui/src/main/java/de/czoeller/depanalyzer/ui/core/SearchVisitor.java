@@ -42,8 +42,8 @@
 
 package de.czoeller.depanalyzer.ui.core;
 
-import org.eclipse.aether.graph.DependencyNode;
-import org.eclipse.aether.graph.DependencyVisitor;
+import de.czoeller.depanalyzer.core.dependency.CoreDependencyNodeVisitor;
+import de.czoeller.depanalyzer.core.dependency.DependencyNode;
 
 import java.util.Stack;
 
@@ -51,7 +51,7 @@ import java.util.Stack;
  *
  * @author mkleint
  */
-public class SearchVisitor implements DependencyVisitor {
+public class SearchVisitor implements CoreDependencyNodeVisitor {
     private DependencyGraphScene scene;
     private DependencyNode root;
     private Stack<DependencyNode> path;

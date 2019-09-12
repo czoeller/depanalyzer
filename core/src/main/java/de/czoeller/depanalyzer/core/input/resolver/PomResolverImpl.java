@@ -11,6 +11,7 @@ import de.czoeller.depanalyzer.core.graph.DependencyNodeIdRenderer;
 import de.czoeller.depanalyzer.core.graph.Edge;
 import de.czoeller.depanalyzer.core.graph.GraphBuilder;
 import de.czoeller.depanalyzer.core.graph.Node;
+import de.czoeller.depanalyzer.core.graph.dot.DotUtils;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.model.Model;
@@ -22,6 +23,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -132,10 +135,10 @@ public class PomResolverImpl implements PomResolver {
             String dependencyGraph = graphFactory.createGraph(project);
             final DependencyNode rootNode = graphBuilder.getRootNode();
 
-            //Path graphFilePath = Paths.get("exm.dot");
-            //Path graphFilePathPNG = Paths.get("exm.png");
+            Path graphFilePath = Paths.get("exm.dot");
+            Path graphFilePathPNG = Paths.get("exm.png");
             //writeGraphFile(dependencyGraph, graphFilePath);
-            //DotUtils.createDotGraphImage(graphFilePathPNG, dependencyGraph);
+            DotUtils.createDotGraphImage(graphFilePathPNG, dependencyGraph);
 
             System.out.println(dependencyGraph);
 

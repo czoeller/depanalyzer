@@ -9,13 +9,13 @@ import lombok.Getter;
 import java.util.*;
 
 /**
- * A builder to create <a href="http://www.graphviz.org/doc/info/lang.html">DOT</a> strings by defining edges between
- * Nodes. The builder allows some customizations including custom {@link NodeRenderer}s and
+ * A builder to create tree of dependencies.
+ * The builder allows some customizations including custom {@link NodeRenderer}s and
  * {@link EdgeRenderer}s.
  *
  * @param <T> Type of the graph nodes.
  */
-public final class GraphBuilder<T extends DependencyNode> {
+public final class TreeGraphBuilder<T extends DependencyNode> {
 
     private final NodeRenderer<? super T> nodeIdRenderer;
     @Getter
@@ -31,11 +31,11 @@ public final class GraphBuilder<T extends DependencyNode> {
     private boolean omitSelfReferences;
     private T rootNode;
 
-    public static <T extends DependencyNode> GraphBuilder<T> create(NodeRenderer<? super T> nodeIdRenderer) {
-        return new GraphBuilder<T>(nodeIdRenderer);
+    public static <T> TreeGraphBuilder<T> create(NodeRenderer<? super T> nodeIdRenderer) {
+        return new TreeGraphBuilder<>(nodeIdRenderer);
     }
 
-    private GraphBuilder(NodeRenderer<? super T> nodeIdRenderer) {
+    private TreeGraphBuilder(NodeRenderer<? super T> nodeIdRenderer) {
         this.nodeIdRenderer = nodeIdRenderer;
         this.nodeDefinitions = new LinkedHashMap<>();
         this.edges = new LinkedHashSet<>();
@@ -47,27 +47,27 @@ public final class GraphBuilder<T extends DependencyNode> {
         this.edgeRenderer = createDefaultEdgeRenderer();
     }
 
-    public GraphBuilder<T> graphName(String name) {
+    public TreeGraphBuilder<T> graphName(String name) {
         this.graphName = name;
         return this;
     }
 
-    public GraphBuilder<T> useNodeNameRenderer(NodeRenderer<? super T> nodeNameRenderer) {
+    public TreeGraphBuilder<T> useNodeNameRenderer(NodeRenderer<? super T> nodeNameRenderer) {
         this.nodeNameRenderer = nodeNameRenderer;
         return this;
     }
 
-    public GraphBuilder<T> useEdgeRenderer(EdgeRenderer<? super T> edgeRenderer) {
+    public TreeGraphBuilder<T> useEdgeRenderer(EdgeRenderer<? super T> edgeRenderer) {
         this.edgeRenderer = edgeRenderer;
         return this;
     }
 
-    public GraphBuilder<T> omitSelfReferences() {
+    public TreeGraphBuilder<T> omitSelfReferences() {
         this.omitSelfReferences = true;
         return this;
     }
 
-    public GraphBuilder<T> graphFormatter(GraphFormatter formatter) {
+    public TreeGraphBuilder<T> graphFormatter(GraphFormatter formatter) {
         this.graphFormatter = formatter;
         return this;
     }
@@ -82,12 +82,19 @@ public final class GraphBuilder<T extends DependencyNode> {
      * @param node The node to add.
      * @return This builder.
      */
-    public GraphBuilder<T> addNode(T node) {
+    public TreeGraphBuilder<T> addNode(T node, T parent) {
         String nodeId = this.nodeIdRenderer.render(node);
         String nodeName = this.nodeNameRenderer.render(node);
+
         this.nodeDefinitions.put(nodeId, new Node<>(nodeId, nodeName, node));
 
         return this;
+    }
+
+    private Node<T> findNodeOrCreate(T node) {
+        final String nodeId = this.nodeIdRenderer.render(node);
+        String nodeName = this.nodeNameRenderer.render(node);
+        return nodeDefinitions.getOrDefault(nodeId, new Node<>(nodeId, nodeName, node));
     }
 
     public void setRootNode(T node) {
@@ -98,11 +105,11 @@ public final class GraphBuilder<T extends DependencyNode> {
         return rootNode;
     }
 
-    public GraphBuilder<T> addEdge(T from, T to) {
+    public TreeGraphBuilder<T> addEdge(T from, T to) {
         return addEdgeInternal(from, to, false);
     }
 
-    public GraphBuilder<T> addPermanentEdge(T from, T to) {
+    public TreeGraphBuilder<T> addPermanentEdge(T from, T to) {
         return addEdgeInternal(from, to, true);
     }
 
@@ -147,7 +154,7 @@ public final class GraphBuilder<T extends DependencyNode> {
      * @param permanent Whether the edge is permanent.
      * @return This builder.
      */
-    private GraphBuilder<T> addEdgeInternal(T from, T to, boolean permanent) {
+    private TreeGraphBuilder<T> addEdgeInternal(T from, T to, boolean permanent) {
         if (from != null && to != null) {
             addNode(from);
             addNode(to);
@@ -166,7 +173,6 @@ public final class GraphBuilder<T extends DependencyNode> {
             Edge edge = new Edge(fromNodeId, toNodeId, this.edgeRenderer.render(fromNode, toNode), permanent);
             this.edges.add(edge);
             this.reachabilityMap.registerEdge(fromNodeId, toNodeId);
-            nodeDefinitions.get(fromNodeId).nodeObject.getChildren().add(nodeDefinitions.get(toNodeId).nodeObject);
         }
     }
 

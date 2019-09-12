@@ -5,6 +5,8 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.eclipse.aether.util.graph.transformer.ConflictResolver;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -26,7 +28,7 @@ public final class DependencyNode {
     private final Set<String> scopes;
     private final Set<String> classifiers;
     private final Set<String> types;
-
+    private final List<DependencyNode> children;
 
     public DependencyNode(Artifact artifact) {
         this(artifact, determineNodeResolution(artifact), artifact.getVersion());
@@ -54,6 +56,7 @@ public final class DependencyNode {
         this.resolution = resolution;
         this.scopes.add(artifact.getScope());
         this.types.add(artifact.getType());
+        this.children = new ArrayList<>();
 
         if (!isNullOrEmpty(artifact.getClassifier())) {
             this.classifiers.add(artifact.getClassifier());
@@ -71,6 +74,7 @@ public final class DependencyNode {
         this.scopes.addAll(other.scopes);
         this.classifiers.addAll(other.classifiers);
         this.types.addAll(other.types);
+        this.children.addAll(other.getChildren());
     }
 
     public Artifact getArtifact() {
@@ -181,5 +185,31 @@ public final class DependencyNode {
         }
 
         return dependencyNode.getArtifact().getVersion();
+    }
+
+    public List<DependencyNode> getChildren() {
+        return children;
+    }
+
+
+    /**
+     * Applies the specified dependency node visitor to this dependency node and its children.
+     *
+     * @param visitor the dependency node visitor to use
+     * @return the visitor result of ending the visit to this node
+     */
+    public boolean accept( CoreDependencyNodeVisitor visitor ) {
+        if ( visitor.visitEnter( this ) )
+        {
+            for ( DependencyNode child : children )
+            {
+                if ( !child.accept( visitor ) )
+                {
+                    break;
+                }
+            }
+        }
+
+        return visitor.visitLeave( this );
     }
 }

@@ -1,9 +1,9 @@
 package de.czoeller.depanalyzer.ui.components;
 
+import de.czoeller.depanalyzer.core.dependency.DependencyNode;
 import de.czoeller.depanalyzer.ui.core.DependencyGraphScene;
 import de.czoeller.depanalyzer.ui.core.ScopesVisitor;
 import de.czoeller.depanalyzer.ui.core.SearchVisitor;
-import org.eclipse.aether.graph.DependencyNode;
 import org.openide.util.NbBundle;
 
 import javax.swing.*;
