@@ -86,7 +86,9 @@ public final class GraphBuilder<T extends DependencyNode> {
         String nodeId = this.nodeIdRenderer.render(node);
         String nodeName = this.nodeNameRenderer.render(node);
         this.nodeDefinitions.put(nodeId, new Node<>(nodeId, nodeName, node));
-
+        if (rootNode == null) {
+            rootNode = node;
+        }
         return this;
     }
 

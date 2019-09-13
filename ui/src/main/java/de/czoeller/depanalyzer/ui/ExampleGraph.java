@@ -33,7 +33,8 @@ public class ExampleGraph {
 
     public static Graph<ArtifactGraphNode, ArtifactGraphEdge> realDependencyTree(Forest<ArtifactGraphNode, ArtifactGraphEdge> forest) {
         final PomResolverImpl pomResolver = new PomResolverImpl();
-        final File pomFile = new File("core/pom.xml");
+        //final File pomFile = new File("core/pom.xml");
+        final File pomFile = new File("C:\\Users\\noex_\\AppData\\Local\\Temp\\mvvmFX\\pom.xml");
         final PomResolverResult pomResolverResult = pomResolver.resolvePomExperimental(pomFile);
 
         final GraphBuilderVisitor graphBuilderVisitor = new GraphBuilderVisitor(forest);

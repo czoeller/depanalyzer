@@ -34,6 +34,7 @@
         <module>core</module>
         <module>analyzer</module>
         <module>ui</module>
+        <module>builder</module>
     </modules>
     <repositories>
         <repository>

@@ -32,7 +32,7 @@ class GraphBuildingVisitor implements DependencyVisitor {
             return true;
         }
 
-        if(nodeStack.isEmpty()) {
+        if(null == this.graphBuilder.getRootNode()) {
             this.graphBuilder.setRootNode(node1);
         }
         this.nodeStack.push(node1);

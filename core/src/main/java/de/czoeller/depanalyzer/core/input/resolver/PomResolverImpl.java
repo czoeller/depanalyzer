@@ -1,6 +1,7 @@
 package de.czoeller.depanalyzer.core.input.resolver;
 
 import com.google.common.collect.Lists;
+import de.czoeller.depanalyzer.builder.ProjectBuilder;
 import de.czoeller.depanalyzer.core.dependency.AggregatingGraphFactory;
 import de.czoeller.depanalyzer.core.dependency.DependencyNode;
 import de.czoeller.depanalyzer.core.dependency.MavenGraphAdapter;
@@ -94,13 +95,13 @@ public class PomResolverImpl implements PomResolver {
     @Override
     public PomResolverResult resolvePomExperimental(File pomFile) {
 
-        final MavenXpp3Reader mavenreader = new MavenXpp3Reader();
-        final Model model;
-        try {
-            model = mavenreader.read(new BufferedReader(new FileReader(pomFile)));
-            model.setPomFile(pomFile);
+            final File file = pomFile;
+            final ProjectBuilder projectBuilder = new ProjectBuilder();
+            projectBuilder.build(file);
 
-            final MavenProject project = new MavenProject(model);
+            final MavenProject project = projectBuilder.getParentProject();
+            final Supplier<Collection<MavenProject>> projectSupplier = projectBuilder.getProjectSupplier();
+
             project.setArtifact(createArtifact(pomFile, project.getGroupId(), project.getArtifactId(), project.getVersion(), "compile", project.getPackaging(), ""));
 
             final MavenGraphAdapter mavenGraphAdapter = new MavenGraphAdapter(new AetherDependencyNodeResolver());
@@ -123,18 +124,15 @@ public class PomResolverImpl implements PomResolver {
             dotGraphStyleConfigurer.showArtifactIds(true);
             dotGraphStyleConfigurer.configure(graphBuilder);
 
-            final Supplier<Collection<MavenProject>> projectSupplier = () -> {
-                //TODO: populate dynamically
-                return Lists.newArrayList(project);
-            };
+
 
             final AggregatingGraphFactory graphFactory = new AggregatingGraphFactory(mavenGraphAdapter, projectSupplier,
-                    graphBuilder, false, true);
+                    graphBuilder, true, false);
 
 
             String dependencyGraph = graphFactory.createGraph(project);
             final DependencyNode rootNode = graphBuilder.getRootNode();
-
+try {
             Path graphFilePath = Paths.get("exm.dot");
             Path graphFilePathPNG = Paths.get("exm.png");
             //writeGraphFile(dependencyGraph, graphFilePath);
@@ -144,13 +142,10 @@ public class PomResolverImpl implements PomResolver {
 
             final Map<String, Node<DependencyNode>> nodeDefinitions = graphBuilder.getNodeDefinitions();
             final Set<Node<DependencyNode>> nodes = new HashSet<>(nodeDefinitions.values());
-
             final Set<Edge> edges = graphBuilder.getEdges();
 
             return new PomResolverResult(rootNode, nodeDefinitions, edges);
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (XmlPullParserException e) {
             e.printStackTrace();
         }
         throw new IllegalStateException("Could not resolve pom");
