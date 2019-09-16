@@ -63,6 +63,10 @@ public final class DependencyNode {
         }
     }
 
+    public void setParent() {
+        isParent = true;
+    }
+
     public void merge(DependencyNode other) {
         if (this == other) {
             return;
@@ -74,7 +78,7 @@ public final class DependencyNode {
         this.scopes.addAll(other.scopes);
         this.classifiers.addAll(other.classifiers);
         this.types.addAll(other.types);
-        this.children.addAll(other.getChildren());
+        this.children = other.getChildren();
     }
 
     public Artifact getArtifact() {
