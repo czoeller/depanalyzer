@@ -7,6 +7,9 @@ import de.czoeller.depanalyzer.core.dependency.DependencyNode;
 import de.czoeller.depanalyzer.core.dependency.MavenGraphAdapter;
 import de.czoeller.depanalyzer.core.dependency.dot.DotGraphStyleConfigurer;
 import de.czoeller.depanalyzer.core.dependency.dot.style.StyleConfiguration;
+import de.czoeller.depanalyzer.core.dependency.dot.style.resource.BuiltInStyleResource;
+import de.czoeller.depanalyzer.core.dependency.dot.style.resource.ClasspathStyleResource;
+import de.czoeller.depanalyzer.core.dependency.dot.style.resource.StyleResource;
 import de.czoeller.depanalyzer.core.dependency.text.TextGraphStyleConfigurer;
 import de.czoeller.depanalyzer.core.graph.DependencyNodeIdRenderer;
 import de.czoeller.depanalyzer.core.graph.Edge;
@@ -26,11 +29,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
+
+import static de.czoeller.depanalyzer.core.graph.dot.DotUtils.writeGraphFile;
 
 public class PomResolverImpl implements PomResolver {
     @Override
@@ -64,6 +66,7 @@ public class PomResolverImpl implements PomResolver {
             dotGraphStyleConfigurer.showArtifactIds(true);
             dotGraphStyleConfigurer.configure(graphBuilder);
 
+
             final Supplier<Collection<MavenProject>> projectSupplier = () -> {
                 //TODO: populate dynamically
                 return Lists.newArrayList(project);
@@ -92,6 +95,18 @@ public class PomResolverImpl implements PomResolver {
         throw new IllegalStateException("Could not resolve pom");
     }
 
+    private StyleConfiguration loadStyleConfiguration() {
+        // default style resources
+        ClasspathStyleResource defaultStyleResource = BuiltInStyleResource.DEFAULT_STYLE.createStyleResource(getClass().getClassLoader());
+        Set<StyleResource> styleResources = new LinkedHashSet<>();
+
+        // load and print
+        StyleConfiguration styleConfiguration = StyleConfiguration.load(defaultStyleResource, styleResources.toArray(new StyleResource[0]));
+        System.out.println("Using effective style configuration:\n" + styleConfiguration.toJson());
+
+        return styleConfiguration;
+    }
+
     @Override
     public PomResolverResult resolvePomExperimental(File pomFile) {
 
@@ -114,16 +129,16 @@ public class PomResolverImpl implements PomResolver {
                                                                                     .withScope(true);
 
             final GraphBuilder<DependencyNode> graphBuilder = GraphBuilder.create(nodeIdRenderer);
-            final TextGraphStyleConfigurer textGraphStyleConfigurer = new TextGraphStyleConfigurer();
-            textGraphStyleConfigurer.showGroupIds(true);
-            textGraphStyleConfigurer.showArtifactIds(true);
-            textGraphStyleConfigurer.configure(graphBuilder);
+            //final TextGraphStyleConfigurer textGraphStyleConfigurer = new TextGraphStyleConfigurer();
+            //textGraphStyleConfigurer.showGroupIds(true);
+            //textGraphStyleConfigurer.showArtifactIds(true);
+            //textGraphStyleConfigurer.configure(graphBuilder);
 
-            final DotGraphStyleConfigurer dotGraphStyleConfigurer = new DotGraphStyleConfigurer(new StyleConfiguration());
+            final StyleConfiguration styleConfiguration = loadStyleConfiguration();
+            final DotGraphStyleConfigurer dotGraphStyleConfigurer = new DotGraphStyleConfigurer(styleConfiguration);
             dotGraphStyleConfigurer.showGroupIds(true);
             dotGraphStyleConfigurer.showArtifactIds(true);
             dotGraphStyleConfigurer.configure(graphBuilder);
-
 
 
             final AggregatingGraphFactory graphFactory = new AggregatingGraphFactory(mavenGraphAdapter, projectSupplier,
@@ -135,7 +150,7 @@ public class PomResolverImpl implements PomResolver {
 try {
             Path graphFilePath = Paths.get("exm.dot");
             Path graphFilePathPNG = Paths.get("exm.png");
-            //writeGraphFile(dependencyGraph, graphFilePath);
+            writeGraphFile(dependencyGraph, graphFilePath);
             DotUtils.createDotGraphImage(graphFilePathPNG, dependencyGraph);
 
             System.out.println(dependencyGraph);

@@ -22,13 +22,14 @@ import static de.czoeller.depanalyzer.core.dependency.NodeResolution.*;
  */
 public final class DependencyNode {
 
+    private static boolean isParent;
     private final Artifact artifact;
     private final String effectiveVersion;
     private final NodeResolution resolution;
     private final Set<String> scopes;
     private final Set<String> classifiers;
     private final Set<String> types;
-    private final List<DependencyNode> children;
+    private List<DependencyNode> children;
 
     public DependencyNode(Artifact artifact) {
         this(artifact, determineNodeResolution(artifact), artifact.getVersion());
@@ -175,7 +176,7 @@ public final class DependencyNode {
     }
 
     private static NodeResolution determineNodeResolution(Artifact artifact) {
-        if (artifact.getScope() == null) {
+        if (isParent || artifact.getScope() == null) {
             return NodeResolution.PARENT;
         }
 
