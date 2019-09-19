@@ -29,7 +29,6 @@ public class ProjectBuilder {
                 .forProject(parent)
                 .setGoals("compile")
                 .setRecursive(true)
-                .useMaven3Version("3.5.2")
                 .setJavaHome(new File("C:\\Program Files\\Java\\jdk1.8.0_211"))
                 .build();
         final Model model = builtProject.getModel();
