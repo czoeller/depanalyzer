@@ -28,7 +28,7 @@ public class Application {
 
         public static GraphAndForest exampleGraph() {
             Forest<ArtifactGraphNode, ArtifactGraphEdge> forest = new DelegateForest<>();
-            ObservableGraph<ArtifactGraphNode, ArtifactGraphEdge> g = new ObservableGraph<>(ExampleGraph.realDependencyTree(forest));
+            ObservableGraph<ArtifactGraphNode, ArtifactGraphEdge> g = new ObservableGraph<>(GraphFactory.realGraphFromExampleProject(forest));
             return new GraphAndForest(g, forest);
         }
     }
@@ -66,41 +66,6 @@ public class Application {
             }
         });
         jf.setVisible(true);
-
-        /*final Path path = Paths.get(".");
-
-        File pomXml = new File(path.toFile(), "pom.xml");
-        DependencyGraphScene scene = null;
-        try {
-            InputStream is = new FileInputStream(pomXml);
-            final MavenXpp3Reader reader = new MavenXpp3Reader();
-
-            Model model;
-
-            model = reader.read(is);
-            final MavenProject prj = new MavenProject(model);
-
-            DependencyTreeBuilder treeBuilder = new DefaultDependencyTreeBuilder();
-            final DependencyNode root = treeBuilder.buildDependencyTree(prj);
-
-            scene = new DependencyGraphScene(prj, model);
-            //scene2.setAnimateIterativeLayouts(animateLayouts.isSelected());
-            GraphConstructor constr = new GraphConstructor(scene);
-
-            root.accept(constr);
-
-        } catch (IOException | XmlPullParserException e) {
-            throw new IllegalStateException(e);
-        } catch (DependencyTreeBuilderException e) {
-            e.printStackTrace();
-        }
-
-        if (scene == null) {
-            throw new IllegalStateException("Could not load scene");
-        }*/
-
-        //jf.setLayout(new BorderLayout());
-        //jf.add(new JScrollPane(scene.createView()), BorderLayout.CENTER);
     }
 
 

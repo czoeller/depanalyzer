@@ -29,7 +29,7 @@ public class Main {
 
     private void readPOM() {
         final File pomFile = new File("core/pom.xml");
-        this.dependencyNode = this.pomResolver.resolvePom(pomFile);
+        this.dependencyNode = this.pomResolver.resolvePom(pomFile).getRootNode();
     }
 
     private void analyze() {

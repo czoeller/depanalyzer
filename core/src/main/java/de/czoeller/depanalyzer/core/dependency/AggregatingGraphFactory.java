@@ -94,7 +94,9 @@ public class AggregatingGraphFactory implements GraphFactory {
 
     private DependencyNode filterProject(MavenProject project) {
         Artifact artifact = project.getArtifact();
-        return new DependencyNode(artifact);
+        final DependencyNode dependencyNode = new DependencyNode(artifact);
+        dependencyNode.setParent();
+        return dependencyNode;
     }
 
 }

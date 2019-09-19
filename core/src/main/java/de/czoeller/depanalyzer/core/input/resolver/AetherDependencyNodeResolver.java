@@ -38,7 +38,7 @@ public class AetherDependencyNodeResolver implements DependencyNodeResolver {
         //artifact.setFile(new File(root.getArtifactPath()));
 
         CollectRequest collectRequest = new CollectRequest();
-        collectRequest.setRoot( new org.eclipse.aether.graph.Dependency( artifact, "" ) );
+        collectRequest.setRoot( new org.eclipse.aether.graph.Dependency( artifact, "compile" ) );
         collectRequest.setRepositories( Booter.newRepositories( system, session ) );
 
         CollectResult collectResult = null;
@@ -63,16 +63,17 @@ public class AetherDependencyNodeResolver implements DependencyNodeResolver {
      */
     private void resolveArtifacts(RepositorySystemSession session, RepositorySystem system, DependencyNode ... nodes ) {
         for (DependencyNode object : nodes) {
+
             final ArtifactRequest artifactRequest = new ArtifactRequest(object);
             artifactRequest.setRepositories(Booter.newRepositories( system, session ));
             try {
                 final ArtifactResult artifactResult = system.resolveArtifact(session, artifactRequest);
                 final Artifact resolvedArtifact = artifactResult.getArtifact();
                 object.setArtifact(resolvedArtifact);
-                resolveArtifacts(session, system, Iterables.toArray(object.getChildren(), DependencyNode.class));
             } catch (ArtifactResolutionException e) {
                 e.printStackTrace();
             }
+            resolveArtifacts(session, system, Iterables.toArray(object.getChildren(), DependencyNode.class));
         }
     }
 
