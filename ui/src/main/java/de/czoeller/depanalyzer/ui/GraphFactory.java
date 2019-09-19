@@ -15,9 +15,9 @@ import java.io.File;
 
 import static de.czoeller.depanalyzer.ui.AetherUtils.getDependencyNode;
 
-public class ExampleGraph {
+public class GraphFactory {
 
-    public static Graph<ArtifactGraphNode, ArtifactGraphEdge> createTree(Forest<ArtifactGraphNode, ArtifactGraphEdge> forest) {
+    public static Graph<ArtifactGraphNode, ArtifactGraphEdge> exampleGraph(Forest<ArtifactGraphNode, ArtifactGraphEdge> forest) {
 
         DependencyNode node = getDependencyNode("root", "art", "1.0.1");
         DependencyNode node2 = getDependencyNode("c1", "tool", "0.1.5");
@@ -31,7 +31,7 @@ public class ExampleGraph {
         return mavenConverterGraphBuilderVisitor.getGraph();
     }
 
-    public static Graph<ArtifactGraphNode, ArtifactGraphEdge> realDependencyTree(Forest<ArtifactGraphNode, ArtifactGraphEdge> forest) {
+    public static Graph<ArtifactGraphNode, ArtifactGraphEdge> realGraphFromExampleProject(Forest<ArtifactGraphNode, ArtifactGraphEdge> forest) {
         final PomResolverImpl pomResolver = new PomResolverImpl();
         //final File pomFile = new File("core/pom.xml");
         final File pomFile = new File("C:\\Users\\noex_\\AppData\\Local\\Temp\\mvvmFX\\pom.xml");
