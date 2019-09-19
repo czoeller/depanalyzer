@@ -57,7 +57,6 @@ import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
-import org.openide.util.NbBundle;
 import org.openide.util.RequestProcessor;
 
 import javax.swing.*;
@@ -65,6 +64,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.*;
+
+import static org.openide.util.NbBundle.Messages;
 
 public class DependencyGraphScene extends JungScene<ArtifactGraphNode, ArtifactGraphEdge> implements Runnable {
 
@@ -384,7 +385,7 @@ public class DependencyGraphScene extends JungScene<ArtifactGraphNode, ArtifactG
             }
         }*/
 
-        @NbBundle.Messages({
+        @Messages({
             "ACT_Show_Graph=Show Dependency Graph",
             "ACT_Export_As_Image=Export As Image",
             "ACT_Export_As_Image_Title=Export Dependency Graph As PNG"
@@ -562,7 +563,7 @@ public class DependencyGraphScene extends JungScene<ArtifactGraphNode, ArtifactG
 
     private class SceneZoomToFitAction extends AbstractAction {
 
-        @NbBundle.Messages("ACT_ZoomToFit=Zoom To Fit")
+        @Messages("ACT_ZoomToFit=Zoom To Fit")
         SceneZoomToFitAction() {
             putValue(NAME, Bundle.ACT_ZoomToFit());
         }
