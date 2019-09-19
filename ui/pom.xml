@@ -109,7 +109,4 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
-    <properties>
-        <maven.version>3.6.1</maven.version>
-    </properties>
 </project>
