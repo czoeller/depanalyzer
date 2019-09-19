@@ -44,44 +44,42 @@ public class PomResolverImpl implements PomResolver {
     @Override
     public PomResolverResult resolvePom(File pomFile) {
 
-            final File file = pomFile;
-            final ProjectBuilder projectBuilder = new ProjectBuilder();
-            projectBuilder.build(file);
+        final File file = pomFile;
+        final ProjectBuilder projectBuilder = new ProjectBuilder();
+        projectBuilder.build(file);
 
-            final MavenProject project = projectBuilder.getParentProject();
-            final Supplier<Collection<MavenProject>> projectSupplier = projectBuilder.getProjectSupplier();
+        final MavenProject project = projectBuilder.getParentProject();
+        final Supplier<Collection<MavenProject>> projectSupplier = projectBuilder.getProjectSupplier();
 
-            project.setArtifact(createArtifact(pomFile, project.getGroupId(), project.getArtifactId(), project.getVersion(), "compile", project.getPackaging(), ""));
+        project.setArtifact(createArtifact(pomFile, project.getGroupId(), project.getArtifactId(), project.getVersion(), "compile", project.getPackaging(), ""));
 
-            final MavenGraphAdapter mavenGraphAdapter = new MavenGraphAdapter(new AetherDependencyNodeResolver());
-
-
-
-            final DependencyNodeIdRenderer nodeIdRenderer = DependencyNodeIdRenderer.versionlessId()
-                                                                                    .withClassifier(true)
-                                                                                    .withType(true)
-                                                                                    .withScope(true);
-
-            final GraphBuilder<DependencyNode> graphBuilder = GraphBuilder.create(nodeIdRenderer);
-            //final TextGraphStyleConfigurer textGraphStyleConfigurer = new TextGraphStyleConfigurer();
-            //textGraphStyleConfigurer.showGroupIds(true);
-            //textGraphStyleConfigurer.showArtifactIds(true);
-            //textGraphStyleConfigurer.configure(graphBuilder);
-
-            final StyleConfiguration styleConfiguration = loadStyleConfiguration();
-            final DotGraphStyleConfigurer dotGraphStyleConfigurer = new DotGraphStyleConfigurer(styleConfiguration);
-            dotGraphStyleConfigurer.showGroupIds(true);
-            dotGraphStyleConfigurer.showArtifactIds(true);
-            dotGraphStyleConfigurer.configure(graphBuilder);
+        final MavenGraphAdapter mavenGraphAdapter = new MavenGraphAdapter(new AetherDependencyNodeResolver());
 
 
-            final AggregatingGraphFactory graphFactory = new AggregatingGraphFactory(mavenGraphAdapter, projectSupplier,
-                    graphBuilder, true, false);
+        final DependencyNodeIdRenderer nodeIdRenderer = DependencyNodeIdRenderer.versionlessId()
+                                                                                .withClassifier(true)
+                                                                                .withType(true)
+                                                                                .withScope(true);
+
+        final GraphBuilder<DependencyNode> graphBuilder = GraphBuilder.create(nodeIdRenderer);
+        //final TextGraphStyleConfigurer textGraphStyleConfigurer = new TextGraphStyleConfigurer();
+        //textGraphStyleConfigurer.showGroupIds(true);
+        //textGraphStyleConfigurer.showArtifactIds(true);
+        //textGraphStyleConfigurer.configure(graphBuilder);
+
+        final StyleConfiguration styleConfiguration = loadStyleConfiguration();
+        final DotGraphStyleConfigurer dotGraphStyleConfigurer = new DotGraphStyleConfigurer(styleConfiguration);
+        dotGraphStyleConfigurer.showGroupIds(true);
+        dotGraphStyleConfigurer.showArtifactIds(true);
+        dotGraphStyleConfigurer.configure(graphBuilder);
 
 
-            String dependencyGraph = graphFactory.createGraph(project);
-            final DependencyNode rootNode = graphBuilder.getRootNode();
-try {
+        final AggregatingGraphFactory graphFactory = new AggregatingGraphFactory(mavenGraphAdapter, projectSupplier, graphBuilder, true, false);
+
+
+        String dependencyGraph = graphFactory.createGraph(project);
+        final DependencyNode rootNode = graphBuilder.getRootNode();
+        try {
             Path graphFilePath = Paths.get("exm.dot");
             Path graphFilePathPNG = Paths.get("exm.png");
             writeGraphFile(dependencyGraph, graphFilePath);

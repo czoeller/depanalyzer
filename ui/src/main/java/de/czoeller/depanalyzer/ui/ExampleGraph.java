@@ -35,7 +35,7 @@ public class ExampleGraph {
         final PomResolverImpl pomResolver = new PomResolverImpl();
         //final File pomFile = new File("core/pom.xml");
         final File pomFile = new File("C:\\Users\\noex_\\AppData\\Local\\Temp\\mvvmFX\\pom.xml");
-        final PomResolverResult pomResolverResult = pomResolver.resolvePomExperimental(pomFile);
+        final PomResolverResult pomResolverResult = pomResolver.resolvePom(pomFile);
 
         final GraphBuilderVisitor graphBuilderVisitor = new GraphBuilderVisitor(forest);
         pomResolverResult.getRootNode().accept(graphBuilderVisitor);
