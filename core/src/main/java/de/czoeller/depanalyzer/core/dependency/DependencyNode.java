@@ -5,6 +5,8 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.eclipse.aether.util.graph.transformer.ConflictResolver;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -20,13 +22,14 @@ import static de.czoeller.depanalyzer.core.dependency.NodeResolution.*;
  */
 public final class DependencyNode {
 
+    private static boolean isParent;
     private final Artifact artifact;
     private final String effectiveVersion;
     private final NodeResolution resolution;
     private final Set<String> scopes;
     private final Set<String> classifiers;
     private final Set<String> types;
-
+    private List<DependencyNode> children;
 
     public DependencyNode(Artifact artifact) {
         this(artifact, determineNodeResolution(artifact), artifact.getVersion());
@@ -54,10 +57,15 @@ public final class DependencyNode {
         this.resolution = resolution;
         this.scopes.add(artifact.getScope());
         this.types.add(artifact.getType());
+        this.children = new ArrayList<>();
 
         if (!isNullOrEmpty(artifact.getClassifier())) {
             this.classifiers.add(artifact.getClassifier());
         }
+    }
+
+    public void setParent() {
+        isParent = true;
     }
 
     public void merge(DependencyNode other) {
@@ -71,6 +79,7 @@ public final class DependencyNode {
         this.scopes.addAll(other.scopes);
         this.classifiers.addAll(other.classifiers);
         this.types.addAll(other.types);
+        this.children = other.getChildren();
     }
 
     public Artifact getArtifact() {
@@ -167,7 +176,7 @@ public final class DependencyNode {
     }
 
     private static NodeResolution determineNodeResolution(Artifact artifact) {
-        if (artifact.getScope() == null) {
+        if (isParent || artifact.getScope() == null) {
             return NodeResolution.PARENT;
         }
 
@@ -181,5 +190,31 @@ public final class DependencyNode {
         }
 
         return dependencyNode.getArtifact().getVersion();
+    }
+
+    public List<DependencyNode> getChildren() {
+        return children;
+    }
+
+
+    /**
+     * Applies the specified dependency node visitor to this dependency node and its children.
+     *
+     * @param visitor the dependency node visitor to use
+     * @return the visitor result of ending the visit to this node
+     */
+    public boolean accept( CoreDependencyNodeVisitor visitor ) {
+        if ( visitor.visitEnter( this ) )
+        {
+            for ( DependencyNode child : children )
+            {
+                if ( !child.accept( visitor ) )
+                {
+                    break;
+                }
+            }
+        }
+
+        return visitor.visitLeave( this );
     }
 }
