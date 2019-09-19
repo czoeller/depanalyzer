@@ -5,6 +5,8 @@ import de.czoeller.depanalyzer.ui.core.*;
 import edu.uci.ics.jung.algorithms.layout.DAGLayout;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
+import org.jdesktop.swingx.autocomplete.ObjectToStringConverter;
 import org.openide.util.NbBundle;
 
 import javax.swing.*;
@@ -16,6 +18,8 @@ import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static de.czoeller.depanalyzer.ui.components.Bundle.*;
 import static org.eclipse.aether.util.artifact.JavaScopes.*;
@@ -97,6 +101,7 @@ public class TopComponent extends JComponent {
         jPanel1.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         txtFind.setPreferredSize(new Dimension(200, 20));
+        AutoCompleteDecorator.decorate(txtFind, scene.graph().getVertices().stream().map(v -> v.getArtifact().getArtifact()).flatMap( v -> Stream.of(v.getGroupId(), v.getArtifactId())).map(Object::toString).distinct().collect(Collectors.toList()), false);
         JLabel txtFindLabel = new JLabel("Search:");
         txtFindLabel.setLabelFor(txtFind);
 
@@ -109,6 +114,13 @@ public class TopComponent extends JComponent {
         jPanel1.add(comScopes);
 
         final JComboBox<Layout<ArtifactGraphNode, ArtifactGraphEdge>> layouts = new JComboBox<>(scene.getLayoutModel());
+        AutoCompleteDecorator.decorate(layouts, new ObjectToStringConverter() {
+            @Override
+            public String getPreferredStringForItem(Object o) {
+                return o.getClass().getSimpleName();
+            }
+        });
+        layouts.putClientProperty("JComboBox.isTableCellEditor", Boolean.TRUE);
         layouts.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> jlist, Object o, int i, boolean bln, boolean bln1) {
