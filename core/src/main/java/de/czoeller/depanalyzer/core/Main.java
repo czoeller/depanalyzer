@@ -1,7 +1,7 @@
 package de.czoeller.depanalyzer.core;
 
 import de.czoeller.depanalyzer.analyzer.Analyzer;
-import de.czoeller.depanalyzer.analyzer.impl.DummyAnalyzerImpl;
+import de.czoeller.depanalyzer.analyzer.dummy.DummyAnalyzerImpl;
 import de.czoeller.depanalyzer.core.dependency.DependencyNode;
 import de.czoeller.depanalyzer.core.input.resolver.PomResolver;
 import de.czoeller.depanalyzer.core.input.resolver.PomResolverImpl;

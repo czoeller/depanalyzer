@@ -7,5 +7,5 @@ import java.util.List;
 import java.util.Map;
 
 public interface Analyzer {
-    Map<Artifact, List<Issue>> analyze(Artifact artifact);
+    Map<Artifact, List<Issue>> analyze(Artifact artifact) throws AnalyzerException;
 }

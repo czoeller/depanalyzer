@@ -1,4 +1,4 @@
-package de.czoeller.depanalyzer.analyzer.impl;
+package de.czoeller.depanalyzer.analyzer.dummy;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
