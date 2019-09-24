@@ -36,7 +36,7 @@ public class PomResolverImpl implements PomResolver {
 
         // load and print
         StyleConfiguration styleConfiguration = StyleConfiguration.load(defaultStyleResource, styleResources.toArray(new StyleResource[0]));
-        System.out.println("Using effective style configuration:\n" + styleConfiguration.toJson());
+        // System.out.println("Using effective style configuration:\n" + styleConfiguration.toJson());
 
         return styleConfiguration;
     }
