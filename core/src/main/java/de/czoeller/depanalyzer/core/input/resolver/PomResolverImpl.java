@@ -1,6 +1,6 @@
 package de.czoeller.depanalyzer.core.input.resolver;
 
-import de.czoeller.depanalyzer.builder.ProjectBuilder;
+import de.czoeller.depanalyzer.core.builder.ProjectBuilder;
 import de.czoeller.depanalyzer.core.dependency.AggregatingGraphFactory;
 import de.czoeller.depanalyzer.core.dependency.DependencyNode;
 import de.czoeller.depanalyzer.core.dependency.MavenGraphAdapter;

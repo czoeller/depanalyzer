@@ -1,4 +1,4 @@
-package de.czoeller.depanalyzer.builder;
+package de.czoeller.depanalyzer.core.builder;
 
 import lombok.Getter;
 import org.apache.maven.artifact.DefaultArtifact;
@@ -33,8 +33,6 @@ public class ProjectBuilder {
                 .build();
         final Model model = builtProject.getModel();
         model.setPomFile(parent);
-
-        builtProject.getModules().get(0).getModel().getParent();
 
         MavenProject project = new MavenProject(model);
         List<MavenProject> subModuleCollector = new ArrayList<>();
