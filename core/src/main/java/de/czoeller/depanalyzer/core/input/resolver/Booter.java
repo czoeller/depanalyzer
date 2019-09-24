@@ -1,5 +1,6 @@
 package de.czoeller.depanalyzer.core.input.resolver;
 
+import com.google.common.collect.Lists;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
@@ -45,5 +46,9 @@ public class Booter
     private static RemoteRepository newCentralRepository()
     {
         return new RemoteRepository.Builder( "central", "default", "http://central.maven.org/maven2/" ).build();
+    }
+
+    public static List<RemoteRepository> repositoryFor(String id, String type, String url) {
+        return Lists.newArrayList( new RemoteRepository.Builder(id, type, url).build() );
     }
 }

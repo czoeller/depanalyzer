@@ -62,18 +62,30 @@ public class AetherDependencyNodeResolver implements DependencyNodeResolver {
      * @param nodes
      */
     private void resolveArtifacts(RepositorySystemSession session, RepositorySystem system, DependencyNode ... nodes ) {
-        for (DependencyNode object : nodes) {
+        for (DependencyNode node : nodes) {
 
-            final ArtifactRequest artifactRequest = new ArtifactRequest(object);
+            final ArtifactRequest artifactRequest = new ArtifactRequest(node);
             artifactRequest.setRepositories(Booter.newRepositories( system, session ));
             try {
                 final ArtifactResult artifactResult = system.resolveArtifact(session, artifactRequest);
                 final Artifact resolvedArtifact = artifactResult.getArtifact();
-                object.setArtifact(resolvedArtifact);
+                node.setArtifact(resolvedArtifact);
             } catch (ArtifactResolutionException e) {
+                System.out.println("Failed to resolve artifact " + node.getArtifact().toString());
                 e.printStackTrace();
+                try {
+                    System.out.println("... Try to resolve artifact in it's repositories");
+                    artifactRequest.setRepositories( artifactRequest.getDependencyNode().getRepositories() );
+                    final ArtifactResult artifactResult = system.resolveArtifact(session, artifactRequest);
+                    final Artifact resolvedArtifact = artifactResult.getArtifact();
+                    System.out.println("... Found it");
+                    node.setArtifact(resolvedArtifact);
+                } catch (ArtifactResolutionException ex) {
+                    System.out.println("... Failed to resolve artifact in repositories too " + node.getArtifact().toString());
+                    ex.printStackTrace();
+                }
             }
-            resolveArtifacts(session, system, Iterables.toArray(object.getChildren(), DependencyNode.class));
+            resolveArtifacts(session, system, Iterables.toArray(node.getChildren(), DependencyNode.class));
         }
     }
 
