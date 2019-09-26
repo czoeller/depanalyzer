@@ -27,7 +27,7 @@ public class ProjectBuilder {
 
         BuiltProject builtProject = EmbeddedMaven
                 .forProject(parent)
-                .setGoals("compile")
+                .setGoals("install")
                 .setRecursive(true)
                 .setJavaHome(new File("C:\\Program Files\\Java\\jdk1.8.0_211"))
                 .build();
