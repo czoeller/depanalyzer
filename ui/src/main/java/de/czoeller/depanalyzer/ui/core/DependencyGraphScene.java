@@ -43,7 +43,7 @@ package de.czoeller.depanalyzer.ui.core;
 
 import com.timboudreau.vl.jung.JungConnectionWidget;
 import com.timboudreau.vl.jung.JungScene;
-import de.czoeller.depanalyzer.core.dependency.DependencyNode;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.algorithms.layout.*;
 import edu.uci.ics.jung.graph.DelegateForest;

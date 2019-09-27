@@ -42,8 +42,8 @@
 
 package de.czoeller.depanalyzer.ui.core;
 
-import de.czoeller.depanalyzer.core.dependency.CoreDependencyNodeVisitor;
-import de.czoeller.depanalyzer.core.dependency.DependencyNode;
+import de.czoeller.depanalyzer.metamodel.visitor.ModelDependencyNodeVisitor;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 
 import java.util.Stack;
 
@@ -51,7 +51,7 @@ import java.util.Stack;
  *
  * @author mkleint
  */
-public class SearchVisitor implements CoreDependencyNodeVisitor {
+public class SearchVisitor implements ModelDependencyNodeVisitor {
     private DependencyGraphScene scene;
     private DependencyNode root;
     private Stack<DependencyNode> path;

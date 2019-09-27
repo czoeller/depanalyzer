@@ -42,7 +42,7 @@
 
 package de.czoeller.depanalyzer.ui.core;
 
-import de.czoeller.depanalyzer.core.dependency.DependencyNode;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 
 /**
  *

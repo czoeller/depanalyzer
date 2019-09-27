@@ -4,6 +4,7 @@ import de.czoeller.depanalyzer.core.ToStringNodeIdRenderer;
 import de.czoeller.depanalyzer.core.dependency.dot.DotGraphStyleConfigurer;
 import de.czoeller.depanalyzer.core.dependency.dot.style.StyleConfiguration;
 import de.czoeller.depanalyzer.core.graph.GraphBuilder;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import org.eclipse.aether.graph.DefaultDependencyNode;
 import org.eclipse.aether.graph.Dependency;
 import org.junit.jupiter.api.BeforeEach;

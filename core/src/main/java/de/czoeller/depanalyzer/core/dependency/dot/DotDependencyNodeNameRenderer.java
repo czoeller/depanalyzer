@@ -2,7 +2,7 @@
 package de.czoeller.depanalyzer.core.dependency.dot;
 
 import com.google.common.base.Joiner;
-import de.czoeller.depanalyzer.core.dependency.DependencyNode;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.core.dependency.dot.style.StyleConfiguration;
 import de.czoeller.depanalyzer.core.dependency.dot.style.StyleKey;
 import de.czoeller.depanalyzer.core.graph.NodeRenderer;

@@ -2,7 +2,7 @@ package de.czoeller.depanalyzer.core.graph;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import de.czoeller.depanalyzer.core.dependency.DependencyNode;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.core.graph.text.TextGraphFormatter;
 import lombok.Getter;
 

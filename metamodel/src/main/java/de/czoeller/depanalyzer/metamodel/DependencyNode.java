@@ -1,6 +1,7 @@
-package de.czoeller.depanalyzer.core.dependency;
+package de.czoeller.depanalyzer.metamodel;
 
 import com.google.common.collect.ImmutableSet;
+import de.czoeller.depanalyzer.metamodel.visitor.ModelDependencyNodeVisitor;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.eclipse.aether.util.graph.transformer.ConflictResolver;
@@ -9,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Stream;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static de.czoeller.depanalyzer.core.dependency.NodeResolution.*;
 
 /**
  * Representation of a dependency graph node. It adapts these Maven-specific classes:
@@ -30,6 +31,7 @@ public final class DependencyNode {
     private final Set<String> classifiers;
     private final Set<String> types;
     private List<DependencyNode> children;
+    private List<Issue> issues;
 
     public DependencyNode(Artifact artifact) {
         this(artifact, determineNodeResolution(artifact), artifact.getVersion());
@@ -62,6 +64,8 @@ public final class DependencyNode {
         if (!isNullOrEmpty(artifact.getClassifier())) {
             this.classifiers.add(artifact.getClassifier());
         }
+
+        this.issues = new ArrayList<>();
     }
 
     public void setParent() {
@@ -166,13 +170,13 @@ public final class DependencyNode {
 
         if (winner != null) {
             if (winner.getArtifact().getVersion().equals(dependencyNode.getArtifact().getVersion())) {
-                return OMITTED_FOR_DUPLICATE;
+                return NodeResolution.OMITTED_FOR_DUPLICATE;
             }
 
-            return OMITTED_FOR_CONFLICT;
+            return NodeResolution.OMITTED_FOR_CONFLICT;
         }
 
-        return INCLUDED;
+        return NodeResolution.INCLUDED;
     }
 
     private static NodeResolution determineNodeResolution(Artifact artifact) {
@@ -180,7 +184,7 @@ public final class DependencyNode {
             return NodeResolution.PARENT;
         }
 
-        return INCLUDED;
+        return NodeResolution.INCLUDED;
     }
 
     private static String determineEffectiveVersion(org.eclipse.aether.graph.DependencyNode dependencyNode) {
@@ -203,7 +207,7 @@ public final class DependencyNode {
      * @param visitor the dependency node visitor to use
      * @return the visitor result of ending the visit to this node
      */
-    public boolean accept( CoreDependencyNodeVisitor visitor ) {
+    public boolean accept( ModelDependencyNodeVisitor visitor ) {
         if ( visitor.visitEnter( this ) )
         {
             for ( DependencyNode child : children )
@@ -216,5 +220,15 @@ public final class DependencyNode {
         }
 
         return visitor.visitLeave( this );
+    }
+
+    public List<Issue> getIssues() {
+        return issues;
+    }
+
+    public Stream<DependencyNode> flattened() {
+        return Stream.concat(
+                Stream.of(this),
+                children.stream().flatMap(DependencyNode::flattened));
     }
 }

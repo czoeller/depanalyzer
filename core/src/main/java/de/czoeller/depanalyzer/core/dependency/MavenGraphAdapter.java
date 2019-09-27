@@ -2,6 +2,7 @@ package de.czoeller.depanalyzer.core.dependency;
 
 import de.czoeller.depanalyzer.core.graph.GraphBuilder;
 import de.czoeller.depanalyzer.core.input.resolver.DependencyNodeResolver;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.OrArtifactFilter;
 import org.apache.maven.model.Dependency;

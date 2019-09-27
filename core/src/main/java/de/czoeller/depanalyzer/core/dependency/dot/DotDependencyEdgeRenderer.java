@@ -1,8 +1,8 @@
 
 package de.czoeller.depanalyzer.core.dependency.dot;
 
-import de.czoeller.depanalyzer.core.dependency.DependencyNode;
-import de.czoeller.depanalyzer.core.dependency.NodeResolution;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
+import de.czoeller.depanalyzer.metamodel.NodeResolution;
 import de.czoeller.depanalyzer.core.dependency.dot.style.StyleConfiguration;
 import de.czoeller.depanalyzer.core.graph.EdgeRenderer;
 import de.czoeller.depanalyzer.core.graph.dot.DotAttributeBuilder;

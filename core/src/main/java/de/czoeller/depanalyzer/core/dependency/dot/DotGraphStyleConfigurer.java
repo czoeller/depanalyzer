@@ -3,7 +3,7 @@ package de.czoeller.depanalyzer.core.dependency.dot;
 
 
 import de.czoeller.depanalyzer.core.dependency.AbstractGraphStyleConfigurer;
-import de.czoeller.depanalyzer.core.dependency.DependencyNode;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.core.dependency.dot.style.StyleConfiguration;
 import de.czoeller.depanalyzer.core.graph.GraphBuilder;
 import de.czoeller.depanalyzer.core.graph.dot.DotGraphFormatter;

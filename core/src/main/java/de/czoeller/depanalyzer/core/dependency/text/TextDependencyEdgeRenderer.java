@@ -1,6 +1,6 @@
 package de.czoeller.depanalyzer.core.dependency.text;
 
-import de.czoeller.depanalyzer.core.dependency.DependencyNode;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.core.graph.EdgeRenderer;
 
 public class TextDependencyEdgeRenderer implements EdgeRenderer<DependencyNode> {

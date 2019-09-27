@@ -1,6 +1,7 @@
 package de.czoeller.depanalyzer.core.dependency;
 
 import de.czoeller.depanalyzer.core.graph.GraphBuilder;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 

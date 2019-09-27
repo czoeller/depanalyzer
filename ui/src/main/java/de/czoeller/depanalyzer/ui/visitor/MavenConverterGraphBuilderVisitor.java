@@ -1,11 +1,11 @@
 package de.czoeller.depanalyzer.ui.visitor;
 
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.ui.core.ArtifactGraphEdge;
 import de.czoeller.depanalyzer.ui.core.ArtifactGraphNode;
 import edu.uci.ics.jung.graph.Forest;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
-import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.graph.DependencyVisitor;
 
 import java.util.Objects;
@@ -17,16 +17,16 @@ import java.util.Stack;
  */
 public class MavenConverterGraphBuilderVisitor implements DependencyVisitor {
 
-    private DependencyNode rootNode;
+    private org.eclipse.aether.graph.DependencyNode rootNode;
     private Graph<ArtifactGraphNode, ArtifactGraphEdge> graph;
-    private Stack<DependencyNode> path = new Stack<>();
+    private Stack<org.eclipse.aether.graph.DependencyNode> path = new Stack<>();
 
     public MavenConverterGraphBuilderVisitor(Forest<ArtifactGraphNode, ArtifactGraphEdge> graph) {
         this.graph = graph;
     }
 
     @Override
-    public boolean visitEnter(DependencyNode node) {
+    public boolean visitEnter(org.eclipse.aether.graph.DependencyNode node) {
         final ArtifactGraphNode graphNode = findNodeOrCreate(node);
 
         if(null == rootNode) {
@@ -40,8 +40,8 @@ public class MavenConverterGraphBuilderVisitor implements DependencyVisitor {
             .stream()
             .unordered()
             .forEach(currentNode -> {
-                final de.czoeller.depanalyzer.core.dependency.DependencyNode currentDependencyNode = new de.czoeller.depanalyzer.core.dependency.DependencyNode(currentNode);
-                final de.czoeller.depanalyzer.core.dependency.DependencyNode nodeDependencyNode = new de.czoeller.depanalyzer.core.dependency.DependencyNode(node);
+                final DependencyNode currentDependencyNode = new de.czoeller.depanalyzer.metamodel.DependencyNode(currentNode);
+                final de.czoeller.depanalyzer.metamodel.DependencyNode nodeDependencyNode = new de.czoeller.depanalyzer.metamodel.DependencyNode(node);
 
                 final ArtifactGraphNode childGraphNode = new ArtifactGraphNode(currentDependencyNode);
                 final ArtifactGraphEdge e = new ArtifactGraphEdge(nodeDependencyNode, currentDependencyNode);
@@ -51,21 +51,21 @@ public class MavenConverterGraphBuilderVisitor implements DependencyVisitor {
         return true;
     }
 
-    private ArtifactGraphNode findNodeOrCreate(DependencyNode node) {
+    private ArtifactGraphNode findNodeOrCreate(org.eclipse.aether.graph.DependencyNode node) {
         return graph.getVertices()
                     .stream()
                     .filter(Objects::nonNull)
-                    .filter(artifactGraphNode -> artifactGraphNode.getArtifact().toString().equals(new de.czoeller.depanalyzer.core.dependency.DependencyNode(node).toString()))
+                    .filter(artifactGraphNode -> artifactGraphNode.getArtifact().toString().equals(new de.czoeller.depanalyzer.metamodel.DependencyNode(node).toString()))
                     .findFirst()
                     .orElseGet(() -> {
-                        final ArtifactGraphNode graphNode = new ArtifactGraphNode(new de.czoeller.depanalyzer.core.dependency.DependencyNode(node));
+                        final ArtifactGraphNode graphNode = new ArtifactGraphNode(new de.czoeller.depanalyzer.metamodel.DependencyNode(node));
                         graph.addVertex(graphNode);
                         return graphNode;
                     });
     }
 
     @Override
-    public boolean visitLeave(DependencyNode node) {
+    public boolean visitLeave(org.eclipse.aether.graph.DependencyNode node) {
         path.pop();
         return true;
     }

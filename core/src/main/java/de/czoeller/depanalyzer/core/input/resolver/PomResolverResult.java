@@ -1,6 +1,6 @@
 package de.czoeller.depanalyzer.core.input.resolver;
 
-import de.czoeller.depanalyzer.core.dependency.DependencyNode;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.core.graph.Edge;
 import de.czoeller.depanalyzer.core.graph.Node;
 import lombok.AllArgsConstructor;

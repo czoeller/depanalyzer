@@ -2,7 +2,7 @@ package de.czoeller.depanalyzer.core.input.resolver;
 
 import de.czoeller.depanalyzer.core.builder.ProjectBuilder;
 import de.czoeller.depanalyzer.core.dependency.AggregatingGraphFactory;
-import de.czoeller.depanalyzer.core.dependency.DependencyNode;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.core.dependency.MavenGraphAdapter;
 import de.czoeller.depanalyzer.core.dependency.dot.DotGraphStyleConfigurer;
 import de.czoeller.depanalyzer.core.dependency.dot.style.StyleConfiguration;

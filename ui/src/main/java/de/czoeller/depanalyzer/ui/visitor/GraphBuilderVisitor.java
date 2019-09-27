@@ -1,7 +1,7 @@
 package de.czoeller.depanalyzer.ui.visitor;
 
-import de.czoeller.depanalyzer.core.dependency.CoreDependencyNodeVisitor;
-import de.czoeller.depanalyzer.core.dependency.DependencyNode;
+import de.czoeller.depanalyzer.metamodel.visitor.ModelDependencyNodeVisitor;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.ui.core.ArtifactGraphEdge;
 import de.czoeller.depanalyzer.ui.core.ArtifactGraphNode;
 import edu.uci.ics.jung.graph.Forest;
@@ -15,11 +15,11 @@ import java.util.Stack;
  * Collects nodes into a graph with nodes and edges.
  * TODO: handle cycles.
  */
-public class GraphBuilderVisitor implements CoreDependencyNodeVisitor {
+public class GraphBuilderVisitor implements ModelDependencyNodeVisitor {
 
     private DependencyNode rootNode;
     private Graph<ArtifactGraphNode, ArtifactGraphEdge> graph;
-    private Stack<DependencyNode> path = new Stack<>();
+    private Stack<DependencyNode> path = new Stack<DependencyNode>();
 
     public GraphBuilderVisitor(Forest<ArtifactGraphNode, ArtifactGraphEdge> graph) {
         this.graph = graph;
@@ -52,7 +52,7 @@ public class GraphBuilderVisitor implements CoreDependencyNodeVisitor {
         return graph.getVertices()
                     .stream()
                     .filter(Objects::nonNull)
-                    .filter(artifactGraphNode -> artifactGraphNode.getArtifact() == node)
+                    .filter(artifactGraphNode -> artifactGraphNode.getArtifact().getArtifact() == node.getArtifact())
                     .findFirst()
                     .orElseGet(() -> {
                         final ArtifactGraphNode graphNode = new ArtifactGraphNode(node);

@@ -1,7 +1,7 @@
 package de.czoeller.depanalyzer.core.dependency.text;
 
 import de.czoeller.depanalyzer.core.dependency.AbstractGraphStyleConfigurer;
-import de.czoeller.depanalyzer.core.dependency.DependencyNode;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.core.dependency.GraphStyleConfigurer;
 import de.czoeller.depanalyzer.core.graph.GraphBuilder;
 import de.czoeller.depanalyzer.core.graph.text.TextGraphFormatter;

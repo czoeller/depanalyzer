@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import de.czoeller.depanalyzer.core.dependency.NodeResolution;
+import de.czoeller.depanalyzer.metamodel.NodeResolution;
 import de.czoeller.depanalyzer.core.dependency.dot.style.resource.StyleResource;
 import de.czoeller.depanalyzer.core.graph.dot.DotAttributeBuilder;
 import org.apache.maven.artifact.Artifact;
@@ -21,7 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static de.czoeller.depanalyzer.core.dependency.NodeResolution.*;
+import static de.czoeller.depanalyzer.metamodel.NodeResolution.*;
 
 public class StyleConfiguration {
 

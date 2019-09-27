@@ -1,6 +1,7 @@
 package de.czoeller.depanalyzer.core.dependency;
 
 import de.czoeller.depanalyzer.core.graph.GraphBuilder;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 
 /**
  * API to configure the style of the dependency graph.

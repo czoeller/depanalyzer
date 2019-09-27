@@ -1,17 +1,16 @@
 package de.czoeller.depanalyzer.analyzer.jdepend;
 
+import com.google.common.collect.Lists;
 import de.czoeller.depanalyzer.analyzer.Analyzer;
 import de.czoeller.depanalyzer.analyzer.AnalyzerException;
-import de.czoeller.depanalyzer.metamodel.Artifact;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.metamodel.Issue;
 import jdepend.framework.JDepend;
 import jdepend.framework.JavaPackage;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class JDependAnalyzer implements Analyzer {
 
@@ -22,10 +21,10 @@ public class JDependAnalyzer implements Analyzer {
     }
 
     @Override
-    public Map<Artifact, List<Issue>> analyze(Artifact artifact) {
-        Map<Artifact, List<Issue>> issues = new HashMap<>();
+    public List<Issue> analyze(DependencyNode node)  {
+        List<Issue> issues = Lists.newArrayList();
         try {
-            analyzer.addDirectory(artifact.getArtifactPath());
+            analyzer.addDirectory(node.getArtifact().getFile().getAbsolutePath());
             final Collection<JavaPackage> packageList = analyzer.analyze();
 
             for (JavaPackage javaPackage : packageList) {

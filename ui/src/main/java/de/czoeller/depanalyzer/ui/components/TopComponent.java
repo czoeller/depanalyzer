@@ -1,6 +1,6 @@
 package de.czoeller.depanalyzer.ui.components;
 
-import de.czoeller.depanalyzer.core.dependency.DependencyNode;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.ui.core.*;
 import edu.uci.ics.jung.algorithms.layout.DAGLayout;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;

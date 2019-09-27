@@ -1,6 +1,6 @@
 package de.czoeller.depanalyzer.core.graph;
 
-import de.czoeller.depanalyzer.core.dependency.DependencyNode;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import org.codehaus.plexus.util.StringUtils;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeDiagnosingMatcher;

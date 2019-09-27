@@ -44,7 +44,7 @@ package de.czoeller.depanalyzer.ui.core;
 
 
 import com.google.common.collect.Iterables;
-import de.czoeller.depanalyzer.core.dependency.DependencyNode;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import edu.uci.ics.jung.graph.Graph;
 
 import javax.annotation.Nonnull;
@@ -65,7 +65,8 @@ public class ArtifactGraphNode {
     public static final int POTENTIAL_CONFLICT = 1;
     public static final int CONFLICT = 2;
 
-    private DependencyNode artifact, parentAfterFix;
+    private DependencyNode artifact;
+    private DependencyNode parentAfterFix;
     public double locX, locY, dispX, dispY; // for use from FruchtermanReingoldLayout
     private boolean fixed;
     private ArtifactWidget widget;

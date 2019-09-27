@@ -1,4 +1,4 @@
-package de.czoeller.depanalyzer.core.dependency;
+package de.czoeller.depanalyzer.metamodel;
 
 public enum NodeResolution {
     INCLUDED,

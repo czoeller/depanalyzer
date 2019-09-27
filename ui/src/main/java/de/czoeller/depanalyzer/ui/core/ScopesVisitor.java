@@ -43,8 +43,8 @@
 package de.czoeller.depanalyzer.ui.core;
 
 
-import de.czoeller.depanalyzer.core.dependency.CoreDependencyNodeVisitor;
-import de.czoeller.depanalyzer.core.dependency.DependencyNode;
+import de.czoeller.depanalyzer.metamodel.visitor.ModelDependencyNodeVisitor;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 
 import java.util.List;
 import java.util.Stack;
@@ -53,7 +53,7 @@ import java.util.Stack;
  *
  * @author mkleint
  */
-public class ScopesVisitor implements CoreDependencyNodeVisitor {
+public class ScopesVisitor implements ModelDependencyNodeVisitor {
     private DependencyGraphScene scene;
     private DependencyNode root;
     private Stack<DependencyNode> path;
@@ -62,7 +62,7 @@ public class ScopesVisitor implements CoreDependencyNodeVisitor {
     public ScopesVisitor(DependencyGraphScene scene, List<String> scopes) {
         this.scene = scene;
         this.scopes = scopes;
-        this.path = new Stack<>();
+        this.path = new Stack<DependencyNode>();
     }
 
     @Override
