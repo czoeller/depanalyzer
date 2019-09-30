@@ -2,6 +2,7 @@ package de.czoeller.depanalyzer.core.dependency;
 
 import de.czoeller.depanalyzer.core.graph.GraphBuilder;
 import de.czoeller.depanalyzer.metamodel.DependencyNode;
+import de.czoeller.depanalyzer.metamodel.NodeResolution;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 
@@ -72,6 +73,7 @@ public class AggregatingGraphFactory implements GraphFactory {
 
                 // Stop if we reached the original parent project!
                 if (parent.equals(parentProject)) {
+                    parentNode.setResolution(NodeResolution.INCLUDED);
                     break;
                 }
 
@@ -96,7 +98,7 @@ public class AggregatingGraphFactory implements GraphFactory {
     private DependencyNode filterProject(MavenProject project) {
         Artifact artifact = project.getArtifact();
         final DependencyNode dependencyNode = new DependencyNode(artifact);
-        dependencyNode.setParent();
+        dependencyNode.setResolution(NodeResolution.PARENT);
         return dependencyNode;
     }
 

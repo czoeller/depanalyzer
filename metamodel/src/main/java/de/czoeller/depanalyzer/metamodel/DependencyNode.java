@@ -26,7 +26,7 @@ public final class DependencyNode {
     private static boolean isParent;
     private final Artifact artifact;
     private final String effectiveVersion;
-    private final NodeResolution resolution;
+    private NodeResolution resolution;
     private final Set<String> scopes;
     private final Set<String> classifiers;
     private final Set<String> types;
@@ -68,8 +68,8 @@ public final class DependencyNode {
         this.issues = new ArrayList<>();
     }
 
-    public void setParent() {
-        isParent = true;
+    public void setResolution(NodeResolution nodeResolution) {
+        this.resolution = nodeResolution;
     }
 
     public void merge(DependencyNode other) {

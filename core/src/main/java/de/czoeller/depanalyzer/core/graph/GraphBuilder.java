@@ -2,9 +2,10 @@ package de.czoeller.depanalyzer.core.graph;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.core.graph.text.TextGraphFormatter;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.*;
 
@@ -29,6 +30,7 @@ public final class GraphBuilder<T extends DependencyNode> {
     private NodeRenderer<? super T> nodeNameRenderer;
     private EdgeRenderer<? super T> edgeRenderer;
     private boolean omitSelfReferences;
+	@Getter @Setter
     private T rootNode;
 
     public static <T extends DependencyNode> GraphBuilder<T> create(NodeRenderer<? super T> nodeIdRenderer) {
@@ -94,14 +96,6 @@ public final class GraphBuilder<T extends DependencyNode> {
             rootNode = newNode.nodeObject;
         }
         return this;
-    }
-
-    public void setRootNode(T node) {
-        this.rootNode = node;
-    }
-
-    public T getRootNode() {
-        return rootNode;
     }
 
     public GraphBuilder<T> addEdge(T from, T to) {

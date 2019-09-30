@@ -1,0 +1,9 @@
+digraph "parent" {
+  node [shape="box",style="rounded",fontname="Arial",fontsize="14"]
+  edge [fontsize="10",fontname="Arial"]
+
+  // Node Definitions:
+  "com.github.ferstl:parent:pom"[label=<parent>]
+
+  // Edge Definitions:
+}

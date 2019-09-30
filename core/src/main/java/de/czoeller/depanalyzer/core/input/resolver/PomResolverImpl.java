@@ -61,27 +61,22 @@ public class PomResolverImpl implements PomResolver {
                                                                                 .withType(true)
                                                                                 .withScope(true);
 
-        final GraphBuilder<DependencyNode> graphBuilder = GraphBuilder.create(nodeIdRenderer);
-        //final TextGraphStyleConfigurer textGraphStyleConfigurer = new TextGraphStyleConfigurer();
-        //textGraphStyleConfigurer.showGroupIds(true);
-        //textGraphStyleConfigurer.showArtifactIds(true);
-        //textGraphStyleConfigurer.configure(graphBuilder);
-
         final StyleConfiguration styleConfiguration = loadStyleConfiguration();
         final DotGraphStyleConfigurer dotGraphStyleConfigurer = new DotGraphStyleConfigurer(styleConfiguration);
-        dotGraphStyleConfigurer.showGroupIds(true);
-        dotGraphStyleConfigurer.showArtifactIds(true);
-        dotGraphStyleConfigurer.configure(graphBuilder);
+        final GraphBuilder<DependencyNode> graphBuilder = dotGraphStyleConfigurer.showGroupIds(false)
+                                                                                 .showArtifactIds(true)
+                                                                                 .repeatTransitiveDependencies(false)
+                                                                                 .showVersionsOnEdges(false)
+                                                                                 .configure(GraphBuilder.create(nodeIdRenderer));
 
-
-        final AggregatingGraphFactory graphFactory = new AggregatingGraphFactory(mavenGraphAdapter, projectSupplier, graphBuilder, true, false);
+        final AggregatingGraphFactory graphFactory = new AggregatingGraphFactory(mavenGraphAdapter, projectSupplier, graphBuilder, true, true);
 
 
         String dependencyGraph = graphFactory.createGraph(project);
         final DependencyNode rootNode = graphBuilder.getRootNode();
         try {
-            Path graphFilePath = Paths.get("exm.dot");
-            Path graphFilePathPNG = Paths.get("exm.png");
+            Path graphFilePath = Paths.get( pomFile.toPath().getParent().toString(), "target", project.getArtifactId() + ".dot");
+            Path graphFilePathPNG = Paths.get(pomFile.toPath().getParent().toString(),"target", project.getArtifactId() + ".png");
             writeGraphFile(dependencyGraph, graphFilePath);
             createDotGraphImage(graphFilePathPNG, dependencyGraph);
 

@@ -18,8 +18,8 @@ public class DotGraphFormatter implements GraphFormatter {
 
   public DotGraphFormatter() {
     this.graphAttributeBuilder = new DotAttributeBuilder();
-    this.nodeAttributeBuilder = new DotAttributeBuilder().shape("box").fontName("Helvetica");
-    this.edgeAttributeBuilder = new DotAttributeBuilder().fontName("Helvetica").fontSize(10);
+    this.nodeAttributeBuilder = new DotAttributeBuilder().shape("box").fontName("Arial");
+    this.edgeAttributeBuilder = new DotAttributeBuilder().fontName("Arial").fontSize(10);
   }
 
   public DotGraphFormatter(DotAttributeBuilder graphAttributeBuilder, DotAttributeBuilder nodeAttributeBuilder, DotAttributeBuilder edgeAttributeBuilder) {

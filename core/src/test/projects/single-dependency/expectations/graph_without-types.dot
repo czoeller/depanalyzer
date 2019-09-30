@@ -1,0 +1,11 @@
+digraph "single-dependency" {
+  node [shape="box",style="rounded",fontname="Arial",fontsize="14"]
+  edge [fontsize="10",fontname="Arial"]
+
+  // Node Definitions:
+  "com.github.ferstl:single-dependency:jar:compile"[label=<single-dependency>]
+  "com.google.guava:guava:jar:compile"[label=<guava>]
+
+  // Edge Definitions:
+  "com.github.ferstl:single-dependency:jar:compile" -> "com.google.guava:guava:jar:compile"
+}
