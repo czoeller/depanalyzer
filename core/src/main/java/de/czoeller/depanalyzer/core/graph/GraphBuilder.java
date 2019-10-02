@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableSet;
 import de.czoeller.depanalyzer.core.graph.text.TextGraphFormatter;
 import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.*;
 
@@ -30,8 +29,6 @@ public final class GraphBuilder<T extends DependencyNode> {
     private NodeRenderer<? super T> nodeNameRenderer;
     private EdgeRenderer<? super T> edgeRenderer;
     private boolean omitSelfReferences;
-	@Getter @Setter
-    private T rootNode;
 
     public static <T extends DependencyNode> GraphBuilder<T> create(NodeRenderer<? super T> nodeIdRenderer) {
         return new GraphBuilder<T>(nodeIdRenderer);
@@ -87,14 +84,8 @@ public final class GraphBuilder<T extends DependencyNode> {
     public GraphBuilder<T> addNode(T node) {
         String nodeId = this.nodeIdRenderer.render(node);
         String nodeName = this.nodeNameRenderer.render(node);
-        final Node<T> newNode = new Node<>(nodeId, nodeName, node);
-        if( null != this.nodeDefinitions.get(nodeId) ) {
-            newNode.nodeObject.merge(this.nodeDefinitions.get(nodeId).nodeObject);
-        }
-        this.nodeDefinitions.put(nodeId, newNode);
-        if (rootNode == null) {
-            rootNode = newNode.nodeObject;
-        }
+        this.nodeDefinitions.put(nodeId, new Node<>(nodeId, nodeName, node));
+
         return this;
     }
 
@@ -166,7 +157,6 @@ public final class GraphBuilder<T extends DependencyNode> {
             Edge edge = new Edge(fromNodeId, toNodeId, this.edgeRenderer.render(fromNode, toNode), permanent);
             this.edges.add(edge);
             this.reachabilityMap.registerEdge(fromNodeId, toNodeId);
-            nodeDefinitions.get(fromNodeId).nodeObject.getChildren().add(nodeDefinitions.get(toNodeId).nodeObject);
         }
     }
 

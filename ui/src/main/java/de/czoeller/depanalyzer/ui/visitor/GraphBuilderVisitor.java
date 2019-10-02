@@ -1,9 +1,10 @@
 package de.czoeller.depanalyzer.ui.visitor;
 
-import de.czoeller.depanalyzer.metamodel.visitor.ModelDependencyNodeVisitor;
 import de.czoeller.depanalyzer.metamodel.DependencyNode;
+import de.czoeller.depanalyzer.metamodel.visitor.ModelDependencyNodeVisitor;
 import de.czoeller.depanalyzer.ui.core.ArtifactGraphEdge;
 import de.czoeller.depanalyzer.ui.core.ArtifactGraphNode;
+import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
 import edu.uci.ics.jung.graph.Forest;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
@@ -22,7 +23,7 @@ public class GraphBuilderVisitor implements ModelDependencyNodeVisitor {
     private Stack<DependencyNode> path = new Stack<DependencyNode>();
 
     public GraphBuilderVisitor(Forest<ArtifactGraphNode, ArtifactGraphEdge> graph) {
-        this.graph = graph;
+        this.graph = new DirectedSparseMultigraph<ArtifactGraphNode, ArtifactGraphEdge>();
     }
 
     @Override
@@ -40,9 +41,15 @@ public class GraphBuilderVisitor implements ModelDependencyNodeVisitor {
             .stream()
             .unordered()
             .forEach(currentNode -> {
-                final ArtifactGraphNode childGraphNode = new ArtifactGraphNode(currentNode);
+                final ArtifactGraphNode childGraphNode = findNodeOrCreate(currentNode);
                 final ArtifactGraphEdge e = new ArtifactGraphEdge(node, currentNode);
-                graph.addEdge(e, graphNode, childGraphNode, EdgeType.DIRECTED);
+                if(!graph.containsVertex(graphNode)) {
+                    graph.addVertex(graphNode);
+                }
+                if(!graph.containsEdge(e)) {
+                    graph.addEdge(e, graphNode, childGraphNode, EdgeType.DIRECTED);
+                }
+
             });
 
         return true;
@@ -52,11 +59,11 @@ public class GraphBuilderVisitor implements ModelDependencyNodeVisitor {
         return graph.getVertices()
                     .stream()
                     .filter(Objects::nonNull)
-                    .filter(artifactGraphNode -> artifactGraphNode.getArtifact().getArtifact() == node.getArtifact())
+                    .filter(artifactGraphNode -> artifactGraphNode.getArtifact().getArtifact().toString().equals(node.getArtifact().toString()))
                     .findFirst()
                     .orElseGet(() -> {
+                        System.out.println("Could not find " + node.getArtifact() + " in graph. So creating one");
                         final ArtifactGraphNode graphNode = new ArtifactGraphNode(node);
-                        graph.addVertex(graphNode);
                         return graphNode;
                     });
     }

@@ -58,9 +58,6 @@ class GraphBuildingVisitorTest {
                         "\"groupId:parent:jar:version:compile\" -> \"groupId:child1:jar:version:compile\"",
                         "\"groupId:parent:jar:version:compile\" -> \"groupId:child2:jar:version:test\""}));
 
-        assertThat(this.graphBuilder.getRootNode().getChildren().size(), is(2));
-        assertThat(this.graphBuilder.getRootNode().getChildren().get(0).getChildren().size(), is(0));
-        assertThat(this.graphBuilder.getRootNode().getChildren().get(1).getChildren().size(), is(0));
     }
 
     private static org.eclipse.aether.graph.DependencyNode createMavenDependencyNode(String artifactId, org.eclipse.aether.graph.DependencyNode... children) {

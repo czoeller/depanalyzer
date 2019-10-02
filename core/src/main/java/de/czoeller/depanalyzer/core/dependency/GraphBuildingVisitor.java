@@ -33,9 +33,6 @@ class GraphBuildingVisitor implements DependencyVisitor {
             return true;
         }
 
-        if(null == this.graphBuilder.getRootNode()) {
-            this.graphBuilder.setRootNode(node1);
-        }
         this.nodeStack.push(node1);
         this.cutOffDepth = this.nodeStack.size();
 

@@ -30,7 +30,7 @@ public final class MavenGraphAdapter {
         this.dependencyNodeResolver = dependencyNodeResolver;
     }
 
-    public org.eclipse.aether.graph.DependencyNode buildDependencyGraph(MavenProject project, GraphBuilder<DependencyNode> graphBuilder) {
+    public void buildDependencyGraph(MavenProject project, GraphBuilder<DependencyNode> graphBuilder) {
         DefaultDependencyResolutionRequest request = new DefaultDependencyResolutionRequest();
         request.setMavenProject(project);
         //request.setRepositorySession(getVerboseRepositorySession(project));
@@ -41,8 +41,6 @@ public final class MavenGraphAdapter {
 
             GraphBuildingVisitor visitor = new GraphBuildingVisitor(graphBuilder);
             root.accept(visitor);
-
-            return root;
         } catch (DependencyCollectionException e) {
             throw new DependencyGraphException(e);
         }

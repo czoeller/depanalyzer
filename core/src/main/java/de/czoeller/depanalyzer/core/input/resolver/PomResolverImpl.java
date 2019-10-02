@@ -1,8 +1,8 @@
 package de.czoeller.depanalyzer.core.input.resolver;
 
+import de.czoeller.depanalyzer.core.NodesAndEdgesDefinitionTreeBuilder;
 import de.czoeller.depanalyzer.core.builder.ProjectBuilder;
 import de.czoeller.depanalyzer.core.dependency.AggregatingGraphFactory;
-import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.core.dependency.MavenGraphAdapter;
 import de.czoeller.depanalyzer.core.dependency.dot.DotGraphStyleConfigurer;
 import de.czoeller.depanalyzer.core.dependency.dot.style.StyleConfiguration;
@@ -13,6 +13,8 @@ import de.czoeller.depanalyzer.core.graph.DependencyNodeIdRenderer;
 import de.czoeller.depanalyzer.core.graph.Edge;
 import de.czoeller.depanalyzer.core.graph.GraphBuilder;
 import de.czoeller.depanalyzer.core.graph.Node;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
+import lombok.val;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.project.MavenProject;
@@ -73,20 +75,20 @@ public class PomResolverImpl implements PomResolver {
 
 
         String dependencyGraph = graphFactory.createGraph(project);
-        final DependencyNode rootNode = graphBuilder.getRootNode();
         try {
-            Path graphFilePath = Paths.get( pomFile.toPath().getParent().toString(), "target", project.getArtifactId() + ".dot");
-            Path graphFilePathPNG = Paths.get(pomFile.toPath().getParent().toString(),"target", project.getArtifactId() + ".png");
+            Path graphFilePath = Paths.get( pomFile.getAbsoluteFile().getParent(), "target", project.getArtifactId() + ".dot");
+            Path graphFilePathPNG = Paths.get( pomFile.getAbsoluteFile().getParent(),"target", project.getArtifactId() + ".png");
             writeGraphFile(dependencyGraph, graphFilePath);
             createDotGraphImage(graphFilePathPNG, dependencyGraph);
 
             System.out.println(dependencyGraph);
 
             final Map<String, Node<DependencyNode>> nodeDefinitions = graphBuilder.getNodeDefinitions();
-            final Set<Node<DependencyNode>> nodes = new HashSet<>(nodeDefinitions.values());
             final Set<Edge> edges = graphBuilder.getEdges();
 
-            return new PomResolverResult(rootNode, nodeDefinitions, edges);
+            final val builder = new NodesAndEdgesDefinitionTreeBuilder(nodeDefinitions, edges);
+
+            return new PomResolverResult(builder.build(), nodeDefinitions, edges);
         } catch (IOException e) {
             e.printStackTrace();
         }
