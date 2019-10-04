@@ -1,13 +1,11 @@
 package de.czoeller.depanalyzer.ui.visitor;
 
+import com.google.common.graph.ImmutableNetwork;
+import com.google.common.graph.MutableNetwork;
 import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.metamodel.visitor.ModelDependencyNodeVisitor;
-import de.czoeller.depanalyzer.ui.core.ArtifactGraphEdge;
-import de.czoeller.depanalyzer.ui.core.ArtifactGraphNode;
-import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
-import edu.uci.ics.jung.graph.Forest;
-import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.util.EdgeType;
+import de.czoeller.depanalyzer.ui.model.GraphDependencyEdge;
+import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
 
 import java.util.Objects;
 import java.util.Stack;
@@ -19,16 +17,16 @@ import java.util.Stack;
 public class GraphBuilderVisitor implements ModelDependencyNodeVisitor {
 
     private DependencyNode rootNode;
-    private Graph<ArtifactGraphNode, ArtifactGraphEdge> graph;
+    private MutableNetwork<GraphDependencyNode, GraphDependencyEdge> graph;
     private Stack<DependencyNode> path = new Stack<DependencyNode>();
 
-    public GraphBuilderVisitor(Forest<ArtifactGraphNode, ArtifactGraphEdge> graph) {
-        this.graph = new DirectedSparseMultigraph<ArtifactGraphNode, ArtifactGraphEdge>();
+    public GraphBuilderVisitor(MutableNetwork<GraphDependencyNode, GraphDependencyEdge> graph) {
+        this.graph = graph;
     }
 
     @Override
     public boolean visitEnter(DependencyNode node) {
-        final ArtifactGraphNode graphNode = findNodeOrCreate(node);
+        final GraphDependencyNode graphNode = findNodeOrCreate(node);
 
         if(null == rootNode) {
             rootNode = node;
@@ -41,13 +39,13 @@ public class GraphBuilderVisitor implements ModelDependencyNodeVisitor {
             .stream()
             .unordered()
             .forEach(currentNode -> {
-                final ArtifactGraphNode childGraphNode = findNodeOrCreate(currentNode);
-                final ArtifactGraphEdge e = new ArtifactGraphEdge(node, currentNode);
-                if(!graph.containsVertex(graphNode)) {
-                    graph.addVertex(graphNode);
+                final GraphDependencyNode childGraphNode = findNodeOrCreate(currentNode);
+                final GraphDependencyEdge e = new GraphDependencyEdge(node, currentNode);
+                if(!graph.nodes().contains(graphNode)) {
+                    graph.addNode(childGraphNode);
                 }
-                if(!graph.containsEdge(e)) {
-                    graph.addEdge(e, graphNode, childGraphNode, EdgeType.DIRECTED);
+                if(!graph.edges().contains(e)) {
+                    graph.addEdge(graphNode, childGraphNode, e);
                 }
 
             });
@@ -55,15 +53,15 @@ public class GraphBuilderVisitor implements ModelDependencyNodeVisitor {
         return true;
     }
 
-    private ArtifactGraphNode findNodeOrCreate(DependencyNode node) {
-        return graph.getVertices()
+    private GraphDependencyNode findNodeOrCreate(DependencyNode node) {
+        return graph.nodes()
                     .stream()
                     .filter(Objects::nonNull)
-                    .filter(artifactGraphNode -> artifactGraphNode.getArtifact().getArtifact().toString().equals(node.getArtifact().toString()))
+                    .filter(artifactGraphNode -> artifactGraphNode.getArtifact().toString().equals(node.getArtifact().toString()))
                     .findFirst()
                     .orElseGet(() -> {
                         System.out.println("Could not find " + node.getArtifact() + " in graph. So creating one");
-                        final ArtifactGraphNode graphNode = new ArtifactGraphNode(node);
+                        final GraphDependencyNode graphNode = new GraphDependencyNode(node);
                         return graphNode;
                     });
     }
@@ -74,7 +72,7 @@ public class GraphBuilderVisitor implements ModelDependencyNodeVisitor {
         return true;
     }
 
-    public Graph<ArtifactGraphNode, ArtifactGraphEdge> getGraph() {
-        return graph;
+    public ImmutableNetwork<GraphDependencyNode, GraphDependencyEdge> getGraph() {
+        return ImmutableNetwork.copyOf(graph);
     }
 }

@@ -11,25 +11,6 @@
 
     <artifactId>ui</artifactId>
 
-    <repositories>
-        <repository>
-            <id>timboudreau-builds</id>
-            <name>timboudreau.com builds</name>
-            <url>http://timboudreau.com/maven/</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-                <updatePolicy>never</updatePolicy>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
     <build>
         <plugins>
             <plugin>
@@ -42,16 +23,24 @@
         </plugins>
     </build>
     <dependencies>
+
+
+        <dependency>
+            <groupId>com.github.jrtom</groupId>
+            <artifactId>jung</artifactId>
+            <version>b5993da</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-util</artifactId>
+            <version>RELEASE111</version>
+        </dependency>
+
         <dependency>
             <groupId>org.swinglabs.swingx</groupId>
             <artifactId>swingx-autocomplete</artifactId>
             <version>1.6.5-1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.timboudreau</groupId>
-            <artifactId>vl-jung</artifactId>
-            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.shared</groupId>
