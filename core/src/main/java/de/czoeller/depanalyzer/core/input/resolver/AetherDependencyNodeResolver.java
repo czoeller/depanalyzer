@@ -72,9 +72,8 @@ public class AetherDependencyNodeResolver implements DependencyNodeResolver {
                 node.setArtifact(resolvedArtifact);
             } catch (ArtifactResolutionException e) {
                 System.out.println("Failed to resolve artifact " + node.getArtifact().toString());
-                e.printStackTrace();
+                System.out.println("... Try to resolve artifact in it's repositories");
                 try {
-                    System.out.println("... Try to resolve artifact in it's repositories");
                     artifactRequest.setRepositories( artifactRequest.getDependencyNode().getRepositories() );
                     final ArtifactResult artifactResult = system.resolveArtifact(session, artifactRequest);
                     final Artifact resolvedArtifact = artifactResult.getArtifact();
