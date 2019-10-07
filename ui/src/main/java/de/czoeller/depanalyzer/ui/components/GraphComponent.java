@@ -20,14 +20,14 @@ import edu.uci.ics.jung.visualization.renderers.Renderer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 public class GraphComponent extends JComponent {
     private final UIModel model;
 
     /** the visual component and renderer for the graph */
     private VisualizationViewer<GraphDependencyNode, GraphDependencyEdge> vv;
+    /** the visual detail view */
+    private DetailPane detailPane;
     /** the visual satellite view */
     private SatelliteVisualizationViewer<GraphDependencyNode, GraphDependencyEdge> vvs;
 
@@ -48,6 +48,7 @@ public class GraphComponent extends JComponent {
 
         // create 2 views that share the same model
         vv = new VisualizationViewer<>(vm, preferredSize1);
+        detailPane = new DetailPane();
         vvs = new SatelliteVisualizationViewer<>(vv, preferredSize2);
 
         HeatMapScorer<GraphDependencyNode, GraphDependencyEdge> heatMapScorer = new HeatMapScorer<>(model.getGraph());
@@ -65,13 +66,7 @@ public class GraphComponent extends JComponent {
         vv.getRenderer().getNodeLabelRenderer().setPosition(Renderer.NodeLabel.Position.AUTO);
 
         vv.getRenderContext().setNodeDrawPaintFunction(v -> vv.getPickedNodeState().isPicked(v) ? Color.CYAN : Color.BLACK);
-        vv.getPickedNodeState().addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if(e.getStateChange() == ItemEvent.SELECTED)
-                    System.out.println("selected " + e.getItem());
-            }
-        });
+        vv.getPickedNodeState().addItemListener(detailPane);
 
         final DefaultModalGraphMouse<Number, Number> gm = new DefaultModalGraphMouse<>();
         gm.setMode(ModalGraphMouse.Mode.PICKING);
@@ -82,7 +77,7 @@ public class GraphComponent extends JComponent {
 
         GraphZoomScrollPane gzsp = new GraphZoomScrollPane(vv);
         panel.add(gzsp);
-        rightPanel.add(new JPanel());
+        rightPanel.add(detailPane.$$$getRootComponent$$$());
         rightPanel.add(vvs);
         panel.add(rightPanel, BorderLayout.EAST);
 
@@ -117,4 +112,5 @@ public class GraphComponent extends JComponent {
                 throw new IllegalArgumentException("Unrecognized layout type");
         }
     }
+
 }

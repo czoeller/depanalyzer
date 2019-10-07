@@ -26,13 +26,14 @@ public class Application {
 
         model.addLayoutChangedListener((layout) -> graphComponent.modelUpdated(layout));
 
-        JPanel grid = new JPanel();
-        grid.setLayout(new GridLayout(2,1));
-        grid.add(topComponent);
-        grid.add(graphComponent);
+        JPanel layout = new JPanel();
+        layout.setPreferredSize(new Dimension(1000, 900));
+        layout.setLayout(new BorderLayout(2,1));
+        layout.add(topComponent, BorderLayout.NORTH);
+        layout.add(graphComponent, BorderLayout.CENTER);
 
         final JFrame jf = new JFrame();
-        jf.getContentPane().add(grid);
+        jf.getContentPane().add(layout);
         jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         jf.pack();
         jf.setVisible(true);

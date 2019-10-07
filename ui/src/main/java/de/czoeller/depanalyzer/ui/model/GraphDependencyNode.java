@@ -1,18 +1,18 @@
 package de.czoeller.depanalyzer.ui.model;
 
 import de.czoeller.depanalyzer.metamodel.DependencyNode;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.*;
 import org.apache.maven.artifact.Artifact;
 
 import java.util.Random;
 
-@Data
+@RequiredArgsConstructor
 @EqualsAndHashCode(of = "id")
+@Data
 public class GraphDependencyNode implements HasHeat, HasArtifact {
     private static long idCounter = 0;
     private final DependencyNode dependencyNode;
+    @Setter
     private Integer primaryLevel = 0;
     @Getter
     private final Long id;
