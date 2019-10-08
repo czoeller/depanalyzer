@@ -231,4 +231,8 @@ public final class DependencyNode {
                 Stream.of(this),
                 children.stream().flatMap(DependencyNode::flattened));
     }
+
+    public String getIdentifier() {
+        return String.format("%s:%s:%s:%s:%s", artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(), artifact.getType(), artifact.getScope());
+    }
 }

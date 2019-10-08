@@ -1,5 +1,6 @@
 package de.czoeller.depanalyzer.ui.components;
 
+import com.google.common.graph.EndpointPair;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyEdge;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
 import de.czoeller.depanalyzer.ui.model.UIModel;
@@ -7,6 +8,7 @@ import de.czoeller.depanalyzer.ui.model.UIModel.Layouts;
 import de.czoeller.depanalyzer.ui.scorer.HeatMapScorer;
 import de.czoeller.depanalyzer.ui.scorer.ScoreToHeatTransformer;
 import edu.uci.ics.jung.layout.algorithms.*;
+import edu.uci.ics.jung.layout.model.Point;
 import edu.uci.ics.jung.visualization.BaseVisualizationModel;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.VisualizationModel;
@@ -20,6 +22,8 @@ import edu.uci.ics.jung.visualization.renderers.Renderer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Point2D;
+import java.util.TimerTask;
 
 public class GraphComponent extends JComponent {
     private final UIModel model;
@@ -55,6 +59,8 @@ public class GraphComponent extends JComponent {
         ScoreToHeatTransformer<GraphDependencyNode, GraphDependencyEdge> nodeFillHeatmapTransformer = new ScoreToHeatTransformer<>(heatMapScorer);
 
         vv.getRenderContext().setNodeFillPaintFunction(nodeFillHeatmapTransformer);
+        vvs.getRenderContext().setNodeFillPaintFunction(nodeFillHeatmapTransformer);
+
         vv.getRenderContext().setEdgeDrawPaintFunction(e -> Color.lightGray);
         vv.getRenderContext().setEdgeStrokeFunction(new EdgeStrokeTransformator());
         vv.getRenderContext().setArrowFillPaintFunction(e -> Color.lightGray);
@@ -80,6 +86,11 @@ public class GraphComponent extends JComponent {
         rightPanel.add(detailPane.$$$getRootComponent$$$());
         rightPanel.add(vvs);
         panel.add(rightPanel, BorderLayout.EAST);
+
+        // Edge animation
+        AnimationTimerTask at = new AnimationTimerTask(vvs);
+        java.util.Timer timer = new java.util.Timer();
+        timer.scheduleAtFixedRate(at, 10, 30);
 
         add(panel);
     }
@@ -110,6 +121,58 @@ public class GraphComponent extends JComponent {
                 return new SpringBHVisitorLayoutAlgorithm<>();
             default:
                 throw new IllegalArgumentException("Unrecognized layout type");
+        }
+    }
+
+    class AnimationTimerTask extends TimerTask {
+
+        private final double width = 0.123; // Size of the colored line.
+        private final double stepsize = 0.01;
+        private double keyframe = 0 + width; // Between 0.0 and 1.0
+        private VisualizationViewer<GraphDependencyNode, GraphDependencyEdge> vv;
+
+        public AnimationTimerTask(VisualizationViewer<GraphDependencyNode, GraphDependencyEdge> vv) {
+            this.vv = vv;
+        }
+
+        @Override
+        public void run() {
+            vv.getRenderContext().setEdgeDrawPaintFunction(edge -> {
+
+                // Find both points of the edge.
+                EndpointPair<GraphDependencyNode> pair = model.getGraph().incidentNodes(edge);
+
+
+                final Point p1_f = vv.getModel()
+                                      .getLayoutModel()
+                                      .get(pair.source());
+
+                final Point p2_f = vv.getModel()
+                                      .getLayoutModel()
+                                      .get(pair.target());
+
+                final Point2D.Double p1d = new Point2D.Double(p1_f.x, p1_f.y);
+                final Point2D.Double p2d = new Point2D.Double(p2_f.x, p2_f.y);
+                final Point2D p1 = vv.getTransformSupport().transform(vv, p1d);
+                final Point2D p2 = vv.getTransformSupport().transform(vv, p2d);
+
+                    // This code won't handle self-edges.
+                    if (p1.equals(p2)) {
+                        return Color.red;
+                    }
+
+                    Color[] colors = { Color.gray, Color.red,
+                            Color.gray };
+                    float start = (float) Math.max(0.0, keyframe
+                            - width);
+                    float end = (float) Math.min(1.0, keyframe + width);
+                    float[] fractions = { start, (float) keyframe, end };
+                    return new LinearGradientPaint(p1, p2, fractions,
+                            colors);
+                });
+            vv.repaint();
+            keyframe += stepsize;
+            keyframe %= 1.0;
         }
     }
 

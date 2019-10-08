@@ -1,10 +1,11 @@
 package de.czoeller.depanalyzer.ui.model;
 
 import de.czoeller.depanalyzer.metamodel.DependencyNode;
+import de.czoeller.depanalyzer.metamodel.Issue;
 import lombok.*;
 import org.apache.maven.artifact.Artifact;
 
-import java.util.Random;
+import java.util.List;
 
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -24,11 +25,15 @@ public class GraphDependencyNode implements HasHeat, HasArtifact {
 
     @Override
     public double getHeat() {
-        return new Random().nextDouble() * 100;
+        return dependencyNode.getIssues().size();
     }
 
     @Override
     public Artifact getArtifact() {
         return dependencyNode.getArtifact();
+    }
+
+    public List<Issue> getIssues() {
+        return dependencyNode.getIssues();
     }
 }

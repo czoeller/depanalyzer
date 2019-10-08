@@ -41,7 +41,7 @@ public class Application {
 
     ImmutableNetwork<GraphDependencyNode, GraphDependencyEdge> createGraph() {
         MutableNetwork<GraphDependencyNode, GraphDependencyEdge> g = NetworkBuilder.directed().expectedNodeCount(200).expectedEdgeCount(400).allowsSelfLoops(false).build();
-        final ImmutableNetwork<GraphDependencyNode, GraphDependencyEdge> graph = GraphFactory.exampleComplexGraph(g);
+        final ImmutableNetwork<GraphDependencyNode, GraphDependencyEdge> graph = GraphFactory.realGraphFromExampleProject(g);
         return graph;
     }
 

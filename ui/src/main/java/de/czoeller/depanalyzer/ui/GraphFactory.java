@@ -4,8 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.graph.ImmutableNetwork;
 import com.google.common.graph.MutableNetwork;
 import com.google.common.graph.NetworkBuilder;
-import de.czoeller.depanalyzer.core.input.resolver.PomResolverImpl;
-import de.czoeller.depanalyzer.core.input.resolver.PomResolverResult;
+import de.czoeller.depanalyzer.core.Main;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyEdge;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
 import de.czoeller.depanalyzer.ui.visitor.GraphBuilderVisitor;
@@ -71,14 +70,13 @@ public class GraphFactory {
     }
 
     public static ImmutableNetwork<GraphDependencyNode, GraphDependencyEdge> realGraphFromExampleProject(MutableNetwork<GraphDependencyNode, GraphDependencyEdge> forest) {
-        final PomResolverImpl pomResolver = new PomResolverImpl();
-        final File pomFile = new File("pom.xml");
-        //final File pomFile = new File("C:\\Users\\noex_\\IdeaProjects\\MasterthesisAnalyse\\velocity-engine\\pom.xml");
-        //final File pomFile = new File("C:\\Users\\noex_\\AppData\\Local\\Temp\\mvvmFX\\pom.xml");
-        final PomResolverResult pomResolverResult = pomResolver.resolvePom(pomFile);
+        final Main main = new Main();
+        main.analyzePOM(new File("pom.xml"));
+
+        final de.czoeller.depanalyzer.metamodel.DependencyNode rootNode = main.getDependencyNode();
 
         final GraphBuilderVisitor graphBuilderVisitor = new GraphBuilderVisitor(forest);
-        pomResolverResult.getRootNode().accept(graphBuilderVisitor);
+        rootNode.accept(graphBuilderVisitor);
 
         return graphBuilderVisitor.getGraph();
     }

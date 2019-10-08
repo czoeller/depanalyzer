@@ -23,6 +23,8 @@ public class DetailPane implements ItemListener {
     private JLabel type;
     private JLabel scopeLabel;
     private JLabel scope;
+    private JLabel nrIssuesLabel;
+    private JLabel nrIssues;
 
     public DetailPane() {
         root.setVisible(false);
@@ -39,6 +41,8 @@ public class DetailPane implements ItemListener {
             version.setText(artifact.getVersion());
             type.setText(artifact.getType());
             scope.setText(artifact.getScope());
+            nrIssues.setText("" + node.getIssues()
+                                      .size());
         }
     }
 
@@ -58,13 +62,13 @@ public class DetailPane implements ItemListener {
      */
     private void $$$setupUI$$$() {
         root = new JPanel();
-        root.setLayout(new GridLayoutManager(6, 2, new Insets(0, 0, 0, 0), -1, -1));
+        root.setLayout(new GridLayoutManager(7, 2, new Insets(0, 0, 0, 0), -1, -1));
         root.setVisible(true);
         groupIdLabel = new JLabel();
         groupIdLabel.setText("groupId");
         root.add(groupIdLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
-        root.add(spacer1, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        root.add(spacer1, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         groupId = new JLabel();
         groupId.setText("");
         root.add(groupId, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -92,6 +96,12 @@ public class DetailPane implements ItemListener {
         scope = new JLabel();
         scope.setText("");
         root.add(scope, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        nrIssuesLabel = new JLabel();
+        nrIssuesLabel.setText("#Issues");
+        root.add(nrIssuesLabel, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        nrIssues = new JLabel();
+        nrIssues.setText("");
+        root.add(nrIssues, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

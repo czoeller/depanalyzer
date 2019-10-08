@@ -1,39 +1,60 @@
 package de.czoeller.depanalyzer.core;
 
-import de.czoeller.depanalyzer.analyzer.Analyzer;
-import de.czoeller.depanalyzer.analyzer.dummy.DummyAnalyzerImpl;
+import de.czoeller.depanalyzer.analyzer.AnalyzeExecutor;
+import de.czoeller.depanalyzer.analyzer.AnalyzerContext;
+import de.czoeller.depanalyzer.analyzer.jdepend.JDependAnalyzer;
 import de.czoeller.depanalyzer.core.input.resolver.PomResolver;
 import de.czoeller.depanalyzer.core.input.resolver.PomResolverImpl;
 import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.metamodel.Issue;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class Main {
 
     private PomResolver pomResolver;
+    @Getter
     private DependencyNode dependencyNode;
 
     public Main() {
         this.pomResolver = new PomResolverImpl();
-        readPOM();
-        analyze();
     }
 
     public static void main(String[] args) {
-        new Main();
+        new Main().analyzePOM(new File("C:\\Users\\noex_\\IdeaProjects\\MasterthesisAnalyse\\velocity-engine\\pom.xml"));
     }
 
-    private void readPOM() {
-        final File pomFile = new File("pom.xml");
+    public void analyzePOM(File pomFile) {
+        readPOM(pomFile);
+        analyze();
+    }
+
+    public void readPOM(File pomFile) {
         this.dependencyNode = this.pomResolver.resolvePom(pomFile).getRootNode();
     }
 
-    private void analyze() {
-        final Analyzer dummyAnalyzer = new DummyAnalyzerImpl();
-        final List<Issue> issues = dummyAnalyzer.analyze(this.dependencyNode);
-        System.out.println(issues);
+    public void analyze() {
+        log.info("Starting analyze ...");
+        AnalyzerContext context = () -> dependencyNode.getArtifact().getGroupId();
+        final AnalyzeExecutor analyzeExecutor = new AnalyzeExecutor(new JDependAnalyzer(context));
+        final Map<String, List<Issue>> dependenciesAndIssues = analyzeExecutor.analyze(dependencyNode, context);
+        log.info("{}", dependenciesAndIssues);
+
+        mapIssuesToNodes(dependenciesAndIssues);
     }
+
+    private void mapIssuesToNodes(Map<String, List<Issue>> dependenciesAndIssues) {
+        dependencyNode.flattened().forEach(n -> {
+            final String key = n.getIdentifier();
+            if(dependenciesAndIssues.containsKey(key)) {
+                n.getIssues().addAll(dependenciesAndIssues.get(n.getIdentifier()));
+            }
+        });
+    }
+
 }
