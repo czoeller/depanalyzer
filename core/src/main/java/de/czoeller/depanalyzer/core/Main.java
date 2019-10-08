@@ -10,6 +10,7 @@ import de.czoeller.depanalyzer.metamodel.Issue;
 import java.io.File;
 import java.util.List;
 
+@Slf4j
 public class Main {
 
     private PomResolver pomResolver;
