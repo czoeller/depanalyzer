@@ -23,9 +23,8 @@ public class TopComponent {
 
         layoutComboBox.addActionListener(a -> model.setSelectedLayout(model.getLayoutModel()
                                                                            .getElementAt(layoutComboBox.getSelectedIndex())));
-        analyzerResultComboBox.addActionListener(e -> {
-
-        });
+        analyzerResultComboBox.addActionListener(a -> model.setSelectedAnalyzer(model.getAnalyzerModel()
+                                                                                     .getElementAt(analyzerResultComboBox.getSelectedIndex())));
         AutoCompleteDecorator.decorate(searchTextField, model.getAvailableNodeNames(), false);
         AutoCompleteDecorator.decorate(layoutComboBox);
         searchTextField.addActionListener(e -> {
@@ -55,7 +54,6 @@ public class TopComponent {
         final JLabel label1 = new JLabel();
         label1.setText("Analyzer Result:");
         rootPanel.add(label1, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        analyzerResultComboBox = new JComboBox();
         rootPanel.add(analyzerResultComboBox, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label2 = new JLabel();
         label2.setText("Layout:");
@@ -75,5 +73,6 @@ public class TopComponent {
 
     private void createUIComponents() {
         layoutComboBox = new JComboBox<>(model.getLayoutModel());
+        analyzerResultComboBox = new JComboBox<>(model.getAnalyzerModel());
     }
 }

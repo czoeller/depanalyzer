@@ -39,7 +39,7 @@
           <text value="Analyzer Result:"/>
         </properties>
       </component>
-      <component id="90cc7" class="javax.swing.JComboBox" binding="analyzerResultComboBox">
+      <component id="90cc7" class="javax.swing.JComboBox" binding="analyzerResultComboBox" custom-create="true">
         <constraints>
           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>

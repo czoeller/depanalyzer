@@ -20,12 +20,13 @@ public class Application {
         // create a simple graph for the demo
         Network<GraphDependencyNode, GraphDependencyEdge> graph = createGraph();
 
-        final UIModel model = new UIModel(graph, UIModel.Layouts.FR);
+        final UIModel model = new UIModel(graph, UIModel.Layouts.FR, UIModel.Analyzers.METRICS);
         final TopComponent topComponent = new TopComponent(model);
         final GraphComponent graphComponent = new GraphComponent(model);
 
         model.addLayoutChangedListener((layout) -> graphComponent.modelUpdated(layout));
         model.addSearchChangedListener((search) -> graphComponent.modelUpdated(search));
+        model.addAnalyzerChangedListener((analyzer) -> graphComponent.modelUpdated(analyzer));
 
         JPanel layout = new JPanel();
         layout.setPreferredSize(new Dimension(1000, 900));

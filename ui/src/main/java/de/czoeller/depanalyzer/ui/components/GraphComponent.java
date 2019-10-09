@@ -110,6 +110,10 @@ public class GraphComponent extends JComponent {
         new NodeFillHighlightAnimation<>(vvs, nodes, Color.yellow);
     }
 
+    public void modelUpdated(UIModel.Analyzers analyzer) {
+        System.out.println("Analyzer set to " + analyzer);
+    }
+
     private static LayoutAlgorithm<GraphDependencyNode> createLayout(Layouts layoutType) {
         switch (layoutType) {
             case CIRCLE:
