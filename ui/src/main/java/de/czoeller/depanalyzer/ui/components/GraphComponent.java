@@ -1,6 +1,7 @@
 package de.czoeller.depanalyzer.ui.components;
 
 import com.google.common.graph.EndpointPair;
+import de.czoeller.depanalyzer.ui.animation.NodeFillHighlightAnimation;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyEdge;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
 import de.czoeller.depanalyzer.ui.model.UIModel;
@@ -19,11 +20,13 @@ import edu.uci.ics.jung.visualization.control.SatelliteVisualizationViewer;
 import edu.uci.ics.jung.visualization.layout.LayoutAlgorithmTransition;
 import edu.uci.ics.jung.visualization.renderers.BasicNodeLabelRenderer;
 import edu.uci.ics.jung.visualization.renderers.Renderer;
+import lombok.val;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.TimerTask;
+import java.util.stream.Collectors;
 
 public class GraphComponent extends JComponent {
     private final UIModel model;
@@ -101,6 +104,12 @@ public class GraphComponent extends JComponent {
         LayoutAlgorithmTransition.animate(vv, createLayout(layoutType));
     }
 
+    public void modelUpdated(String search) {
+        val nodes = model.getGraph().nodes().stream().filter(n -> n.getArtifact().getArtifactId().contains(search)).collect(Collectors.toList());
+        new NodeFillHighlightAnimation<>(vv, nodes, Color.yellow);
+        new NodeFillHighlightAnimation<>(vvs, nodes, Color.yellow);
+    }
+
     private static LayoutAlgorithm<GraphDependencyNode> createLayout(Layouts layoutType) {
         switch (layoutType) {
             case CIRCLE:
@@ -137,39 +146,40 @@ public class GraphComponent extends JComponent {
 
         @Override
         public void run() {
-            vv.getRenderContext().setEdgeDrawPaintFunction(edge -> {
+            vv.getRenderContext()
+              .setEdgeDrawPaintFunction(edge -> {
 
-                // Find both points of the edge.
-                EndpointPair<GraphDependencyNode> pair = model.getGraph().incidentNodes(edge);
+                  // Find both points of the edge.
+                  EndpointPair<GraphDependencyNode> pair = model.getGraph()
+                                                                .incidentNodes(edge);
 
 
-                final Point p1_f = vv.getModel()
-                                      .getLayoutModel()
-                                      .get(pair.source());
+                  final Point p1_f = vv.getModel()
+                                       .getLayoutModel()
+                                       .get(pair.source());
 
-                final Point p2_f = vv.getModel()
-                                      .getLayoutModel()
-                                      .get(pair.target());
+                  final Point p2_f = vv.getModel()
+                                       .getLayoutModel()
+                                       .get(pair.target());
 
-                final Point2D.Double p1d = new Point2D.Double(p1_f.x, p1_f.y);
-                final Point2D.Double p2d = new Point2D.Double(p2_f.x, p2_f.y);
-                final Point2D p1 = vv.getTransformSupport().transform(vv, p1d);
-                final Point2D p2 = vv.getTransformSupport().transform(vv, p2d);
+                  final Point2D.Double p1d = new Point2D.Double(p1_f.x, p1_f.y);
+                  final Point2D.Double p2d = new Point2D.Double(p2_f.x, p2_f.y);
+                  final Point2D p1 = vv.getTransformSupport()
+                                       .transform(vv, p1d);
+                  final Point2D p2 = vv.getTransformSupport()
+                                       .transform(vv, p2d);
 
-                    // This code won't handle self-edges.
-                    if (p1.equals(p2)) {
-                        return Color.red;
-                    }
+                  // This code won't handle self-edges.
+                  if (p1.equals(p2)) {
+                      return Color.red;
+                  }
 
-                    Color[] colors = { Color.gray, Color.red,
-                            Color.gray };
-                    float start = (float) Math.max(0.0, keyframe
-                            - width);
-                    float end = (float) Math.min(1.0, keyframe + width);
-                    float[] fractions = { start, (float) keyframe, end };
-                    return new LinearGradientPaint(p1, p2, fractions,
-                            colors);
-                });
+                  Color[] colors = {Color.gray, Color.red, Color.gray};
+                  float start = (float) Math.max(0.0, keyframe - width);
+                  float end = (float) Math.min(1.0, keyframe + width);
+                  float[] fractions = {start, (float) keyframe, end};
+                  return new LinearGradientPaint(p1, p2, fractions, colors);
+              });
             vv.repaint();
             keyframe += stepsize;
             keyframe %= 1.0;

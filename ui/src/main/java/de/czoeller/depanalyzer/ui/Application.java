@@ -25,11 +25,12 @@ public class Application {
         final GraphComponent graphComponent = new GraphComponent(model);
 
         model.addLayoutChangedListener((layout) -> graphComponent.modelUpdated(layout));
+        model.addSearchChangedListener((search) -> graphComponent.modelUpdated(search));
 
         JPanel layout = new JPanel();
         layout.setPreferredSize(new Dimension(1000, 900));
         layout.setLayout(new BorderLayout(2,1));
-        layout.add(topComponent, BorderLayout.NORTH);
+        layout.add(topComponent.$$$getRootComponent$$$(), BorderLayout.NORTH);
         layout.add(graphComponent, BorderLayout.CENTER);
 
         final JFrame jf = new JFrame();

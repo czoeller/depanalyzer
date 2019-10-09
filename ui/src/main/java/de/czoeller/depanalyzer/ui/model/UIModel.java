@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 
 public class UIModel {
 
+
     public enum Layouts {
         KK("Kamada Kawai"),
         DIRECTED_ACYCLIC_GRAPH("Directed Acyclic Graph"),
@@ -36,13 +37,17 @@ public class UIModel {
     }
 
     private final List<Consumer<Layouts>> layoutChangeObservers;
+    private final List<Consumer<String>> searchChangeObservers;
     private final Layouts layoutDefault;
+    private String search;
     private final DefaultComboBoxModel<Layouts> layoutModel;
+
     @Getter
     private final Network<GraphDependencyNode, GraphDependencyEdge> graph;
 
     public UIModel(Network<GraphDependencyNode, GraphDependencyEdge> graph, Layouts layoutDefault) {
         this.layoutChangeObservers = new LinkedList<>();
+        this.searchChangeObservers = new LinkedList<>();
         this.layoutDefault = layoutDefault;
         this.graph = graph;
         layoutModel = new DefaultComboBoxModel<>(Layouts.values());
@@ -79,6 +84,25 @@ public class UIModel {
 
     public void addLayoutChangedListener(Consumer<Layouts> layoutChangedAction) {
         layoutChangeObservers.add(layoutChangedAction);
+    }
+
+    public void setSearch(String search) {
+        this.search = search;
+        notifySearchChangedObservers();
+    }
+
+    private void notifySearchChangedObservers() {
+        for (Consumer<String> observer : searchChangeObservers) {
+            try {
+                observer.accept(search);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void addSearchChangedListener(Consumer<String> searchChangedAction) {
+        searchChangeObservers.add(searchChangedAction);
     }
 
     public ListCellRenderer createRenderer() {
