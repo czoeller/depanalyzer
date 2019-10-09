@@ -6,6 +6,7 @@ import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.metamodel.visitor.ModelDependencyNodeVisitor;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyEdge;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
 import java.util.Stack;
@@ -14,6 +15,7 @@ import java.util.Stack;
  * Collects nodes into a graph with nodes and edges.
  * TODO: handle cycles.
  */
+@Slf4j
 public class GraphBuilderVisitor implements ModelDependencyNodeVisitor {
 
     private DependencyNode rootNode;
@@ -60,7 +62,7 @@ public class GraphBuilderVisitor implements ModelDependencyNodeVisitor {
                     .filter(artifactGraphNode -> artifactGraphNode.getArtifact().toString().equals(node.getArtifact().toString()))
                     .findFirst()
                     .orElseGet(() -> {
-                        System.out.println("Could not find " + node.getArtifact() + " in graph. So creating one");
+                        log.trace("Could not find '{}' in graph. So creating one", node.getArtifact());
                         final GraphDependencyNode graphNode = new GraphDependencyNode(node);
                         return graphNode;
                     });

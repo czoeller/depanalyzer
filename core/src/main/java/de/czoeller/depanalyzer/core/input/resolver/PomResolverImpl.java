@@ -14,6 +14,7 @@ import de.czoeller.depanalyzer.core.graph.Edge;
 import de.czoeller.depanalyzer.core.graph.GraphBuilder;
 import de.czoeller.depanalyzer.core.graph.Node;
 import de.czoeller.depanalyzer.metamodel.DependencyNode;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
@@ -29,6 +30,7 @@ import java.util.function.Supplier;
 import static de.czoeller.depanalyzer.core.graph.dot.DotUtils.createDotGraphImage;
 import static de.czoeller.depanalyzer.core.graph.dot.DotUtils.writeGraphFile;
 
+@Slf4j
 public class PomResolverImpl implements PomResolver {
 
     private StyleConfiguration loadStyleConfiguration() {
@@ -81,7 +83,7 @@ public class PomResolverImpl implements PomResolver {
             writeGraphFile(dependencyGraph, graphFilePath);
             createDotGraphImage(graphFilePathPNG, dependencyGraph);
 
-            System.out.println(dependencyGraph);
+            log.debug("Dependency graph: {}", dependencyGraph);
 
             final Map<String, Node<DependencyNode>> nodeDefinitions = graphBuilder.getNodeDefinitions();
             final Set<Edge> edges = graphBuilder.getEdges();

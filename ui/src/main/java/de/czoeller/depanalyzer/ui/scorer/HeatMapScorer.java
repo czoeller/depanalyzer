@@ -27,8 +27,6 @@ public class HeatMapScorer<N extends HasHeat, E> implements NodeScorer<N, Double
         final double min = Collections.min(map.entrySet(), Comparator.comparing(Map.Entry::getValue)).getValue();
 
         map = Maps.asMap(map.keySet(), n -> normalizedHeat(n.getHeat(), min, max));
-
-        System.out.println(map);
     }
 
     private double normalizedHeat(double heat, double min, double max) {
