@@ -57,6 +57,8 @@ public class GraphComponent extends JComponent {
         vv = new VisualizationViewer<>(vm, preferredSize1);
         detailPane = new DetailPane();
         vvs = new SatelliteVisualizationViewer<>(vv, preferredSize2);
+        vv.setBackground(Color.decode("#f4f4f4"));
+        vvs.setBackground(Color.decode("#f4f4f4"));
 
         HeatMapScorer<GraphDependencyNode, GraphDependencyEdge> heatMapScorer = new HeatMapScorer<>(model.getGraph());
         ScoreToHeatTransformer<GraphDependencyNode, GraphDependencyEdge> nodeFillHeatmapTransformer = new ScoreToHeatTransformer<>(heatMapScorer);
