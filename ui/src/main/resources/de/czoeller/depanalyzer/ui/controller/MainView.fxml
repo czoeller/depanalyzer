@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.embed.swing.SwingNode?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import org.controlsfx.control.SegmentedButton?>
+
+<BorderPane fx:id="borderPane" prefHeight="700.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.czoeller.depanalyzer.ui.controller.MainController">
+
+    <top>
+      <GridPane fx:id="gridPane" hgap="25" maxWidth="600.0" vgap="15">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="100.0" />
+            <ColumnConstraints />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+         </rowConstraints>
+         <children>
+            <TextField fx:id="textField" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <Label text="Search:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <TextField fx:id="searchTextField" prefWidth="500.0" promptText="dependency name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label text="Layout:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+            <ComboBox fx:id="layoutComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <SegmentedButton fx:id="layoutSegmentedButton" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="Analyzer Result:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+            <ComboBox fx:id="analyzerResultComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label fx:id="debugLabel" text="Label" GridPane.columnIndex="1" />
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="15.0" />
+         </BorderPane.margin>
+      </GridPane>
+    </top>
+    <left>
+        <AnchorPane fx:id="leftPane" prefWidth="170.0">
+            <SwingNode fx:id="swingNodeViewer" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+        </AnchorPane>
+    </left>
+    <center>
+        <AnchorPane fx:id="centerPane" maxHeight="250.0" prefHeight="250.0" prefWidth="170.0" BorderPane.alignment="BOTTOM_CENTER">
+            <SwingNode fx:id="swingNodeSatelliteViewer" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+        </AnchorPane>
+    </center>
+    <right>
+        <AnchorPane fx:id="rightPane" prefWidth="170.0">
+            <Label fx:id="selectedNode" />
+        </AnchorPane>
+    </right>
+   <bottom>
+      <HBox alignment="BASELINE_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button mnemonicParsing="false" onAction="#pickModeAction" text="Pick Mode">
+               <graphic>
+                  <FontAwesomeIconView glyphName="CROSSHAIRS" glyphStyle="-fx-fill: linear-gradient(#70b4e5 0%, #247cbc 70%, #2c85c1 85%);" />
+               </graphic>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#transformModeAction" text="Transform Mode">
+               <graphic>
+                  <FontAwesomeIconView glyphName="ARROWS_ALT" glyphStyle="-fx-fill: linear-gradient(#70b4e5 0%, #247cbc 70%, #2c85c1 85%);" />
+               </graphic>
+            </Button>
+         </children>
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </padding>
+      </HBox>
+   </bottom>
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
+
+</BorderPane>

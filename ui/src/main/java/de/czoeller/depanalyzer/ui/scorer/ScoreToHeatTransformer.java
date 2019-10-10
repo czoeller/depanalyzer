@@ -11,7 +11,7 @@ public class ScoreToHeatTransformer<N extends HasHeat, E> implements Function<N,
 
     private final HeatMapScorer<N, E> vs;
 
-    private static final Color[] multiGradient = createMultiGradient(new Color[]{Color.black, new Color(105, 0, 0), new Color(192, 23, 0), new Color(255, 150, 38), Color.red}, 100);
+    private static final Color[] multiGradient = createMultiGradient(new Color[]{Color.decode("#f4f4f4"), new Color(105, 0, 0), new Color(192, 23, 0), new Color(255, 150, 38), Color.red}, 100);
 
     /**
      * Creates an instance based on the specified NodeScorer. Maps
