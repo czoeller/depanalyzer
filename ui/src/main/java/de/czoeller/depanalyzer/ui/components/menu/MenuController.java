@@ -2,6 +2,7 @@ package de.czoeller.depanalyzer.ui.components.menu;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -14,11 +15,13 @@ public class MenuController {
 
     private static final @StaticResource String helpView = "de/czoeller/depanalyzer/ui/components/help/HelpView.fxml";
 
+    @FXML
     public void close(ActionEvent actionEvent) {
         Platform.exit();
     }
 
-    public void about(ActionEvent actionEvent) {
+    @FXML
+    public void help(ActionEvent actionEvent) {
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(helpView));
         Parent root;
         try {
@@ -32,5 +35,9 @@ public class MenuController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    public void about(ActionEvent actionEvent) {
     }
 }

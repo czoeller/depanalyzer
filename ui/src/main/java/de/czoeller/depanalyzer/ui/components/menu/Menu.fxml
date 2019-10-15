@@ -10,21 +10,34 @@
     <children>
         <MenuBar AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <menus>
-                <Menu mnemonicParsing="false" text="File">
+                <Menu text="_File">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#close" text="Close">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator></MenuItem>
+                        <MenuItem onAction="#close" text="_Quit">
+                            <accelerator>
+                                <KeyCodeCombination alt="UP" code="Q" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                            </accelerator>
+                        </MenuItem>
                     </items>
+               <accelerator>
+                  <KeyCodeCombination alt="UP" code="F" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+               </accelerator>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Help">
+                <Menu text="_Help">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#about" text="About">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="A" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator></MenuItem>
+                        <MenuItem onAction="#help" text="_Help">
+                            <accelerator>
+                                <KeyCodeCombination alt="UP" code="H" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                            </accelerator>
+                        </MenuItem>
+                        <MenuItem fx:id="about" onAction="#about" text="_About">
+                            <accelerator>
+                                <KeyCodeCombination alt="UP" code="A" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                            </accelerator>
+                        </MenuItem>
                     </items>
+                    <accelerator>
+                        <KeyCodeCombination alt="UP" code="H" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                    </accelerator>
                 </Menu>
             </menus>
         </MenuBar>
