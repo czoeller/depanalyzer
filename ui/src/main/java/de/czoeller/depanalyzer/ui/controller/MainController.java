@@ -66,7 +66,7 @@ public class MainController implements Initializable {
     private AnchorPane rightPane;
 
     @FXML
-    private Label selectedNode;
+    public DetailController detailController;
 
     private UIViewModel viewModel;
 
@@ -98,7 +98,7 @@ public class MainController implements Initializable {
         centerPane.prefWidthProperty().bind(Application.getPrimaryStage().widthProperty().divide(3));
         rightPane.prefWidthProperty().bind(Application.getPrimaryStage().widthProperty().divide(3));
 
-        selectedNode.textProperty().bind(viewModel.selectedNodePropertyProperty().asString());
+        detailController.selectedNodeProperty().bind(viewModel.selectedNodePropertyProperty());
 
         Application.getPrimaryStage().titleProperty().bind(Bindings.concat("Dependency Analyzer - ").concat(viewModel.selectedLayoutProperty()));
     }
