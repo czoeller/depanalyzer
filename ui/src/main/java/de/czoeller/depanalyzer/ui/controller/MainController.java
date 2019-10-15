@@ -17,6 +17,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.shape.Rectangle;
 import org.controlsfx.control.SegmentedButton;
 
 import java.net.URL;
@@ -43,6 +44,9 @@ public class MainController implements Initializable {
 
     @FXML
     public SegmentedButton layoutSegmentedButton;
+
+    @FXML
+    public Rectangle legendColorRect;
 
     @FXML
     private SwingNode swingNodeViewer;
