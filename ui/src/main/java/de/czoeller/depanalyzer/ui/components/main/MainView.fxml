@@ -20,7 +20,7 @@
     <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
     <children>
         <fx:include source="../menu/Menu.fxml" />
-        <BorderPane fx:id="borderPane">
+        <BorderPane fx:id="borderPane" VBox.vgrow="ALWAYS">
             <top>
               <GridPane fx:id="gridPane" hgap="25" maxWidth="900.0" vgap="15">
                  <columnConstraints>
@@ -50,22 +50,25 @@
               </GridPane>
             </top>
             <left>
-                <AnchorPane fx:id="leftPane" prefWidth="170.0">
-                    <SwingNode fx:id="swingNodeViewer" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                </AnchorPane>
+                <AnchorPane fx:id="leftPane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
             </left>
             <center>
-                <AnchorPane fx:id="centerPane" maxHeight="250.0" prefHeight="250.0" prefWidth="170.0" BorderPane.alignment="BOTTOM_CENTER">
-                    <SwingNode fx:id="swingNodeSatelliteViewer" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                <AnchorPane fx:id="centerPane" prefWidth="560.0" BorderPane.alignment="CENTER">
+                    <SwingNode fx:id="swingNodeViewer" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                 </AnchorPane>
             </center>
             <right>
                 <AnchorPane fx:id="rightPane" prefWidth="170.0">
-                    <fx:include fx:id="detail" source="../detail/DetailView.fxml" />
+                  <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                          <fx:include fx:id="detail" source="../detail/DetailView.fxml" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                          <SwingNode fx:id="swingNodeSatelliteViewer" />
+                     </children>
+                  </VBox>
                 </AnchorPane>
             </right>
            <bottom>
-              <HBox alignment="BASELINE_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" BorderPane.alignment="CENTER">
+              <HBox alignment="BOTTOM_LEFT" prefWidth="200.0" spacing="5.0">
                  <children>
                     <Button mnemonicParsing="false" onAction="#pickModeAction" text="Pick Mode">
                        <graphic>

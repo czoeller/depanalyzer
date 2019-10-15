@@ -54,9 +54,11 @@ public class GraphViewerWrapper {
             SwingUtilities.invokeAndWait(() -> {
                 LayoutAlgorithm<GraphDependencyNode> layout = new CircleLayoutAlgorithm<>();
 
+                final Dimension dimensions = new Dimension(200, 200);
+
                 // The BasicVisualizationServer<V,E> is parameterized by the edge types
-                vv = new VisualizationViewer<>(model.getGraph(), layout, new Dimension(200, 200));
-                vvs = new SatelliteVisualizationViewer<>(vv, new Dimension(200, 200));
+                vv = new VisualizationViewer<>(model.getGraph(), layout, dimensions);
+                vvs = new SatelliteVisualizationViewer<>(vv, dimensions);
                 vv.setBackground(Color.decode("#f4f4f4"));
                 vvs.setBackground(Color.decode("#f4f4f4"));
                 HeatMapScorer<GraphDependencyNode, GraphDependencyEdge> heatMapScorer = new HeatMapScorer<>(model.getGraph());
@@ -97,8 +99,8 @@ public class GraphViewerWrapper {
                 gm.setMode(ModalGraphMouse.Mode.PICKING);
                 vv.setGraphMouse(gm);
 
-                vv.setPreferredSize(new Dimension(9000, 9000));
-                vvs.setPreferredSize(new Dimension(9000, 250));
+                vv.setPreferredSize(dimensions);
+                vvs.setPreferredSize(dimensions);
                 swingNodeViewer.setContent(vv);
                 swingNodeSatelliteViewer.setContent(vvs);
 

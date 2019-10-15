@@ -61,10 +61,10 @@ public class MainController implements Initializable {
     private TextField textField;
 
     @FXML
-    private AnchorPane leftPane;
+    private AnchorPane centerPane;
 
     @FXML
-    private AnchorPane centerPane;
+    private AnchorPane leftPane;
 
     @FXML
     private AnchorPane rightPane;
@@ -98,8 +98,8 @@ public class MainController implements Initializable {
         debugLabel.textProperty().bind(viewModel.selectedLayoutProperty().asString());
 
         // Sizes
-        leftPane.prefWidthProperty().bind(Application.getPrimaryStage().widthProperty().divide(3));
-        centerPane.prefWidthProperty().bind(Application.getPrimaryStage().widthProperty().divide(3));
+        leftPane.prefWidthProperty().set(1);
+        centerPane.prefWidthProperty().bind(Application.getPrimaryStage().widthProperty().divide(1.5));
         rightPane.prefWidthProperty().bind(Application.getPrimaryStage().widthProperty().divide(3));
 
         detailController.selectedNodeProperty().bind(viewModel.selectedNodePropertyProperty());
