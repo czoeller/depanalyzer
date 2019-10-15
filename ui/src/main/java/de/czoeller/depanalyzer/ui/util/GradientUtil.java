@@ -166,4 +166,13 @@ public class GradientUtil
 
         return gradient;
     }
+
+
+    /**
+     * Returns a javaFX Color object that represents the same color as the awt color object
+     * @param c a java.awt.Color object
+     */
+    public static javafx.scene.paint.Color fromAWTColor(java.awt.Color c) {
+        return javafx.scene.paint.Color.rgb(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha() / 255.0);
+    }
 }

@@ -1,4 +1,4 @@
-package de.czoeller.depanalyzer.ui.components;
+package de.czoeller.depanalyzer.ui.transformators;
 
 import de.czoeller.depanalyzer.ui.model.GraphDependencyEdge;
 
