@@ -2,7 +2,7 @@ package de.czoeller.depanalyzer.ui.swingwrapper;
 
 import com.google.common.graph.EndpointPair;
 import de.czoeller.depanalyzer.ui.animation.NodeFillHighlightAnimation;
-import de.czoeller.depanalyzer.ui.components.EdgeStrokeTransformator;
+import de.czoeller.depanalyzer.ui.transformators.EdgeStrokeTransformator;
 import de.czoeller.depanalyzer.ui.model.*;
 import de.czoeller.depanalyzer.ui.scorer.HeatMapScorer;
 import de.czoeller.depanalyzer.ui.scorer.ScoreToHeatTransformer;
