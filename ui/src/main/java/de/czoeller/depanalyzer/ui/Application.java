@@ -3,10 +3,10 @@ package de.czoeller.depanalyzer.ui;
 import com.google.common.graph.ImmutableNetwork;
 import com.google.common.graph.MutableNetwork;
 import com.google.common.graph.NetworkBuilder;
-import de.czoeller.depanalyzer.ui.controller.MainController;
+import de.czoeller.depanalyzer.ui.components.main.MainController;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyEdge;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
-import de.czoeller.depanalyzer.ui.model.UIModel;
+import de.czoeller.depanalyzer.ui.model.MainModel;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -20,7 +20,7 @@ import java.io.IOException;
 
 public class Application extends javafx.application.Application {
 
-    private static final @StaticResource String mainView = "de/czoeller/depanalyzer/ui/controller/MainView.fxml";
+    private static final @StaticResource String mainView = "de/czoeller/depanalyzer/ui/components/main/MainView.fxml";
 
     public static Stage primaryStage;
 
@@ -41,8 +41,8 @@ public class Application extends javafx.application.Application {
         return primaryStage;
     }
 
-    public static UIModel getUIModel() {
-        return new UIModel(createGraph());
+    public static MainModel getUIModel() {
+        return new MainModel(createGraph());
     }
 
     private static ImmutableNetwork<GraphDependencyNode, GraphDependencyEdge> createGraph() {

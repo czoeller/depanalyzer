@@ -1,10 +1,10 @@
-package de.czoeller.depanalyzer.ui.controller;
+package de.czoeller.depanalyzer.ui.components.main;
 
 import de.czoeller.depanalyzer.ui.Application;
+import de.czoeller.depanalyzer.ui.components.detail.DetailController;
 import de.czoeller.depanalyzer.ui.model.Analyzers;
 import de.czoeller.depanalyzer.ui.model.Layouts;
-import de.czoeller.depanalyzer.ui.model.UIModel;
-import de.czoeller.depanalyzer.ui.model.UIViewModel;
+import de.czoeller.depanalyzer.ui.model.MainModel;
 import de.czoeller.depanalyzer.ui.util.ControlsUtils;
 import javafx.beans.binding.Bindings;
 import javafx.embed.swing.SwingNode;
@@ -72,13 +72,13 @@ public class MainController implements Initializable {
     @FXML
     public DetailController detailController;
 
-    private UIViewModel viewModel;
+    private MainViewModel viewModel;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        final UIModel model = Application.getUIModel();
-        viewModel = new UIViewModel(model, swingNodeViewer, swingNodeSatelliteViewer);
+        final MainModel model = Application.getUIModel();
+        viewModel = new MainViewModel(model, swingNodeViewer, swingNodeSatelliteViewer);
 
         // Bindings
         textField.textProperty().bind(Application.getPrimaryStage().widthProperty().asString());

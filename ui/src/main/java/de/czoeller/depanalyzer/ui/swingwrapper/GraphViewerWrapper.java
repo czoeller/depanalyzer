@@ -2,6 +2,7 @@ package de.czoeller.depanalyzer.ui.swingwrapper;
 
 import com.google.common.graph.EndpointPair;
 import de.czoeller.depanalyzer.ui.animation.NodeFillHighlightAnimation;
+import de.czoeller.depanalyzer.ui.model.MainModel;
 import de.czoeller.depanalyzer.ui.transformators.EdgeStrokeTransformator;
 import de.czoeller.depanalyzer.ui.model.*;
 import de.czoeller.depanalyzer.ui.scorer.HeatMapScorer;
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
 
 public class GraphViewerWrapper {
 
-    private final UIModel model;
+    private final MainModel model;
     private final SwingNode swingNodeViewer;
     private final SwingNode swingNodeSatelliteViewer;
     private final ObjectProperty<GraphDependencyNode> selectedNodeProperty = new SimpleObjectProperty<>();
@@ -38,7 +39,7 @@ public class GraphViewerWrapper {
     private VisualizationViewer<GraphDependencyNode, GraphDependencyEdge> vv;
     private SatelliteVisualizationViewer<GraphDependencyNode, GraphDependencyEdge> vvs;
 
-    public GraphViewerWrapper(UIModel model, SwingNode swingNodeViewer, SwingNode swingNodeSatelliteViewer) {
+    public GraphViewerWrapper(MainModel model, SwingNode swingNodeViewer, SwingNode swingNodeSatelliteViewer) {
         this.model = model;
         this.swingNodeViewer = swingNodeViewer;
         this.swingNodeSatelliteViewer = swingNodeSatelliteViewer;

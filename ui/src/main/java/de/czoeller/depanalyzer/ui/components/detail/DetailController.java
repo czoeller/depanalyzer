@@ -1,6 +1,5 @@
-package de.czoeller.depanalyzer.ui.controller;
+package de.czoeller.depanalyzer.ui.components.detail;
 
-import de.czoeller.depanalyzer.ui.model.DetailViewModel;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
 import javafx.beans.property.ObjectProperty;
 import javafx.fxml.Initializable;

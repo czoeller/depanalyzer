@@ -1,4 +1,4 @@
-package de.czoeller.depanalyzer.ui.controller;
+package de.czoeller.depanalyzer.ui.components.help;
 
 import de.czoeller.depanalyzer.ui.scorer.ScoreToHeatTransformer;
 import de.czoeller.depanalyzer.ui.util.GradientUtil;

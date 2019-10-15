@@ -1,4 +1,4 @@
-package de.czoeller.depanalyzer.ui.controller;
+package de.czoeller.depanalyzer.ui.components.menu;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class MenuController {
 
-    private static final @StaticResource String helpView = "de/czoeller/depanalyzer/ui/controller/HelpView.fxml";
+    private static final @StaticResource String helpView = "de/czoeller/depanalyzer/ui/components/help/HelpView.fxml";
 
     public void close(ActionEvent actionEvent) {
         Platform.exit();

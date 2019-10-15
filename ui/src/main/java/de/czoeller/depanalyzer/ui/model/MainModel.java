@@ -1,11 +1,13 @@
 package de.czoeller.depanalyzer.ui.model;
 
 import com.google.common.graph.Network;
+import de.czoeller.depanalyzer.ui.model.GraphDependencyEdge;
+import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
 
-public class UIModel {
+public class MainModel {
     private final Network<GraphDependencyNode, GraphDependencyEdge> graph;
 
-    public UIModel(Network<GraphDependencyNode, GraphDependencyEdge> graph) {
+    public MainModel(Network<GraphDependencyNode, GraphDependencyEdge> graph) {
         this.graph = graph;
     }
 

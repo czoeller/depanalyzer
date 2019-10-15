@@ -1,5 +1,6 @@
-package de.czoeller.depanalyzer.ui.model;
+package de.czoeller.depanalyzer.ui.components.detail;
 
+import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;

@@ -1,5 +1,9 @@
-package de.czoeller.depanalyzer.ui.model;
+package de.czoeller.depanalyzer.ui.components.main;
 
+import de.czoeller.depanalyzer.ui.model.Analyzers;
+import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
+import de.czoeller.depanalyzer.ui.model.Layouts;
+import de.czoeller.depanalyzer.ui.model.MainModel;
 import de.czoeller.depanalyzer.ui.swingwrapper.GraphViewerWrapper;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -12,9 +16,9 @@ import java.util.stream.Stream;
 
 import static de.czoeller.depanalyzer.ui.util.ControlsUtils.safeChangeListener;
 
-public class UIViewModel {
+public class MainViewModel {
 
-    private final UIModel model;
+    private final MainModel model;
     private ListProperty<Layouts> layoutsProperty = new SimpleListProperty<>();
     private ListProperty<Analyzers> analyzerResultsProperty = new SimpleListProperty<>();
     private ObjectProperty<Layouts> selectedLayoutProperty = new SimpleObjectProperty<>();
@@ -22,7 +26,7 @@ public class UIViewModel {
     private ObjectProperty<GraphDependencyNode> selectedNodeProperty = new SimpleObjectProperty<>();
     private StringProperty searchTextProperty = new SimpleStringProperty();
     private GraphViewerWrapper graphViewerWrapper;
-    public UIViewModel(UIModel model, SwingNode swingNodeViewer, SwingNode swingNodeSatelliteViewer) {
+    public MainViewModel(MainModel model, SwingNode swingNodeViewer, SwingNode swingNodeSatelliteViewer) {
         this.model = model;
         this.graphViewerWrapper = new GraphViewerWrapper(model, swingNodeViewer, swingNodeSatelliteViewer);
         layoutsProperty.set(FXCollections.observableArrayList(Layouts.values()));
