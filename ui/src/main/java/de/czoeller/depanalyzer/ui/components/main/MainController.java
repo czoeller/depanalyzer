@@ -1,8 +1,8 @@
 package de.czoeller.depanalyzer.ui.components.main;
 
+import de.czoeller.depanalyzer.metamodel.Analyzers;
 import de.czoeller.depanalyzer.ui.Application;
 import de.czoeller.depanalyzer.ui.components.detail.DetailController;
-import de.czoeller.depanalyzer.ui.model.Analyzers;
 import de.czoeller.depanalyzer.ui.model.Layouts;
 import de.czoeller.depanalyzer.ui.model.MainModel;
 import de.czoeller.depanalyzer.ui.util.ControlsUtils;

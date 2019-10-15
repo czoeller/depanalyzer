@@ -1,6 +1,6 @@
 package de.czoeller.depanalyzer.ui.components.main;
 
-import de.czoeller.depanalyzer.ui.model.Analyzers;
+import de.czoeller.depanalyzer.metamodel.Analyzers;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
 import de.czoeller.depanalyzer.ui.model.Layouts;
 import de.czoeller.depanalyzer.ui.model.MainModel;

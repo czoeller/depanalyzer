@@ -1,4 +1,4 @@
-package de.czoeller.depanalyzer.ui.model;
+package de.czoeller.depanalyzer.metamodel;
 
 public enum Analyzers {
     METRICS("Software Metrics");

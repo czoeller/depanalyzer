@@ -1,12 +1,15 @@
 package de.czoeller.depanalyzer.ui.swingwrapper;
 
 import com.google.common.graph.EndpointPair;
+import de.czoeller.depanalyzer.metamodel.Analyzers;
 import de.czoeller.depanalyzer.ui.animation.NodeFillHighlightAnimation;
+import de.czoeller.depanalyzer.ui.model.GraphDependencyEdge;
+import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
+import de.czoeller.depanalyzer.ui.model.Layouts;
 import de.czoeller.depanalyzer.ui.model.MainModel;
-import de.czoeller.depanalyzer.ui.transformators.EdgeStrokeTransformator;
-import de.czoeller.depanalyzer.ui.model.*;
 import de.czoeller.depanalyzer.ui.scorer.HeatMapScorer;
 import de.czoeller.depanalyzer.ui.scorer.ScoreToHeatTransformer;
+import de.czoeller.depanalyzer.ui.transformators.EdgeStrokeTransformator;
 import edu.uci.ics.jung.layout.algorithms.*;
 import edu.uci.ics.jung.layout.model.Point;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
