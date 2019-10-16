@@ -1,17 +1,14 @@
 package de.czoeller.depanalyzer.ui.components.detail;
 
 import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 
 public class DetailViewModel {
 
     private final ReadOnlyStringWrapper groupId = new ReadOnlyStringWrapper(this, "groupId");
     private final ReadOnlyStringWrapper artifactId = new ReadOnlyStringWrapper(this, "artifactId");
     private final ReadOnlyStringWrapper version = new ReadOnlyStringWrapper(this, "version");
-    private final ReadOnlyStringWrapper issues = new ReadOnlyStringWrapper(this, "issues");
+    private final ReadOnlyIntegerWrapper nrIssues = new ReadOnlyIntegerWrapper(this, "nrIssues");
     private final ObjectProperty<GraphDependencyNode> selectedNode = new SimpleObjectProperty<>(this, "selectedNode");
 
     public DetailViewModel() {
@@ -19,7 +16,7 @@ public class DetailViewModel {
             groupId.set(newValue.getDependencyNode().getArtifact().getGroupId());
             artifactId.set(newValue.getDependencyNode().getArtifact().getArtifactId());
             version.set(newValue.getDependencyNode().getArtifact().getVersion());
-            issues.set("" + newValue.getIssues().size());
+            nrIssues.set(newValue.getIssues().size());
         });
     }
 
@@ -71,16 +68,16 @@ public class DetailViewModel {
         this.version.set(version);
     }
 
-    public String getIssues() {
-        return issues.get();
+    public Integer getNrIssues() {
+        return nrIssues.get();
     }
 
-    public ReadOnlyStringProperty issuesProperty() {
-        return issues.getReadOnlyProperty();
+    public ReadOnlyIntegerProperty nrIssuesProperty() {
+        return nrIssues.getReadOnlyProperty();
     }
 
-    public void setIssues(String issues) {
-        this.issues.set(issues);
+    public void setNrIssues(Integer nrIssues) {
+        this.nrIssues.set(nrIssues);
     }
 
 }

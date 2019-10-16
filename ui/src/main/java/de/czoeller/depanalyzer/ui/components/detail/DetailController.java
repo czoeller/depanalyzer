@@ -13,7 +13,7 @@ public class DetailController implements Initializable {
     public Text groupIdText;
     public Text artifactIdText;
     public Text versionText;
-    public Text issuesText;
+    public Text nrIssuesText;
     private DetailViewModel viewModel;
 
     @Override
@@ -22,7 +22,7 @@ public class DetailController implements Initializable {
         groupIdText.textProperty().bind(viewModel.groupIdProperty());
         artifactIdText.textProperty().bind(viewModel.artifactIdProperty());
         versionText.textProperty().bind(viewModel.versionProperty());
-        issuesText.textProperty().bind(viewModel.issuesProperty());
+        nrIssuesText.textProperty().bind(viewModel.nrIssuesProperty().asString());
     }
 
     public ObjectProperty<GraphDependencyNode> selectedNodeProperty() {
