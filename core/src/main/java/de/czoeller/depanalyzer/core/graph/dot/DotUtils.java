@@ -18,10 +18,12 @@ public class DotUtils {
     private DotUtils() {}
 
     public static void createDotGraphImage(Path graphFilePath, String dotFormattedOutput) throws IOException {
-        Graphviz.useEngine(new GraphvizCmdLineEngine());
-        Graphviz.fromString(dotFormattedOutput)
-                .render(Format.PNG)
-                .toFile(graphFilePath.toFile());
+        if(System.getenv("CI") != null) {
+            Graphviz.useEngine(new GraphvizCmdLineEngine());
+            Graphviz.fromString(dotFormattedOutput)
+                    .render(Format.PNG)
+                    .toFile(graphFilePath.toFile());
+        }
     }
 
     public static void writeGraphFile(String graph, Path graphFilePath) throws IOException {
