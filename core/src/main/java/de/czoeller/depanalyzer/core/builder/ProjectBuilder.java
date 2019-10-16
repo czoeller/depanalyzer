@@ -3,6 +3,7 @@ package de.czoeller.depanalyzer.core.builder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.model.Model;
@@ -19,7 +20,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
+@Slf4j
 public class ProjectBuilder {
 
     @Getter
@@ -49,13 +52,12 @@ public class ProjectBuilder {
         project.setCollectedProjects(subModuleCollector);
 
         parentProject = project;
-        projectSupplier = () -> {
-            return parentProject.getCollectedProjects();
-        };
+        projectSupplier = () -> parentProject.getCollectedProjects();
 
     }
 
-    private void modulesReactorOrder(BuiltProject builtProject, List<MavenProject> subModuleCollector) {
+    private void modulesReactorOrder(BuiltProject builtProject, List<MavenProject> subModuleList) {
+        log.debug("Try to bring modules to reactor order");
         Scanner scanner = new Scanner(new StringReader(builtProject.getMavenLog()));
         List<String> modules = Lists.newArrayList();
         boolean nowModules = false;
@@ -74,8 +76,20 @@ public class ProjectBuilder {
             }
             // process the line
         }
+        if(modules.isEmpty()) {
+            log.debug("Project seems to be no multi module project.");
+        } else {
+            log.debug("order parsed from reactor: {}", modules);
+            log.debug("order before sort: {}", subModuleList.stream().map(MavenProject::getName).collect(Collectors.toList()));
+            subModuleList.sort(Ordering.explicit(modules).onResultOf(MavenProject::getName));
+            final List<String> modulesAfterSort = subModuleList.stream().map(MavenProject::getName).collect(Collectors.toList());
+            log.debug("order after sort: {}", modulesAfterSort);
 
-        subModuleCollector.sort(Ordering.explicit(modules).onResultOf(MavenProject::getName));
+            if(!modulesAfterSort.equals(modules)) {
+                log.error("The reactor order could not be reconstructed! This would lead to wrong handling in the reachability map of the graph building component.");
+                System.exit(1);
+            }
+        }
     }
 
     private void setHierarchy(BuiltProject builtProject, MavenProject parentMavenProject, List<MavenProject> subModuleCollector) {
