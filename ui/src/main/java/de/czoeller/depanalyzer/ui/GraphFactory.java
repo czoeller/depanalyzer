@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.graph.ImmutableNetwork;
 import com.google.common.graph.MutableNetwork;
 import com.google.common.graph.NetworkBuilder;
-import de.czoeller.depanalyzer.core.Main;
+import de.czoeller.depanalyzer.core.Core;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyEdge;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
 import de.czoeller.depanalyzer.ui.visitor.GraphBuilderVisitor;
@@ -70,10 +70,10 @@ public class GraphFactory {
     }
 
     public static ImmutableNetwork<GraphDependencyNode, GraphDependencyEdge> realGraphFromExampleProject(MutableNetwork<GraphDependencyNode, GraphDependencyEdge> forest) {
-        final Main main = new Main();
-        main.analyzePOM(new File("pom.xml"));
+        final Core core = new Core();
+        core.analyzePOM(new File("pom.xml"));
 
-        final de.czoeller.depanalyzer.metamodel.DependencyNode rootNode = main.getDependencyNode();
+        final de.czoeller.depanalyzer.metamodel.DependencyNode rootNode = core.getDependencyNode();
 
         final GraphBuilderVisitor graphBuilderVisitor = new GraphBuilderVisitor(forest);
         rootNode.accept(graphBuilderVisitor);

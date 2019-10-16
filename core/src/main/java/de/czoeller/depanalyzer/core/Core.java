@@ -1,20 +1,55 @@
 package de.czoeller.depanalyzer.core;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
+import de.czoeller.depanalyzer.analyzer.AnalyzeExecutor;
+import de.czoeller.depanalyzer.analyzer.AnalyzerContext;
+import de.czoeller.depanalyzer.analyzer.jdepend.JDependAnalyzer;
+import de.czoeller.depanalyzer.core.input.resolver.PomResolver;
+import de.czoeller.depanalyzer.core.input.resolver.PomResolverImpl;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
+import de.czoeller.depanalyzer.metamodel.Issue;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map;
 
+@Slf4j
 public class Core {
-    public static final Artifact TEST_ARTIFACT_SPRING;
 
-    static {
-        //String TARGET_LIB_PATH = System.getProperty("user.dir") + "/assets/mysql-connector-java-5.1.27.jar";
-        String TARGET_LIB_PATH = "C:\\Users\\noex_\\.m2\\repository\\org\\springframework\\spring-web\\5.1.3.RELEASE\\spring-web-5.1.3.RELEASE.jar";
-        Artifact artifact = new DefaultArtifact("org.springframework","spring-web", ":5.1.3.RELEASE", "compile", "jar", "", new DefaultArtifactHandler());
-        artifact.setFile(new File(TARGET_LIB_PATH));
-        TEST_ARTIFACT_SPRING = artifact;
+    private PomResolver pomResolver;
+    @Getter
+    private DependencyNode dependencyNode;
+
+    public Core() {
+        this.pomResolver = new PomResolverImpl();
     }
 
+    public void analyzePOM(File pomFile) {
+        readPOM(pomFile);
+        analyze();
+    }
+
+    public void readPOM(File pomFile) {
+        this.dependencyNode = this.pomResolver.resolvePom(pomFile).getRootNode();
+    }
+
+    public void analyze() {
+        log.info("Starting analyze ...");
+        AnalyzerContext context = () -> dependencyNode.getArtifact().getGroupId();
+        final AnalyzeExecutor analyzeExecutor = new AnalyzeExecutor(new JDependAnalyzer(context));
+        final Map<String, List<Issue>> dependenciesAndIssues = analyzeExecutor.analyze(dependencyNode, context);
+        log.info("{}", dependenciesAndIssues);
+
+        mapIssuesToNodes(dependenciesAndIssues);
+    }
+
+    private void mapIssuesToNodes(Map<String, List<Issue>> dependenciesAndIssues) {
+        dependencyNode.flattened().forEach(n -> {
+            final String key = n.getIdentifier();
+            if(dependenciesAndIssues.containsKey(key)) {
+                n.getIssues().addAll(dependenciesAndIssues.get(n.getIdentifier()));
+            }
+        });
+    }
 }
