@@ -23,6 +23,7 @@ import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.embed.swing.SwingNode;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.TimerTask;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class GraphViewerWrapper {
 
     private final MainModel model;
@@ -143,7 +145,8 @@ public class GraphViewerWrapper {
     }
 
     public void setAnalyzerResults(Analyzers analyzer) {
-        System.out.println("Analyzer set to " + analyzer);
+        log.debug("Analyzer set to " + analyzer);
+        vv.repaint();
     }
 
     private static LayoutAlgorithm<GraphDependencyNode> createLayout(Layouts layoutType) {
