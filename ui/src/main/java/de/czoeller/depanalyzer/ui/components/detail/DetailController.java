@@ -2,7 +2,9 @@ package de.czoeller.depanalyzer.ui.components.detail;
 
 import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
 import javafx.beans.property.ObjectProperty;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.SortEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.text.Text;
 
@@ -32,5 +34,11 @@ public class DetailController implements Initializable {
 
     public ObjectProperty<GraphDependencyNode> selectedNodeProperty() {
         return viewModel.selectedNodeProperty();
+    }
+
+
+    @FXML
+    public void onSort(SortEvent<TableView<IssueTableViewModel>> tableViewSortEvent) {
+        issuesTableView.refresh();
     }
 }
