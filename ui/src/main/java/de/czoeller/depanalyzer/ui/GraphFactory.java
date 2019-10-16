@@ -7,6 +7,7 @@ import com.google.common.graph.NetworkBuilder;
 import de.czoeller.depanalyzer.core.Core;
 import de.czoeller.depanalyzer.metamodel.Analyzers;
 import de.czoeller.depanalyzer.metamodel.CVEIssue;
+import de.czoeller.depanalyzer.metamodel.Issue;
 import de.czoeller.depanalyzer.metamodel.MetricIssue;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyEdge;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
@@ -22,7 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import static de.czoeller.depanalyzer.metamodel.Issue.Severity.LOW;
 import static de.czoeller.depanalyzer.ui.AetherUtils.getDependencyNode;
 
 public class GraphFactory {
@@ -48,11 +48,13 @@ public class GraphFactory {
             final de.czoeller.depanalyzer.metamodel.DependencyNode dependencyNode = new de.czoeller.depanalyzer.metamodel.DependencyNode(new DefaultArtifact(name, name, name, name, name, "jar", new DefaultArtifactHandler()));
             if(i % 3 == 0) {
                 for (int j = 0; j < i; j++) {
-                    dependencyNode.addIssues(Analyzers.METRICS, Lists.newArrayList(new MetricIssue(LOW, "Example Metrics descroption", 0.9f)));
+                    int x = (i % (j + 1) % 3);
+                    dependencyNode.addIssues(Analyzers.METRICS, Lists.newArrayList(new MetricIssue(Issue.Severity.values()[x], "Example Metrics descroption", 0.9f)));
                 }
             } else if(i % 10 == 0) {
                 for (int j = 0; j < i; j++) {
-                    dependencyNode.addIssues(Analyzers.CVE, Lists.newArrayList(new CVEIssue(LOW,"Example CVE description")));
+                    int x = (i % (j + 1) % 3);
+                    dependencyNode.addIssues(Analyzers.CVE, Lists.newArrayList(new CVEIssue(Issue.Severity.values()[x],"Example CVE description")));
                 }
             }
 
