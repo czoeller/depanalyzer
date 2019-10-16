@@ -2,6 +2,7 @@ package de.czoeller.depanalyzer.ui.model;
 
 import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.metamodel.Issue;
+import de.czoeller.depanalyzer.ui.Globals;
 import lombok.*;
 import org.apache.maven.artifact.Artifact;
 
@@ -25,7 +26,7 @@ public class GraphDependencyNode implements HasHeat, HasArtifact {
 
     @Override
     public double getHeat() {
-        return dependencyNode.getIssues().size();
+        return this.getIssues().size();
     }
 
     @Override
@@ -34,6 +35,6 @@ public class GraphDependencyNode implements HasHeat, HasArtifact {
     }
 
     public List<Issue> getIssues() {
-        return dependencyNode.getIssues();
+        return dependencyNode.getIssues().get(Globals.getSelectedAnalyzer());
     }
 }

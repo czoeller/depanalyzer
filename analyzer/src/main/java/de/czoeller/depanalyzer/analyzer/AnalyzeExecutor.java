@@ -5,6 +5,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import de.czoeller.depanalyzer.analyzer.tasks.AnalyzeTask;
 import de.czoeller.depanalyzer.analyzer.util.CompletableFutureCollector;
+import de.czoeller.depanalyzer.metamodel.AnalyzerResult;
+import de.czoeller.depanalyzer.metamodel.Analyzers;
 import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.metamodel.Issue;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +33,7 @@ public class AnalyzeExecutor {
         this.delegates = Lists.newArrayList(Arrays.asList(delegates));
     }
 
-    public Map<String, List<Issue>> analyze(DependencyNode node, AnalyzerContext context) throws AnalyzerException {
+    public AnalyzerResult analyze(DependencyNode node, AnalyzerContext context) throws AnalyzerException {
 
         val dependencyNodes = node.flattened().filter(distinctByKey(d -> d.getArtifact().toString())).collect(Collectors.toList());
         final CompletableFuture<List<Map<String, List<Issue>>>> collect = StreamSupport.stream(Iterables.partition(dependencyNodes, 10).spliterator(), false)
@@ -54,8 +56,7 @@ public class AnalyzeExecutor {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-
-        return newMaps;
+        return new AnalyzerResult(Analyzers.METRICS, newMaps);
     }
 
     private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {

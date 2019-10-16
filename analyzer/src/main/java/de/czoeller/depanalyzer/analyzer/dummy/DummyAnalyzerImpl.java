@@ -33,7 +33,7 @@ public class DummyAnalyzerImpl extends BaseAnalyzer {
         final int size;
         try {
             size = Iterators.size(FileUtils.lineIterator(file));
-            issues.add(new LOCIssue(size));
+            issues.add(new LOCIssue(Issue.Severity.LOW, "loc issue", size));
             return issues;
         } catch (IOException e) {
             e.printStackTrace();

@@ -55,7 +55,7 @@ public class JDependAnalyzer extends BaseAnalyzer {
                     final float instability = javaPackage.instability();
                     if(instability >= 0.75) {
                         log.info("Found instability issue in package '{}'", javaPackage);
-                        issues.add(new MetricIssue(instability));
+                        issues.add(new MetricIssue(Issue.Severity.LOW, "instability issue", instability));
                     }
                 } else {
                     log.trace("Skip analyzing package '{}'", javaPackage);

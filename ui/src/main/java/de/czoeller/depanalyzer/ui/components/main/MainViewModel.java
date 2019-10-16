@@ -1,6 +1,7 @@
 package de.czoeller.depanalyzer.ui.components.main;
 
 import de.czoeller.depanalyzer.metamodel.Analyzers;
+import de.czoeller.depanalyzer.ui.Globals;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
 import de.czoeller.depanalyzer.ui.model.Layouts;
 import de.czoeller.depanalyzer.ui.model.MainModel;
@@ -28,6 +29,7 @@ public class MainViewModel {
     private GraphViewerWrapper graphViewerWrapper;
     public MainViewModel(MainModel model, SwingNode swingNodeViewer, SwingNode swingNodeSatelliteViewer) {
         this.model = model;
+        Globals.selectedAnalyzerProperty().bind(selectedAnalyzerResultProperty());
         this.graphViewerWrapper = new GraphViewerWrapper(model, swingNodeViewer, swingNodeSatelliteViewer);
         layoutsProperty.set(FXCollections.observableArrayList(Layouts.values()));
         analyzerResultsProperty.set(FXCollections.observableArrayList(Analyzers.values()));
