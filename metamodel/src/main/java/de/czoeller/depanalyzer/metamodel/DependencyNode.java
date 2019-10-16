@@ -1,15 +1,13 @@
 package de.czoeller.depanalyzer.metamodel;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import de.czoeller.depanalyzer.metamodel.visitor.ModelDependencyNodeVisitor;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.eclipse.aether.util.graph.transformer.ConflictResolver;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -31,7 +29,7 @@ public final class DependencyNode {
     private final Set<String> classifiers;
     private final Set<String> types;
     private List<DependencyNode> children;
-    private List<Issue> issues;
+    private Map<Analyzers, List<Issue>> issues;
 
     public DependencyNode(Artifact artifact) {
         this(artifact, determineNodeResolution(artifact), artifact.getVersion());
@@ -65,7 +63,10 @@ public final class DependencyNode {
             this.classifiers.add(artifact.getClassifier());
         }
 
-        this.issues = new ArrayList<>();
+        this.issues = new HashMap<>();
+        for (Analyzers analyzer : Analyzers.values()) {
+            this.issues.put(analyzer, Lists.newArrayList());
+        }
     }
 
     public void setResolution(NodeResolution nodeResolution) {
@@ -222,8 +223,12 @@ public final class DependencyNode {
         return visitor.visitLeave( this );
     }
 
-    public List<Issue> getIssues() {
+    public Map<Analyzers, List<Issue>> getIssues() {
         return issues;
+    }
+
+    public void addIssues(Analyzers analyzer, List<Issue> issues) {
+        this.issues.get(analyzer).addAll(issues);
     }
 
     public Stream<DependencyNode> flattened() {

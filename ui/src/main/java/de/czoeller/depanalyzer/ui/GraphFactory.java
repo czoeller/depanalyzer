@@ -5,6 +5,9 @@ import com.google.common.graph.ImmutableNetwork;
 import com.google.common.graph.MutableNetwork;
 import com.google.common.graph.NetworkBuilder;
 import de.czoeller.depanalyzer.core.Core;
+import de.czoeller.depanalyzer.metamodel.Analyzers;
+import de.czoeller.depanalyzer.metamodel.CVEIssue;
+import de.czoeller.depanalyzer.metamodel.MetricIssue;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyEdge;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
 import de.czoeller.depanalyzer.ui.visitor.GraphBuilderVisitor;
@@ -19,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import static de.czoeller.depanalyzer.metamodel.Issue.Severity.LOW;
 import static de.czoeller.depanalyzer.ui.AetherUtils.getDependencyNode;
 
 public class GraphFactory {
@@ -41,7 +45,18 @@ public class GraphFactory {
         final Map<Integer, de.czoeller.depanalyzer.metamodel.DependencyNode> nodeMap = new HashMap<>();
         for (int i = 0; i < 150; i++) {
             final String name = String.valueOf(i);
-            nodeMap.put(i, new de.czoeller.depanalyzer.metamodel.DependencyNode(new DefaultArtifact(name, name, name, name, name, "jar", new DefaultArtifactHandler())));
+            final de.czoeller.depanalyzer.metamodel.DependencyNode dependencyNode = new de.czoeller.depanalyzer.metamodel.DependencyNode(new DefaultArtifact(name, name, name, name, name, "jar", new DefaultArtifactHandler()));
+            if(i % 3 == 0) {
+                for (int j = 0; j < i; j++) {
+                    dependencyNode.addIssues(Analyzers.METRICS, Lists.newArrayList(new MetricIssue(LOW, "Example Metrics descroption", 0.9f)));
+                }
+            } else if(i % 10 == 0) {
+                for (int j = 0; j < i; j++) {
+                    dependencyNode.addIssues(Analyzers.CVE, Lists.newArrayList(new CVEIssue(LOW,"Example CVE description")));
+                }
+            }
+
+            nodeMap.put(i, dependencyNode);
         }
         Supplier<GraphDependencyNode> nodeFactory =
                 new Supplier<GraphDependencyNode>() {
