@@ -2,6 +2,8 @@ package de.czoeller.depanalyzer.ui.components.detail;
 
 import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
 import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class DetailViewModel {
 
@@ -9,6 +11,7 @@ public class DetailViewModel {
     private final ReadOnlyStringWrapper artifactId = new ReadOnlyStringWrapper(this, "artifactId");
     private final ReadOnlyStringWrapper version = new ReadOnlyStringWrapper(this, "version");
     private final ReadOnlyIntegerWrapper nrIssues = new ReadOnlyIntegerWrapper(this, "nrIssues");
+    private final ObservableList<IssueTableViewModel> issues = FXCollections.observableArrayList();
     private final ObjectProperty<GraphDependencyNode> selectedNode = new SimpleObjectProperty<>(this, "selectedNode");
 
     public DetailViewModel() {
@@ -17,7 +20,12 @@ public class DetailViewModel {
             artifactId.set(newValue.getDependencyNode().getArtifact().getArtifactId());
             version.set(newValue.getDependencyNode().getArtifact().getVersion());
             nrIssues.set(newValue.getIssues().size());
+            initialize();
         });
+    }
+
+    public void initialize() {
+        selectedNode.get().getIssues().forEach(issue -> issues.add(new IssueTableViewModel(issue)));
     }
 
     public GraphDependencyNode getSelectedNode() {
@@ -80,4 +88,7 @@ public class DetailViewModel {
         this.nrIssues.set(nrIssues);
     }
 
+    public ObservableList<IssueTableViewModel> getIssues() {
+        return issues;
+    }
 }

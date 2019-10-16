@@ -3,6 +3,7 @@ package de.czoeller.depanalyzer.ui.components.detail;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
 import javafx.beans.property.ObjectProperty;
 import javafx.fxml.Initializable;
+import javafx.scene.control.TableView;
 import javafx.scene.text.Text;
 
 import java.net.URL;
@@ -14,6 +15,7 @@ public class DetailController implements Initializable {
     public Text artifactIdText;
     public Text versionText;
     public Text nrIssuesText;
+    public TableView<IssueTableViewModel> issuesTableView;
     private DetailViewModel viewModel;
 
     @Override
@@ -23,6 +25,7 @@ public class DetailController implements Initializable {
         artifactIdText.textProperty().bind(viewModel.artifactIdProperty());
         versionText.textProperty().bind(viewModel.versionProperty());
         nrIssuesText.textProperty().bind(viewModel.nrIssuesProperty().asString());
+        issuesTableView.setItems(viewModel.getIssues());
     }
 
     public ObjectProperty<GraphDependencyNode> selectedNodeProperty() {
