@@ -26,7 +26,7 @@ public class GraphDependencyNode implements HasHeat, HasArtifact {
 
     @Override
     public double getHeat() {
-        return this.getIssues().size();
+        return this.getIssues().stream().mapToDouble(issue -> issue.getSeverity().ordinal() + 1).sum();
     }
 
     @Override
