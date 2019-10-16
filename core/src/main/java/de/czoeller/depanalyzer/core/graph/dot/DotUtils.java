@@ -9,6 +9,7 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class DotUtils {
@@ -18,7 +19,7 @@ public class DotUtils {
     private DotUtils() {}
 
     public static void createDotGraphImage(Path graphFilePath, String dotFormattedOutput) throws IOException {
-        if(System.getenv("CI") != null) {
+        if(!Optional.ofNullable(System.getenv("CI")).isPresent()) {
             Graphviz.useEngine(new GraphvizCmdLineEngine());
             Graphviz.fromString(dotFormattedOutput)
                     .render(Format.PNG)
