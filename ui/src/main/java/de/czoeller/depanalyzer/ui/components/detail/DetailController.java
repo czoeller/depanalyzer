@@ -15,6 +15,7 @@ public class DetailController implements Initializable {
     public Text artifactIdText;
     public Text versionText;
     public Text nrIssuesText;
+    public Text heatText;
     public TableView<IssueTableViewModel> issuesTableView;
     private DetailViewModel viewModel;
 
@@ -25,6 +26,7 @@ public class DetailController implements Initializable {
         artifactIdText.textProperty().bind(viewModel.artifactIdProperty());
         versionText.textProperty().bind(viewModel.versionProperty());
         nrIssuesText.textProperty().bind(viewModel.nrIssuesProperty().asString());
+        heatText.textProperty().bind(viewModel.heatProperty().asString());
         issuesTableView.setItems(viewModel.getIssues());
     }
 

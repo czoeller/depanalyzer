@@ -13,6 +13,7 @@ public class DetailViewModel {
     private final ReadOnlyStringWrapper artifactId = new ReadOnlyStringWrapper(this, "artifactId");
     private final ReadOnlyStringWrapper version = new ReadOnlyStringWrapper(this, "version");
     private final ReadOnlyIntegerWrapper nrIssues = new ReadOnlyIntegerWrapper(this, "nrIssues");
+    private final ReadOnlyDoubleWrapper heat = new ReadOnlyDoubleWrapper(this, "heat");
     private final ObservableList<IssueTableViewModel> issues = FXCollections.observableArrayList();
     private final ObjectProperty<GraphDependencyNode> selectedNode = new SimpleObjectProperty<>(this, "selectedNode");
 
@@ -22,6 +23,7 @@ public class DetailViewModel {
             artifactId.set(newValue.getDependencyNode().getArtifact().getArtifactId());
             version.set(newValue.getDependencyNode().getArtifact().getVersion());
             nrIssues.set(newValue.getIssues().size());
+            heat.set(newValue.getHeat());
             initialize();
         });
     }
@@ -88,6 +90,14 @@ public class DetailViewModel {
 
     public void setNrIssues(Integer nrIssues) {
         this.nrIssues.set(nrIssues);
+    }
+
+    public double getHeat() {
+        return heat.get();
+    }
+
+    public ReadOnlyDoubleWrapper heatProperty() {
+        return heat;
     }
 
     public ObservableList<IssueTableViewModel> getIssues() {
