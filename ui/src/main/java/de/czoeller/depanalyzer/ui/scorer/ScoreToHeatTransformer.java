@@ -10,7 +10,7 @@ import static de.czoeller.depanalyzer.ui.util.GradientUtil.createMultiGradient;
 public class ScoreToHeatTransformer<N extends HasHeat, E> implements Function<N, Paint> {
 
     private final HeatMapScorer<N, E> vs;
-    public static final Color[] multiGradient = createMultiGradient(new Color[]{Color.decode("#f4f4f4"), new Color(105, 0, 0), new Color(192, 23, 0), new Color(255, 150, 38), Color.red}, 100);
+    public static final Color[] multiGradient = createMultiGradient(new Color[]{Color.decode("#f4f4f4"), new Color(105, 0, 0), new Color(255, 150, 38), Color.red}, 100);
 
     /**
      * Creates an instance based on the specified NodeScorer. Maps
