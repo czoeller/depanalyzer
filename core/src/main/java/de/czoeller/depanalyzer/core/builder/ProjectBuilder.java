@@ -35,6 +35,7 @@ public class ProjectBuilder {
         BuiltProject builtProject = EmbeddedMaven
                 .forProject(parent)
                 .setGoals("install")
+                .setBatchMode(true)
                 .setRecursive(true)
                 .build();
 
