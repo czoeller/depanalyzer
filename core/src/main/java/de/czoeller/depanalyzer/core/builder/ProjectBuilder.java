@@ -36,9 +36,7 @@ public class ProjectBuilder {
                 .forProject(parent)
                 .setGoals("install")
                 .setRecursive(true)
-                .setJavaHome(new File("C:\\Program Files\\Java\\jdk1.8.0_211"))
                 .build();
-
 
         final Model model = builtProject.getModel();
         model.setPomFile(parent);
