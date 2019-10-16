@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static de.czoeller.depanalyzer.ui.util.ControlsUtils.delayListener;
 import static de.czoeller.depanalyzer.ui.util.ControlsUtils.safeChangeListener;
 
 public class MainViewModel {
@@ -38,7 +39,7 @@ public class MainViewModel {
         // Actions
         selectedLayoutProperty.addListener(safeChangeListener($ -> changeLayoutAction()));
         selectedAnalyzerResultProperty.addListener(safeChangeListener($ -> changeAnalyzerResults()));
-        searchTextProperty.addListener(safeChangeListener($ -> changeSearchTextAction()));
+        searchTextProperty.addListener(delayListener(safeChangeListener($ -> changeSearchTextAction())));
     }
 
     public GraphDependencyNode getSelectedNodeProperty() {
