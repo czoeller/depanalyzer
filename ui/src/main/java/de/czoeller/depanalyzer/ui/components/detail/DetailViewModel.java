@@ -5,6 +5,8 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.stream.Collectors;
+
 public class DetailViewModel {
 
     private final ReadOnlyStringWrapper groupId = new ReadOnlyStringWrapper(this, "groupId");
@@ -25,7 +27,7 @@ public class DetailViewModel {
     }
 
     public void initialize() {
-        selectedNode.get().getIssues().forEach(issue -> issues.add(new IssueTableViewModel(issue)));
+        issues.setAll(selectedNode.get().getIssues().stream().map(IssueTableViewModel::new).collect(Collectors.toList()));
     }
 
     public GraphDependencyNode getSelectedNode() {
