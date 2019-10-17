@@ -15,10 +15,7 @@ import org.jboss.shrinkwrap.resolver.api.maven.embedded.EmbeddedMaven;
 
 import java.io.File;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -32,11 +29,16 @@ public class ProjectBuilder {
 
     public void build(File parent) {
 
+        final File java = findJava();
+
+        log.info("Using java {} for maven build.", java);
+
         BuiltProject builtProject = EmbeddedMaven
                 .forProject(parent)
                 .setGoals("install")
                 .setBatchMode(true)
                 .setRecursive(true)
+                .setJavaHome(java)
                 .build();
 
         final Model model = builtProject.getModel();
@@ -52,7 +54,38 @@ public class ProjectBuilder {
 
         parentProject = project;
         projectSupplier = () -> parentProject.getCollectedProjects();
+    }
 
+    /**
+     * Try to find and use java8 for maven build.
+     * @return
+     */
+    private File findJava() {
+        final String javaHome = System.getenv("java_home");
+        if(javaHome != null && (javaHome.contains("1.8") || javaHome.contains("8.0"))) {
+            return new File(javaHome);
+        }
+        if (javaHome != null && (javaHome.contains("11") || javaHome.contains("12") || javaHome.contains("13"))) {
+            log.warn("Detected Java home at {} and it doesn't seem to be java8!", javaHome);
+            log.warn("Trying to find and switch to java8 ...");
+            final Optional<File> java8 = findJava8(javaHome);
+            if(java8.isPresent()) {
+                log.warn("Found java8.");
+                return java8.get();
+            } else {
+                log.error("Could not find java8");
+            }
+        }
+        log.error("Could not find proper java.");
+        System.exit(1);
+        return null;
+    }
+
+    private Optional<File> findJava8(String javaHome) {
+        final File javaHomeParent = new File(javaHome).getParentFile();
+        return Arrays.stream(javaHomeParent.listFiles((current, name) -> new File(current, name).isDirectory()))
+                     .filter(f -> f.getName().contains("1.8"))
+                     .findFirst();
     }
 
     private void modulesReactorOrder(BuiltProject builtProject, List<MavenProject> subModuleList) {

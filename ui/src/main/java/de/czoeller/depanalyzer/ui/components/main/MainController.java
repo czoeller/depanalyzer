@@ -1,7 +1,7 @@
 package de.czoeller.depanalyzer.ui.components.main;
 
 import de.czoeller.depanalyzer.metamodel.Analyzers;
-import de.czoeller.depanalyzer.ui.Application;
+import de.czoeller.depanalyzer.ui.GUI;
 import de.czoeller.depanalyzer.ui.components.detail.DetailController;
 import de.czoeller.depanalyzer.ui.model.Layouts;
 import de.czoeller.depanalyzer.ui.model.MainModel;
@@ -77,11 +77,11 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        final MainModel model = Application.getUIModel();
+        final MainModel model = GUI.getUIModel();
         viewModel = new MainViewModel(model, swingNodeViewer, swingNodeSatelliteViewer);
 
         // Bindings
-        textField.textProperty().bind(Application.getPrimaryStage().widthProperty().asString());
+        textField.textProperty().bind(GUI.getPrimaryStage().widthProperty().asString());
         searchTextField.textProperty().bindBidirectional(viewModel.searchTextProperty());
 
         layoutComboBox.setItems(viewModel.layoutsProperty());
@@ -99,12 +99,12 @@ public class MainController implements Initializable {
 
         // Sizes
         leftPane.prefWidthProperty().set(1);
-        centerPane.prefWidthProperty().bind(Application.getPrimaryStage().widthProperty().divide(1.5));
-        rightPane.prefWidthProperty().bind(Application.getPrimaryStage().widthProperty().divide(3));
+        centerPane.prefWidthProperty().bind(GUI.getPrimaryStage().widthProperty().divide(1.5));
+        rightPane.prefWidthProperty().bind(GUI.getPrimaryStage().widthProperty().divide(3));
 
         detailController.selectedNodeProperty().bind(viewModel.selectedNodePropertyProperty());
 
-        Application.getPrimaryStage().titleProperty().bind(Bindings.concat("Dependency Analyzer - ").concat(viewModel.selectedLayoutProperty()));
+        GUI.getPrimaryStage().titleProperty().bind(Bindings.concat("Dependency Analyzer - ").concat(viewModel.selectedLayoutProperty()));
     }
 
     private List<ToggleButton> buildLayoutButtons(List<Layouts> layouts) {
