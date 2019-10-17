@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class JDependAnalyzer extends BaseAnalyzer {
 
+    public static final double INSTABILITY_THRESHOLD = 0.75;
+
     private JDepend jdepend;
 
     /**
@@ -53,7 +55,7 @@ public class JDependAnalyzer extends BaseAnalyzer {
                 if (javaPackage.getName().contains(getContext().getTargetGroupId())) {
                     log.trace("Analyzing package internals of '{}'", javaPackage);
                     final float instability = javaPackage.instability();
-                    if(instability >= 0.75) {
+                    if(instability >= INSTABILITY_THRESHOLD) {
                         log.info("Found instability issue in package '{}'", javaPackage);
                         issues.add(new MetricIssue(Issue.Severity.LOW, "instability issue", instability));
                     }
