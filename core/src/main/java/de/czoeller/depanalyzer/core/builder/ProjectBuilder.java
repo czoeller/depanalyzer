@@ -62,7 +62,9 @@ public class ProjectBuilder {
      */
     private File findJava() {
         final String javaHome = System.getenv("java_home");
+        log.debug("java_home is set to {}", javaHome);
         if(javaHome != null && (javaHome.contains("1.8") || javaHome.contains("8.0"))) {
+            log.debug("using java_home as is");
             return new File(javaHome);
         }
         if (javaHome != null && (javaHome.contains("11") || javaHome.contains("12") || javaHome.contains("13"))) {
@@ -83,7 +85,9 @@ public class ProjectBuilder {
 
     private Optional<File> findJava8(String javaHome) {
         final File javaHomeParent = new File(javaHome).getParentFile();
-        return Arrays.stream(javaHomeParent.listFiles((current, name) -> new File(current, name).isDirectory()))
+        final File[] files = javaHomeParent.listFiles((current, name) -> new File(current, name).isDirectory());
+        log.debug("possible jdk: {}", files);
+        return Arrays.stream(files)
                      .filter(f -> f.getName().contains("1.8"))
                      .findFirst();
     }
