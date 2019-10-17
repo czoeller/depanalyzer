@@ -61,7 +61,7 @@ public class ProjectBuilder {
      * @return
      */
     private File findJava() {
-        final String javaHome = System.getenv("java_home");
+        final String javaHome = System.getenv("JAVA_HOME");
         log.debug("java_home is set to {}", javaHome);
         if(javaHome != null && (javaHome.contains("1.8") || javaHome.contains("8.0"))) {
             log.debug("using java_home as is");
