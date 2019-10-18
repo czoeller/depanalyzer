@@ -1,0 +1,11 @@
+-> [INFO] Scanning for projects...
+-> [INFO] ------------------------------------------------------------------------
+-> [INFO] Reactor Build Order:
+-> [INFO] 
+-> [INFO] depanalyzer
+-> [INFO] metamodel
+-> [INFO] analyzer
+-> [INFO] core
+-> [INFO] ui
+-> [INFO] 
+-> [INFO] ------------------------------------------------------------------------
