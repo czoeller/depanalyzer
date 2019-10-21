@@ -62,6 +62,10 @@
                 </dependencies>
                 <configuration>
                     <trimStackTrace>false</trimStackTrace>
+                    <forkMode>always</forkMode>
+                    <environmentVariables>
+                        <CI>true</CI>
+                    </environmentVariables>
                 </configuration>
             </plugin>
         </plugins>
