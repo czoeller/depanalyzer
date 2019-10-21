@@ -1,6 +1,7 @@
 package de.czoeller.depanalyzer.metamodel;
 
 public enum Analyzers {
+    DUMMY("Dummy"),
     METRICS("Software Metrics"),
     CVE("CVE");
 

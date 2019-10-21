@@ -2,7 +2,6 @@ package de.czoeller.depanalyzer.analyzer;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import de.czoeller.depanalyzer.analyzer.tasks.AnalyzeTask;
 import de.czoeller.depanalyzer.analyzer.util.CompletableFutureCollector;
 import de.czoeller.depanalyzer.metamodel.AnalyzerResult;
@@ -12,10 +11,7 @@ import de.czoeller.depanalyzer.metamodel.Issue;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -33,22 +29,28 @@ public class AnalyzeExecutor {
         this.delegates = Lists.newArrayList(Arrays.asList(delegates));
     }
 
-    public AnalyzerResult analyze(DependencyNode node, AnalyzerContext context) throws AnalyzerException {
+    public List<AnalyzerResult> analyze(DependencyNode node, AnalyzerContext context) throws AnalyzerException {
 
         val dependencyNodes = node.flattened().filter(distinctByKey(d -> d.getArtifact().toString())).collect(Collectors.toList());
-        final CompletableFuture<List<Map<String, List<Issue>>>> collect = StreamSupport.stream(Iterables.partition(dependencyNodes, 10).spliterator(), false)
+        final CompletableFuture<List<List<AnalyzerResult>>> collect = StreamSupport.stream(Iterables.partition(dependencyNodes, 10).spliterator(), false)
                                                                    .map(chunk -> new AnalyzeTask(delegates, context, chunk))
                                                                    .map(CompletableFuture::supplyAsync)
                                                                    .collect(CompletableFutureCollector.collectResult());
 
         collect.join();
-        final List<Map<String, List<Issue>>> maps;
-        final Map<String, List<Issue>> newMaps = Maps.newHashMap();
+        final List<List<AnalyzerResult>> results;
+        final Map<Analyzers, AnalyzerResult> mergedResultsByAnalyzerType = new HashMap<>();
+
         try {
-            maps = collect.get();
-            for (Map<String, List<Issue>> map : maps) {
-                for (Map.Entry<String, List<Issue>> entry : map.entrySet()) {
-                    newMaps.put(entry.getKey(), entry.getValue());
+            results = collect.get();
+            for (List<AnalyzerResult> result : results) {
+                for (AnalyzerResult analyzerResult : result) {
+                    for (Map.Entry<String, List<Issue>> entry : analyzerResult.getNodeIssuesMap().entrySet() ) {
+                        if(!mergedResultsByAnalyzerType.containsKey(analyzerResult.getAnalyzerType())) {
+                            mergedResultsByAnalyzerType.put(analyzerResult.getAnalyzerType(), analyzerResult);
+                        }
+                        mergedResultsByAnalyzerType.get(analyzerResult.getAnalyzerType()).getNodeIssuesMap().put(entry.getKey(), entry.getValue());
+                    }
                 }
             }
         } catch (InterruptedException e) {
@@ -56,7 +58,7 @@ public class AnalyzeExecutor {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        return new AnalyzerResult(Analyzers.METRICS, newMaps);
+        return new ArrayList<>(mergedResultsByAnalyzerType.values());
     }
 
     private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {

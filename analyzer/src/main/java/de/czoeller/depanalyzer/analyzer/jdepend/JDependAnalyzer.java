@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import de.czoeller.depanalyzer.analyzer.AnalyzerContext;
 import de.czoeller.depanalyzer.analyzer.AnalyzerException;
 import de.czoeller.depanalyzer.analyzer.BaseAnalyzer;
+import de.czoeller.depanalyzer.metamodel.Analyzers;
 import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.metamodel.Issue;
 import de.czoeller.depanalyzer.metamodel.MetricIssue;
@@ -13,7 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -22,6 +25,8 @@ public class JDependAnalyzer extends BaseAnalyzer {
     public static final double INSTABILITY_THRESHOLD = 0.75;
 
     private JDepend jdepend;
+
+    private static Map<String, Boolean> visitedPackages = new HashMap<>();
 
     /**
      * Required to obtain instance reflective.
@@ -41,23 +46,28 @@ public class JDependAnalyzer extends BaseAnalyzer {
     }
 
     @Override
+    public Analyzers getType() {
+        return Analyzers.METRICS;
+    }
+
+    @Override
     public List<Issue> analyze(DependencyNode node)  {
         List<Issue> issues = Lists.newArrayList();
         try {
             jdepend.addDirectory(node.getArtifact().getFile().getAbsolutePath());
             final Collection<JavaPackage> packageList = jdepend.analyze();
 
-            final List<JavaPackage> filteredPackages = packageList.stream()
-                                                                  .filter(this::shouldAnalyzePackage).collect(Collectors.toList());
+            final List<JavaPackage> filteredPackages = packageList.stream().filter(this::shouldAnalyzePackage).collect(Collectors.toList());
 
             for (JavaPackage javaPackage : filteredPackages) {
                 log.trace("Analyzing package '{}'", javaPackage);
+                visitedPackages.put(javaPackage.getName(), true);
                 if (javaPackage.getName().contains(getContext().getTargetGroupId())) {
                     log.trace("Analyzing package internals of '{}'", javaPackage);
                     final float instability = javaPackage.instability();
                     if(instability >= INSTABILITY_THRESHOLD) {
                         log.info("Found instability issue in package '{}'", javaPackage);
-                        issues.add(new MetricIssue(Issue.Severity.LOW, "instability issue", instability));
+                        issues.add(new MetricIssue(Issue.Severity.LOW, String.format("instability of pkg '%s': %.2f", javaPackage.getName(), instability), instability));
                     }
                 } else {
                     log.trace("Skip analyzing package '{}'", javaPackage);
@@ -71,7 +81,15 @@ public class JDependAnalyzer extends BaseAnalyzer {
     }
 
     private boolean shouldAnalyzePackage(JavaPackage javaPackage) {
-        return !javaPackage.getName().startsWith("java.") && javaPackage.getName()
-                                                              .contains(getContext().getTargetGroupId());
+        return !alreadyVisited(javaPackage) && !javaPackage.getName().startsWith("java.") && javaPackage.getName()
+                                                            .contains(getContext().getTargetGroupId());
+    }
+
+    private boolean alreadyVisited(JavaPackage javaPackage) {
+        final boolean visited = visitedPackages.containsKey(javaPackage.getName());
+        if(visited) {
+            log.info("Already visited package '{}'", javaPackage.getName());
+        }
+        return visited;
     }
 }

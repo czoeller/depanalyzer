@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import de.czoeller.depanalyzer.analyzer.AnalyzerContext;
 import de.czoeller.depanalyzer.analyzer.AnalyzerException;
 import de.czoeller.depanalyzer.analyzer.BaseAnalyzer;
+import de.czoeller.depanalyzer.metamodel.Analyzers;
 import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.metamodel.Issue;
 import de.czoeller.depanalyzer.metamodel.LOCIssue;
@@ -24,6 +25,11 @@ public class DummyAnalyzerImpl extends BaseAnalyzer {
 
     public DummyAnalyzerImpl(AnalyzerContext context) {
         super(context);
+    }
+
+    @Override
+    public Analyzers getType() {
+        return Analyzers.DUMMY;
     }
 
     @Override

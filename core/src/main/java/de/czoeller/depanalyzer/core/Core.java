@@ -39,10 +39,12 @@ public class Core {
         log.info("Starting analyze ...");
         AnalyzerContext context = () -> dependencyNode.getArtifact().getGroupId();
         final AnalyzeExecutor analyzeExecutor = new AnalyzeExecutor(new JDependAnalyzer(context));
-        final AnalyzerResult dependenciesAndIssues = analyzeExecutor.analyze(dependencyNode, context);
-        log.info("{}", dependenciesAndIssues);
+        final List<AnalyzerResult> analyzerResults = analyzeExecutor.analyze(dependencyNode, context);
+        log.info("{}", analyzerResults);
 
-        setIssuesToNodes(dependenciesAndIssues);
+        for (AnalyzerResult analyzerResult : analyzerResults) {
+            setIssuesToNodes(analyzerResult);
+        }
     }
 
     private void setIssuesToNodes(AnalyzerResult analyzerResult) {
@@ -50,7 +52,8 @@ public class Core {
         dependencyNode.flattened().forEach(n -> {
             final String key = n.getIdentifier();
             if(nodeIssuesMap.containsKey(key)) {
-                n.addIssues(analyzerResult.getAnalyzerType(), nodeIssuesMap.get(n.getIdentifier()));
+                final List<Issue> issues = nodeIssuesMap.get(n.getIdentifier());
+                n.addIssues(analyzerResult.getAnalyzerType(), issues);
             }
         });
     }
