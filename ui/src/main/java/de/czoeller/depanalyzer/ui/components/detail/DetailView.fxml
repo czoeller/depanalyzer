@@ -40,7 +40,7 @@
             <Label text="Issues:" GridPane.rowIndex="5" />
             <TableView fx:id="issuesTableView" minHeight="120.0" minWidth="120.0" onSort="#onSort" prefHeight="200.0" prefWidth="200.0" tableMenuButtonVisible="true" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="6" GridPane.valignment="BOTTOM" GridPane.vgrow="ALWAYS">
                 <columns>
-                <TableColumn fx:id="severityColumn" prefWidth="75.0" text="Severity">
+                <TableColumn fx:id="severityColumn" prefWidth="35.0" text="Severity">
                     <cellValueFactory>
                         <PropertyValueFactory property="severity" />
                     </cellValueFactory>
