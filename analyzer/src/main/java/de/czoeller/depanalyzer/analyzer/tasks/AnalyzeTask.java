@@ -37,7 +37,11 @@ public class AnalyzeTask implements Supplier<List<AnalyzerResult>> {
     public List<AnalyzerResult> get() {
         List<AnalyzerResult> results = Lists.newArrayList();
 
+        log.debug("{} starting to analyze with #{} analyzers a chunk of nodes with size #{} namely: {}", Thread.currentThread().getName(), analyzers.size(), chunk.size(), chunk);
+
         for (Analyzer analyzer : analyzers) {
+            log.debug("{} starting to analyze with analyzer '{}'", Thread.currentThread().getName(), analyzer);
+
             final Map<String, List<Issue>> nodeIssues = Maps.newHashMap();
             try {
                 final BaseAnalyzer analyzerInstance = (BaseAnalyzer) analyzer.getClass().newInstance();
@@ -48,6 +52,7 @@ public class AnalyzeTask implements Supplier<List<AnalyzerResult>> {
                         log.info("Skipping analyze with {} for dependency of type pom '{}'", analyzer.getClass().getSimpleName(), node.toString());
                     } else {
                         final List<Issue> issues = analyzerInstance.analyze(node);
+                        log.debug("{} with analyzer '{}' found #{} issues", Thread.currentThread().getName(), analyzer, issues.size());
                         if(!issues.isEmpty()) {
                             nodeIssues.putIfAbsent(node.getIdentifier(), Lists.newArrayList());
                             nodeIssues.get(node.getIdentifier()).addAll(issues);
