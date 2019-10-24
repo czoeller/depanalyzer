@@ -1,5 +1,6 @@
 package de.czoeller.depanalyzer.analyzer;
 
+import com.google.common.base.MoreObjects;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,5 +17,12 @@ public abstract class BaseAnalyzer implements Analyzer {
 
     public BaseAnalyzer(AnalyzerContext context) {
         this.context = context;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                          .add("type", getType())
+                          .toString();
     }
 }

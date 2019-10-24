@@ -17,12 +17,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 class JDependAnalyzerTest {
 
     private List<Issue> issues;
+    private JDependAnalyzer jDependAnalyzer;
 
     @BeforeEach
     void setUp() {
-        JDependAnalyzer analyzer = new JDependAnalyzer(() -> "mysql");
+        jDependAnalyzer = new JDependAnalyzer(() -> "mysql");
         DependencyNode node = new DependencyNode(ExampleArtifacts.TEST_ARTIFACT_MYSQL);
-        issues = analyzer.analyze(node);
+        issues = jDependAnalyzer.analyze(node);
     }
 
     @DisplayName("Has expected size of issues")
@@ -39,5 +40,11 @@ class JDependAnalyzerTest {
                                           .map(MetricIssue::getInstability)
                                           .collect(Collectors.toList());
         assertThat(instabilities).allMatch(i -> i >= INSTABILITY_THRESHOLD);
+    }
+
+    @DisplayName("TestToString")
+    @Test
+    void testToString() {
+        assertThat(jDependAnalyzer.toString()).isEqualTo("JDependAnalyzer{type=Software Metrics}");
     }
 }
