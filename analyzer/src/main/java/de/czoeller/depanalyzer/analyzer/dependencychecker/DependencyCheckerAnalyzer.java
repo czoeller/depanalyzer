@@ -16,6 +16,7 @@ import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.utils.Settings;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -46,7 +47,7 @@ public class DependencyCheckerAnalyzer extends BaseAnalyzer {
         List<Issue> issues = Lists.newArrayList();
         String[] files = new String[] { node.getArtifact().getFile().getAbsolutePath() };
         try {
-            final List<Dependency> dependencies = runScan("report", new String[]{"html"}, "Test Application", files, new String[]{}, 0, 11);
+            final List<Dependency> dependencies = runScan("report/"+node.getIdentifier(), new String[]{"html"}, "Test Application", files, new String[]{}, 0, 11);
 
             for (Dependency dependency : dependencies) {
                 for (Vulnerability vulnerability : dependency.getVulnerabilities()) {
@@ -75,6 +76,18 @@ public class DependencyCheckerAnalyzer extends BaseAnalyzer {
                 throw ex;
             }
             exCol = ex;
+        }
+        try {
+            for (String outputFormat : outputFormats) {
+                engine.writeReports(applicationName, new File(reportDirectory), outputFormat, exCol);
+            }
+        } catch (ReportException ex) {
+            if (exCol != null) {
+                exCol.addException(ex);
+                throw exCol;
+            } else {
+                throw ex;
+            }
         }
         if (exCol != null && !exCol.getExceptions().isEmpty()) {
             throw exCol;
