@@ -15,5 +15,12 @@ public abstract class Issue {
         LOW,
         MEDIUM,
         HIGH;
+
+        public static Severity map(int priority) {
+            if(priority < Severity.values().length) {
+                return Severity.values()[priority];
+            }
+            return HIGH;
+        }
     }
 }
