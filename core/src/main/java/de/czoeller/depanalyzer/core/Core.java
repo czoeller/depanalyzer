@@ -14,6 +14,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 @Slf4j
 public class Core {
@@ -53,12 +57,19 @@ public class Core {
 
     private void setIssuesToNodes(AnalyzerResult analyzerResult) {
         final Map<String, List<Issue>> nodeIssuesMap = analyzerResult.getNodeIssuesMap();
-        dependencyNode.flattened().forEach(n -> {
+        dependencyNode.flattened()
+                      .filter(distinctByKey(DependencyNode::getIdentifier))
+                      .forEach(n -> {
             final String key = n.getIdentifier();
             if(nodeIssuesMap.containsKey(key)) {
                 final List<Issue> issues = nodeIssuesMap.get(n.getIdentifier());
                 n.addIssues(analyzerResult.getAnalyzerType(), issues);
             }
         });
+    }
+
+    private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
     }
 }
