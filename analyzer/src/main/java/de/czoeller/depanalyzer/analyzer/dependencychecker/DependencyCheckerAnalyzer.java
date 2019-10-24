@@ -37,6 +37,7 @@ public class DependencyCheckerAnalyzer extends BaseAnalyzer {
     }
 
     private void init() {
+        settings.setBoolean("ossindexAnalyzerEnabled", false);
         engine = new Engine(Engine.Mode.STANDALONE, settings);
     }
 
