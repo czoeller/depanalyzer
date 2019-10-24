@@ -1,6 +1,7 @@
 package de.czoeller.depanalyzer.analyzer.spotbugs;
 
 import com.google.common.collect.Lists;
+import de.czoeller.depanalyzer.analyzer.Analyzer;
 import de.czoeller.depanalyzer.analyzer.AnalyzerContext;
 import de.czoeller.depanalyzer.analyzer.AnalyzerException;
 import de.czoeller.depanalyzer.analyzer.BaseAnalyzer;
@@ -41,6 +42,11 @@ public class SpotBugsAnalyzer extends BaseAnalyzer {
 
     private void init() {
         this.findBugs = new FindBugs2();
+    }
+
+    @Override
+    public Analyzer newInstance(AnalyzerContext context) {
+        return new SpotBugsAnalyzer(context);
     }
 
     @Override
@@ -122,18 +128,13 @@ public class SpotBugsAnalyzer extends BaseAnalyzer {
                 Plugin plugin = Plugin.addCustomPlugin(new File(path).toURI(), contextClassLoader);
                 if (plugin != null) {
                     customPluginList.add(plugin);
-                    // log.info("Loading findbugs plugin: " + path); //info
-                    System.out.println("Loading findbugs plugin: " + path);
+                    log.info("Loading findbugs plugin: " + path);
                 }
             } catch (PluginException e) {
-                //log.warn("Failed to load plugin for custom detector: " + path); //warn
-                System.out.println("Failed to load plugin for custom detector: " + path);
-                //log.debug("Cause of failure", e); //debug
-                System.out.println("Cause of failure " + e.getCause());
+                log.warn("Failed to load plugin for custom detector: " + path);
+                log.debug("Cause of failure", e);
             } catch (DuplicatePluginIdException e) {
-                // log only if it's not the FV Core plugin
-                // log.debug("Plugin already loaded: exception ignored: " + e.getMessage(), e); //debug
-                System.out.println("Plugin already loaded: exception ignored: " + e.getMessage());
+                log.debug("Plugin already loaded: exception ignored: " + e.getMessage(), e);
             }
         }
 

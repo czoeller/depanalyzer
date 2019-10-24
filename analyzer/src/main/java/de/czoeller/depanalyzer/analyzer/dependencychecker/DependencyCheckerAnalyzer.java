@@ -1,6 +1,7 @@
 package de.czoeller.depanalyzer.analyzer.dependencychecker;
 
 import com.google.common.collect.Lists;
+import de.czoeller.depanalyzer.analyzer.Analyzer;
 import de.czoeller.depanalyzer.analyzer.AnalyzerContext;
 import de.czoeller.depanalyzer.analyzer.AnalyzerException;
 import de.czoeller.depanalyzer.analyzer.BaseAnalyzer;
@@ -40,6 +41,11 @@ public class DependencyCheckerAnalyzer extends BaseAnalyzer {
     private void init() {
         settings.setBoolean("ossindexAnalyzerEnabled", false);
         engine = new Engine(Engine.Mode.STANDALONE, settings);
+    }
+
+    @Override
+    public Analyzer newInstance(AnalyzerContext context) {
+        return new DependencyCheckerAnalyzer(context);
     }
 
     @Override

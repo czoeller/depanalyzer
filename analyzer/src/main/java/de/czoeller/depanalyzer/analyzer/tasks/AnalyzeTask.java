@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import de.czoeller.depanalyzer.analyzer.Analyzer;
 import de.czoeller.depanalyzer.analyzer.AnalyzerContext;
-import de.czoeller.depanalyzer.analyzer.BaseAnalyzer;
 import de.czoeller.depanalyzer.metamodel.AnalyzerResult;
 import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.metamodel.Issue;
@@ -43,24 +42,19 @@ public class AnalyzeTask implements Supplier<List<AnalyzerResult>> {
             log.debug("{} starting to analyze with analyzer '{}'", Thread.currentThread().getName(), analyzer);
 
             final Map<String, List<Issue>> nodeIssues = Maps.newHashMap();
-            try {
-                final BaseAnalyzer analyzerInstance = (BaseAnalyzer) analyzer.getClass().newInstance();
-                analyzerInstance.setContext(context);
+            final Analyzer analyzerInstance = analyzer.newInstance(context);
 
-                for (DependencyNode node : chunk) {
-                    if(node.getTypes().contains("pom")) {
+            for (DependencyNode node : chunk) {
+                if(node.getTypes().contains("pom")) {
                     log.info("Skipping analyze with {} for dependency of type pom '{}'", analyzerInstance.getClass().getSimpleName(), node.toString());
-                    } else {
-                        final List<Issue> issues = analyzerInstance.analyze(node);
+                } else {
+                    final List<Issue> issues = analyzerInstance.analyze(node);
                     log.debug("{} with analyzer '{}' found #{} issues", Thread.currentThread().getName(), analyzerInstance, issues.size());
-                        if(!issues.isEmpty()) {
-                            nodeIssues.putIfAbsent(node.getIdentifier(), Lists.newArrayList());
-                            nodeIssues.get(node.getIdentifier()).addAll(issues);
-                        }
+                    if(!issues.isEmpty()) {
+                        nodeIssues.putIfAbsent(node.getIdentifier(), Lists.newArrayList());
+                        nodeIssues.get(node.getIdentifier()).addAll(issues);
                     }
                 }
-            } catch (InstantiationException | IllegalAccessException e) {
-                log.error("Failed to analyze", e);
             }
             results.add(new AnalyzerResult(analyzer.getType(), nodeIssues));
         }

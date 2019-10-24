@@ -2,6 +2,7 @@ package de.czoeller.depanalyzer.analyzer.dummy;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
+import de.czoeller.depanalyzer.analyzer.Analyzer;
 import de.czoeller.depanalyzer.analyzer.AnalyzerContext;
 import de.czoeller.depanalyzer.analyzer.AnalyzerException;
 import de.czoeller.depanalyzer.analyzer.BaseAnalyzer;
@@ -30,6 +31,11 @@ public class DummyAnalyzerImpl extends BaseAnalyzer {
     @Override
     public Analyzers getType() {
         return Analyzers.DUMMY;
+    }
+
+    @Override
+    public Analyzer newInstance(AnalyzerContext context) {
+        return new DummyAnalyzerImpl(context);
     }
 
     @Override

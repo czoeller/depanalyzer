@@ -10,4 +10,5 @@ public interface Analyzer {
     List<Issue> analyze(DependencyNode node) throws AnalyzerException;
     void setContext(AnalyzerContext context);
     Analyzers getType();
+    Analyzer newInstance(AnalyzerContext context);
 }

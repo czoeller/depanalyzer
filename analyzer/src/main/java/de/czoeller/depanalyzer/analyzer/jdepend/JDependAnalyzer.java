@@ -1,6 +1,7 @@
 package de.czoeller.depanalyzer.analyzer.jdepend;
 
 import com.google.common.collect.Lists;
+import de.czoeller.depanalyzer.analyzer.Analyzer;
 import de.czoeller.depanalyzer.analyzer.AnalyzerContext;
 import de.czoeller.depanalyzer.analyzer.AnalyzerException;
 import de.czoeller.depanalyzer.analyzer.BaseAnalyzer;
@@ -48,6 +49,11 @@ public class JDependAnalyzer extends BaseAnalyzer {
     @Override
     public Analyzers getType() {
         return Analyzers.METRICS;
+    }
+
+    @Override
+    public Analyzer newInstance(AnalyzerContext context) {
+        return new JDependAnalyzer(context);
     }
 
     @Override
