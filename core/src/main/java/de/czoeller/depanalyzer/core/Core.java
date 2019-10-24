@@ -38,11 +38,15 @@ public class Core {
     public void analyze() {
         log.info("Starting analyze ...");
         AnalyzerContext context = () -> dependencyNode.getArtifact().getGroupId();
-        final AnalyzeExecutor analyzeExecutor = new AnalyzeExecutor(new JDependAnalyzer(context));
+        final AnalyzeExecutor analyzeExecutor = new AnalyzeExecutor(
+                new JDependAnalyzer(context)
+                //new DependencyCheckerAnalyzer(context)
+                //new SpotBugsAnalyzer()
+        );
         final List<AnalyzerResult> analyzerResults = analyzeExecutor.analyze(dependencyNode, context);
-        log.info("{}", analyzerResults);
 
         for (AnalyzerResult analyzerResult : analyzerResults) {
+            log.info("found issues for analyzer type '{}': {}", analyzerResult.getAnalyzerType(), analyzerResults);
             setIssuesToNodes(analyzerResult);
         }
     }
