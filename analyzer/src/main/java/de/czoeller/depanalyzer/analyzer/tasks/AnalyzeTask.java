@@ -49,20 +49,18 @@ public class AnalyzeTask implements Supplier<List<AnalyzerResult>> {
 
                 for (DependencyNode node : chunk) {
                     if(node.getTypes().contains("pom")) {
-                        log.info("Skipping analyze with {} for dependency of type pom '{}'", analyzer.getClass().getSimpleName(), node.toString());
+                    log.info("Skipping analyze with {} for dependency of type pom '{}'", analyzerInstance.getClass().getSimpleName(), node.toString());
                     } else {
                         final List<Issue> issues = analyzerInstance.analyze(node);
-                        log.debug("{} with analyzer '{}' found #{} issues", Thread.currentThread().getName(), analyzer, issues.size());
+                    log.debug("{} with analyzer '{}' found #{} issues", Thread.currentThread().getName(), analyzerInstance, issues.size());
                         if(!issues.isEmpty()) {
                             nodeIssues.putIfAbsent(node.getIdentifier(), Lists.newArrayList());
                             nodeIssues.get(node.getIdentifier()).addAll(issues);
                         }
                     }
                 }
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+            } catch (InstantiationException | IllegalAccessException e) {
+                log.error("Failed to analyze", e);
             }
             results.add(new AnalyzerResult(analyzer.getType(), nodeIssues));
         }

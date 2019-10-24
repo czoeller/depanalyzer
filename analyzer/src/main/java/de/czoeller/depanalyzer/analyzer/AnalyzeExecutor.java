@@ -31,7 +31,7 @@ public class AnalyzeExecutor {
 
     public List<AnalyzerResult> analyze(DependencyNode node, AnalyzerContext context) throws AnalyzerException {
 
-        val dependencyNodes = node.flattened().filter(distinctByKey(d -> d.getArtifact().toString())).collect(Collectors.toList());
+        val dependencyNodes = node.flattened().filter(distinctByKey(DependencyNode::getIdentifier)).collect(Collectors.toList());
         final CompletableFuture<List<List<AnalyzerResult>>> collect = StreamSupport.stream(Iterables.partition(dependencyNodes, 10).spliterator(), false)
                                                                    .map(chunk -> new AnalyzeTask(delegates, context, chunk))
                                                                    .map(CompletableFuture::supplyAsync)
@@ -48,15 +48,14 @@ public class AnalyzeExecutor {
                     for (Map.Entry<String, List<Issue>> entry : analyzerResult.getNodeIssuesMap().entrySet() ) {
                         if(!mergedResultsByAnalyzerType.containsKey(analyzerResult.getAnalyzerType())) {
                             mergedResultsByAnalyzerType.put(analyzerResult.getAnalyzerType(), analyzerResult);
+                        } else {
+                            mergedResultsByAnalyzerType.get(analyzerResult.getAnalyzerType()).getNodeIssuesMap().put(entry.getKey(), entry.getValue());
                         }
-                        mergedResultsByAnalyzerType.get(analyzerResult.getAnalyzerType()).getNodeIssuesMap().put(entry.getKey(), entry.getValue());
                     }
                 }
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Failed to analyze", e);
         }
         return new ArrayList<>(mergedResultsByAnalyzerType.values());
     }
