@@ -32,4 +32,5 @@
 
     <logger level="TRACE" name="de.czoeller"/>
     <logger name="org.apache.http" level="WARN"/>
+    <logger name="org.apache.velocity" level="WARN"/>
 </configuration>
