@@ -2,8 +2,10 @@ package de.czoeller.depanalyzer.analyzer.spotbugs;
 
 import edu.umd.cs.findbugs.*;
 import edu.umd.cs.findbugs.classfile.ClassDescriptor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.bcel.classfile.JavaClass;
 
+@Slf4j
 public class MyReporter extends TextUIBugReporter {
 
     private final BugCollection bugs;
@@ -26,14 +28,14 @@ public class MyReporter extends TextUIBugReporter {
     }
 
     public void finish() {
-        System.out.println("Finished SpotBugs analysis");
-        System.out.println("Results: ");
+        log.info("Finished SpotBugs analysis");
+        log.info("Results: ");
         if(bugs.getCollection().isEmpty()) {
-            System.out.println("No bugs found");
+            log.info("No bugs found");
         } else {
-            System.out.println(String.format("%d bugs found", bugs.getCollection().size()));
+            log.info("{} bugs found", bugs.getCollection().size());
             for (BugInstance bug : bugs) {
-                System.out.println(String.format("message: %s ", bug.getMessage()));
+                log.info("message: {}}", bug.getMessage());
             }
         }
 
