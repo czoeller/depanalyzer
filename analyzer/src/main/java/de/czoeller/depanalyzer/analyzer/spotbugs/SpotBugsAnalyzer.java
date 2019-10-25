@@ -14,12 +14,14 @@ import edu.umd.cs.findbugs.*;
 import edu.umd.cs.findbugs.config.UserPreferences;
 import edu.umd.cs.findbugs.plugins.DuplicatePluginIdException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 @Slf4j
@@ -70,12 +72,13 @@ public class SpotBugsAnalyzer extends BaseAnalyzer {
         Project project = new Project();
         project.addFile(node.getArtifact().getFile().getAbsolutePath());
 
-        //Iterator<File> it = FileUtils.iterateFiles(new File("target/lib"), null, false);
-        //while(it.hasNext()) {
-        //    File next = it.next();
-        //    if(!next.getName().equals(new File(TARGET_LIB_PATH).getName()))
-        //        project.addAuxClasspathEntry(next.getAbsolutePath());
-        //}
+        Iterator<File> it = FileUtils.iterateFiles(new File("target/jar-analysis"), null, false);
+        while(it.hasNext()) {
+            File next = it.next();
+            if(!(next.getName().contains("spotbugs") || next.getName().contains("findbugs") || next.getName().contains(node.getArtifact().getArtifactId()))) {
+                project.addAuxClasspathEntry(next.getAbsolutePath());
+            }
+        }
 
         BugCollection bugs = new SortedBugCollection();
         BugReporter bugReporter = new MyReporter(bugs);
@@ -103,7 +106,7 @@ public class SpotBugsAnalyzer extends BaseAnalyzer {
         } catch (InterruptedException e) {
             log.debug("Analyzer interrupted", e);
         } finally {
-            resetCustomPluginList(customPlugins);
+            //resetCustomPluginList(customPlugins);
         }
         //final BugCollection bugCollection = findBugs.getBugReporter().getBugCollection();
         return issues;
@@ -134,7 +137,7 @@ public class SpotBugsAnalyzer extends BaseAnalyzer {
                 log.warn("Failed to load plugin for custom detector: " + path);
                 log.debug("Cause of failure", e);
             } catch (DuplicatePluginIdException e) {
-                log.debug("Plugin already loaded: exception ignored: " + e.getMessage(), e);
+                log.debug("Plugin already loaded: exception ignored: " + e.getMessage());
             }
         }
 

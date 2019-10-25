@@ -10,7 +10,14 @@ import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.metamodel.Issue;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.FileUtils;
+import org.apache.maven.artifact.Artifact;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,6 +39,19 @@ public class AnalyzeExecutor {
     public List<AnalyzerResult> analyze(DependencyNode node, AnalyzerContext context) throws AnalyzerException {
 
         val dependencyNodes = node.flattened().filter(distinctByKey(DependencyNode::getIdentifier)).collect(Collectors.toList());
+
+        final File analysisDir = new File("target/jar-analysis");
+        try {
+            if(!analysisDir.exists()) {
+                analysisDir.mkdir();
+            }
+            FileUtils.cleanDirectory(analysisDir);
+            dependencyNodes.stream().map(DependencyNode::getArtifact).map(Artifact::getFile).forEach(f -> createSymbolicLink(f, analysisDir));
+            dependencyNodes.stream().map(DependencyNode::getArtifact).forEach(a -> a.setFile(new File(analysisDir, a.getFile().getName())));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         final CompletableFuture<List<List<AnalyzerResult>>> collect = StreamSupport.stream(Iterables.partition(dependencyNodes, 10).spliterator(), false)
                                                                    .map(chunk -> new AnalyzeTask(delegates, context, chunk))
                                                                    .map(CompletableFuture::supplyAsync)
@@ -58,6 +78,18 @@ public class AnalyzeExecutor {
             log.error("Failed to analyze", e);
         }
         return new ArrayList<>(mergedResultsByAnalyzerType.values());
+    }
+
+    private void createSymbolicLink(File source, File analysisDir) {
+        try {
+            final Path link = Paths.get(analysisDir.getPath(), source.getName());
+            if(!Files.exists(link)) {
+                Files.createSymbolicLink(link, Paths.get(source.toURI()));
+            }
+        } catch (IOException e) {
+            log.error("Failed to create symlink", e);
+            throw new RuntimeException(e);
+        }
     }
 
     private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
