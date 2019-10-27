@@ -35,11 +35,13 @@ public class HeatMapScorer<N extends HasHeat, E> implements NodeScorer<N, Double
 
     @Override
     public Double getNodeScore(N n) {
+        init();
         return map.get(n);
     }
 
     @Override
     public Map<N, Double> nodeScores() {
+        init();
         return map;
     }
 }
