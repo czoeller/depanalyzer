@@ -2,7 +2,6 @@ package de.czoeller.depanalyzer.analyzer;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import de.czoeller.depanalyzer.analyzer.dependencychecker.DependencyCheckerAnalyzer;
 import de.czoeller.depanalyzer.analyzer.tasks.AnalyzeTask;
 import de.czoeller.depanalyzer.analyzer.util.CompletableFutureCollector;
 import de.czoeller.depanalyzer.metamodel.AnalyzerResult;
@@ -26,7 +25,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @Slf4j
@@ -54,17 +52,10 @@ public class AnalyzeExecutor {
             throw new RuntimeException(e);
         }
 
-        //TODO:
-        delegates.removeIf(a -> a.getType().equals(Analyzers.CVE));
-        final List<CompletableFuture<List<AnalyzerResult>>> normalAnalyzerTasks = StreamSupport.stream(Iterables.partition(dependencyNodes, 10)
-                                                                                                     .spliterator(), false)
-                                                                                    .map(chunk -> new AnalyzeTask(delegates, context, chunk))
-                                                                                    .map(CompletableFuture::supplyAsync)
-                                                                                    .collect(Collectors.toList());
-        final CompletableFuture<List<AnalyzerResult>> specialAnalyzerTask = CompletableFuture.supplyAsync(new AnalyzeTask(Lists.newArrayList(new DependencyCheckerAnalyzer()), context, Lists.newArrayList(node)));
-
-        final CompletableFuture<List<List<AnalyzerResult>>> collect = Stream.concat(normalAnalyzerTasks.stream(), Stream.of(specialAnalyzerTask))
-                                                                                         .collect(CompletableFutureCollector.collectResult());
+        final CompletableFuture<List<List<AnalyzerResult>>> collect = StreamSupport.stream(Iterables.partition(dependencyNodes, 10).spliterator(), false)
+                                                                                   .map(chunk -> new AnalyzeTask(delegates, context, chunk))
+                                                                                   .map(CompletableFuture::supplyAsync)
+                                                                                   .collect(CompletableFutureCollector.collectResult());
 
         collect.join();
         final List<List<AnalyzerResult>> results;

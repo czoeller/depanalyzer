@@ -29,6 +29,9 @@ public class DependencyCheckerAnalyzer extends BaseAnalyzer {
 
     private Engine engine = null;
 
+    private static DependencyCheckerAnalyzer INSTANCE;
+    private static List<Dependency> analyzeResult = null;
+
     public DependencyCheckerAnalyzer() {
         init();
     }
@@ -36,6 +39,7 @@ public class DependencyCheckerAnalyzer extends BaseAnalyzer {
     public DependencyCheckerAnalyzer(AnalyzerContext context) {
         super(context);
         init();
+        INSTANCE = this;
     }
 
     private void init() {
@@ -45,23 +49,32 @@ public class DependencyCheckerAnalyzer extends BaseAnalyzer {
 
     @Override
     public Analyzer newInstance(AnalyzerContext context) {
-        return new DependencyCheckerAnalyzer(context);
+        synchronized(DependencyCheckerAnalyzer.class) {
+            return INSTANCE;
+        }
     }
 
     @Override
     public List<Issue> analyze(DependencyNode node) throws AnalyzerException {
         List<Issue> issues = Lists.newArrayList();
-        String[] files = new String[] { "target/jar-analysis" };
-        try {
-            final List<Dependency> dependencies = runScan("report", new String[]{"html"}, "Test Application", files, new String[]{}, 0, 11);
 
-            for (Dependency dependency : dependencies) {
-                for (Vulnerability vulnerability : dependency.getVulnerabilities()) {
+        synchronized(DependencyCheckerAnalyzer.class) {
+            if (analyzeResult == null) {
+                String[] files = new String[] { "target/jar-analysis" };
+                try {
+                    analyzeResult = runScan("report", new String[]{"html"}, "Test Application", files, new String[]{}, 0, 11);
+                } catch (ReportException | ExceptionCollection e) {
+                    //throw new AnalyzerException("Could not analyze", e);
+                }
+            }
+        }
+
+        for (Dependency dependency : analyzeResult) {
+            for (Vulnerability vulnerability : dependency.getVulnerabilities()) {
+                if(dependency.getFileName().equals(node.getArtifact().getFile().getName())) {
                     issues.add(new CVEIssue(Issue.Severity.HIGH, vulnerability.getDescription()));
                 }
             }
-        } catch (ReportException | ExceptionCollection e) {
-            //throw new AnalyzerException("Could not analyze", e);
         }
 
         return issues;

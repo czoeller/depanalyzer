@@ -5,7 +5,6 @@ import com.google.common.collect.Maps;
 import de.czoeller.depanalyzer.analyzer.Analyzer;
 import de.czoeller.depanalyzer.analyzer.AnalyzerContext;
 import de.czoeller.depanalyzer.metamodel.AnalyzerResult;
-import de.czoeller.depanalyzer.metamodel.Analyzers;
 import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.metamodel.Issue;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +45,7 @@ public class AnalyzeTask implements Supplier<List<AnalyzerResult>> {
             final Analyzer analyzerInstance = analyzer.newInstance(context);
 
             for (DependencyNode node : chunk) {
-                if(!analyzer.getType().equals(Analyzers.CVE) && node.getTypes().contains("pom")) {
+                if(node.getTypes().contains("pom")) {
                     log.info("Skipping analyze with {} for dependency of type pom '{}'", analyzerInstance.getClass().getSimpleName(), node.toString());
                 } else {
                     final List<Issue> issues = analyzerInstance.analyze(node);
