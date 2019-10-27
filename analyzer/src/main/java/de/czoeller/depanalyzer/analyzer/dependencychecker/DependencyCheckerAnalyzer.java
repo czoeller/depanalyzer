@@ -51,9 +51,9 @@ public class DependencyCheckerAnalyzer extends BaseAnalyzer {
     @Override
     public List<Issue> analyze(DependencyNode node) throws AnalyzerException {
         List<Issue> issues = Lists.newArrayList();
-        String[] files = new String[] { node.getArtifact().getFile().getAbsolutePath() };
+        String[] files = new String[] { "target/jar-analysis" };
         try {
-            final List<Dependency> dependencies = runScan("report/"+node.getIdentifier(), new String[]{"html"}, "Test Application", files, new String[]{}, 0, 11);
+            final List<Dependency> dependencies = runScan("report", new String[]{"html"}, "Test Application", files, new String[]{}, 0, 11);
 
             for (Dependency dependency : dependencies) {
                 for (Vulnerability vulnerability : dependency.getVulnerabilities()) {
