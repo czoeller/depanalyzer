@@ -27,7 +27,7 @@ public class JDependAnalyzer extends BaseAnalyzer {
 
     private JDepend jdepend;
 
-    private static Map<String, Boolean> visitedPackages = new HashMap<>();
+    private Map<String, Boolean> visitedPackages = new HashMap<>();
 
     /**
      * Required to obtain instance reflective.
