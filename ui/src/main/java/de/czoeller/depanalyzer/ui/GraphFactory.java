@@ -5,6 +5,7 @@ import com.google.common.graph.ImmutableNetwork;
 import com.google.common.graph.MutableNetwork;
 import com.google.common.graph.NetworkBuilder;
 import de.czoeller.depanalyzer.core.Core;
+import de.czoeller.depanalyzer.core.config.Config;
 import de.czoeller.depanalyzer.metamodel.Analyzers;
 import de.czoeller.depanalyzer.metamodel.CVEIssue;
 import de.czoeller.depanalyzer.metamodel.Issue;
@@ -18,7 +19,6 @@ import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.eclipse.aether.graph.DependencyNode;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -88,7 +88,7 @@ public class GraphFactory {
 
     public static ImmutableNetwork<GraphDependencyNode, GraphDependencyEdge> realGraphFromExampleProject(MutableNetwork<GraphDependencyNode, GraphDependencyEdge> forest) {
         final Core core = new Core();
-        core.analyzePOM(new File("pom.xml"));
+        core.analyzePOM(Config.INSTANCE.getTargetPomFile());
 
         final de.czoeller.depanalyzer.metamodel.DependencyNode rootNode = core.getDependencyNode();
 
