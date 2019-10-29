@@ -27,19 +27,21 @@ public class MainViewModel {
     private ObjectProperty<Analyzers> selectedAnalyzerResultProperty = new SimpleObjectProperty<>();
     private ObjectProperty<GraphDependencyNode> selectedNodeProperty = new SimpleObjectProperty<>();
     private StringProperty searchTextProperty = new SimpleStringProperty();
+    private StringProperty analyzedProjectProperty = new SimpleStringProperty();
     private GraphViewerWrapper graphViewerWrapper;
     public MainViewModel(MainModel model, SwingNode swingNodeViewer, SwingNode swingNodeSatelliteViewer) {
         this.model = model;
         Globals.selectedAnalyzerProperty().bind(selectedAnalyzerResultProperty());
         this.graphViewerWrapper = new GraphViewerWrapper(model, swingNodeViewer, swingNodeSatelliteViewer);
-        layoutsProperty.set(FXCollections.observableArrayList(Layouts.values()));
-        analyzerResultsProperty.set(FXCollections.observableArrayList(Analyzers.values()));
+        this.layoutsProperty.set(FXCollections.observableArrayList(Layouts.values()));
+        this.analyzerResultsProperty.set(FXCollections.observableArrayList(Analyzers.values()));
+        this.analyzedProjectProperty.bind(Globals.analyzedProjectProperty());
 
         selectedNodePropertyProperty().bind(graphViewerWrapper.selectedNodePropertyProperty());
         // Actions
-        selectedLayoutProperty.addListener(safeChangeListener($ -> changeLayoutAction()));
-        selectedAnalyzerResultProperty.addListener(safeChangeListener($ -> changeAnalyzerResults()));
-        searchTextProperty.addListener(delayListener(safeChangeListener($ -> changeSearchTextAction())));
+        this.selectedLayoutProperty.addListener(safeChangeListener($ -> changeLayoutAction()));
+        this.selectedAnalyzerResultProperty.addListener(safeChangeListener($ -> changeAnalyzerResults()));
+        this.searchTextProperty.addListener(delayListener(safeChangeListener($ -> changeSearchTextAction())));
     }
 
     public GraphDependencyNode getSelectedNodeProperty() {
@@ -60,6 +62,14 @@ public class MainViewModel {
 
     public String getSearchText() {
         return searchTextProperty.get();
+    }
+
+    public StringProperty analyzedProjectProperty() {
+        return analyzedProjectProperty;
+    }
+
+    public String getAnalyzedProject() {
+        return analyzedProjectProperty.get();
     }
 
     public ObservableList<Layouts> layoutsProperty() {

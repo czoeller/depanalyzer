@@ -136,6 +136,12 @@ public class GraphFactory {
             dependencyNode = core.getDependencyNode();
         }
 
+        if(null == dependencyNode) {
+            throw new RuntimeException("Could not retrieve dependency graph.");
+        }
+
+        Globals.analyzedProjectProperty().set(dependencyNode.getIdentifier());
+
         return dependencyNode;
     }
 

@@ -35,7 +35,8 @@
                     <RowConstraints />
                  </rowConstraints>
                  <children>
-                    <TextField fx:id="textField" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                     <Label text="Analyzed project:" />
+                    <Label fx:id="analyzedProjectLabel" text="Label" GridPane.columnIndex="1" />
                     <Label text="Search:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
                     <TextField fx:id="searchTextField" prefWidth="500.0" promptText="dependency name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                     <Label text="Layout:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
@@ -43,7 +44,6 @@
                     <SegmentedButton fx:id="layoutSegmentedButton" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                     <Label text="Analyzer Result:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
                     <ComboBox fx:id="analyzerResultComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                    <Label fx:id="debugLabel" text="Label" GridPane.columnIndex="1" />
                  </children>
                  <BorderPane.margin>
                     <Insets bottom="15.0" />

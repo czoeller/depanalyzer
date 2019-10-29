@@ -17,7 +17,6 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.shape.Rectangle;
 import org.controlsfx.control.SegmentedButton;
 
 import java.net.URL;
@@ -40,13 +39,10 @@ public class MainController implements Initializable {
     public ComboBox<Analyzers> analyzerResultComboBox;
 
     @FXML
-    public Label debugLabel;
+    public Label analyzedProjectLabel;
 
     @FXML
     public SegmentedButton layoutSegmentedButton;
-
-    @FXML
-    public Rectangle legendColorRect;
 
     @FXML
     private SwingNode swingNodeViewer;
@@ -56,9 +52,6 @@ public class MainController implements Initializable {
 
     @FXML
     private BorderPane borderPane;
-
-    @FXML
-    private TextField textField;
 
     @FXML
     private AnchorPane centerPane;
@@ -81,7 +74,7 @@ public class MainController implements Initializable {
         viewModel = new MainViewModel(model, swingNodeViewer, swingNodeSatelliteViewer);
 
         // Bindings
-        textField.textProperty().bind(GUI.getPrimaryStage().widthProperty().asString());
+        analyzedProjectLabel.textProperty().bind(viewModel.analyzedProjectProperty());
         searchTextField.textProperty().bindBidirectional(viewModel.searchTextProperty());
 
         layoutComboBox.setItems(viewModel.layoutsProperty());
@@ -95,7 +88,6 @@ public class MainController implements Initializable {
         analyzerResultComboBox.setItems(viewModel.analyzerResultsProperty());
         analyzerResultComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> viewModel.selectedAnalyzerResultProperty().set(newValue));
         analyzerResultComboBox.getSelectionModel().selectFirst();
-        debugLabel.textProperty().bind(viewModel.selectedLayoutProperty().asString());
 
         // Sizes
         leftPane.prefWidthProperty().set(1);
