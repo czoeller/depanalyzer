@@ -1,8 +1,13 @@
 package de.czoeller.depanalyzer.core;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Output;
 import de.czoeller.depanalyzer.analyzer.AnalyzeExecutor;
 import de.czoeller.depanalyzer.analyzer.AnalyzerContext;
+import de.czoeller.depanalyzer.analyzer.dependencychecker.DependencyCheckerAnalyzer;
+import de.czoeller.depanalyzer.analyzer.dummy.DummyAnalyzerImpl;
 import de.czoeller.depanalyzer.analyzer.jdepend.JDependAnalyzer;
+import de.czoeller.depanalyzer.analyzer.spotbugs.SpotBugsAnalyzer;
 import de.czoeller.depanalyzer.core.input.resolver.PomResolver;
 import de.czoeller.depanalyzer.core.input.resolver.PomResolverImpl;
 import de.czoeller.depanalyzer.metamodel.AnalyzerResult;
@@ -12,6 +17,8 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,26 +39,35 @@ public class Core {
 
     public void analyzePOM(File pomFile) {
         readPOM(pomFile);
-        analyze();
+        analyzeAndPersistResults();
     }
 
     public void readPOM(File pomFile) {
         this.dependencyNode = this.pomResolver.resolvePom(pomFile).getRootNode();
     }
 
-    public void analyze() {
+    public void analyzeAndPersistResults() {
         log.info("Starting analyze ...");
         AnalyzerContext context = () -> dependencyNode.getArtifact().getGroupId();
         final AnalyzeExecutor analyzeExecutor = new AnalyzeExecutor(
-                new JDependAnalyzer(context)
-                //new DependencyCheckerAnalyzer(context)
-                //new SpotBugsAnalyzer()
+                new DummyAnalyzerImpl(context),
+                new JDependAnalyzer(context),
+                new DependencyCheckerAnalyzer(context),
+                new SpotBugsAnalyzer(context)
         );
         final List<AnalyzerResult> analyzerResults = analyzeExecutor.analyze(dependencyNode, context);
 
         for (AnalyzerResult analyzerResult : analyzerResults) {
             log.info("found issues for analyzer type '{}': {}", analyzerResult.getAnalyzerType(), analyzerResults);
             setIssuesToNodes(analyzerResult);
+        }
+
+        Kryo kryo = new Kryo();
+        kryo.setRegistrationRequired(false);
+        try (Output output = new Output(new FileOutputStream("results.dar"))) {
+            kryo.writeObject(output, dependencyNode);
+        } catch (FileNotFoundException e) {
+            log.error("Could not write results to file.", e);
         }
     }
 

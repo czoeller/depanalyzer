@@ -1,5 +1,8 @@
 package de.czoeller.depanalyzer.ui;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
 import com.google.common.collect.Lists;
 import com.google.common.graph.ImmutableNetwork;
 import com.google.common.graph.MutableNetwork;
@@ -15,10 +18,15 @@ import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
 import de.czoeller.depanalyzer.ui.visitor.GraphBuilderVisitor;
 import de.czoeller.depanalyzer.ui.visitor.MavenConverterGraphBuilderVisitor;
 import edu.uci.ics.jung.algorithms.generators.random.BarabasiAlbertGenerator;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.eclipse.aether.graph.DependencyNode;
+import org.objenesis.strategy.StdInstantiatorStrategy;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -87,15 +95,48 @@ public class GraphFactory {
     }
 
     public static ImmutableNetwork<GraphDependencyNode, GraphDependencyEdge> realGraphFromExampleProject(MutableNetwork<GraphDependencyNode, GraphDependencyEdge> forest) {
-        final Core core = new Core();
-        core.analyzePOM(Config.INSTANCE.getTargetPomFile());
-
-        final de.czoeller.depanalyzer.metamodel.DependencyNode rootNode = core.getDependencyNode();
+        final de.czoeller.depanalyzer.metamodel.DependencyNode rootNode = getDependencyNodeCachedOrNew();
 
         final GraphBuilderVisitor graphBuilderVisitor = new GraphBuilderVisitor(forest);
         rootNode.accept(graphBuilderVisitor);
 
         return graphBuilderVisitor.getGraph();
+    }
+
+    private static de.czoeller.depanalyzer.metamodel.DependencyNode getDependencyNodeCachedOrNew() {
+
+        final File resultFile = new File("results.dar");
+        de.czoeller.depanalyzer.metamodel.DependencyNode dependencyNode = null;
+
+        if(resultFile.exists()) {
+            final Kryo kryo = new Kryo();
+            kryo.setRegistrationRequired(false);
+            kryo.setInstantiatorStrategy(new DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
+            try(Input in = new Input(new FileInputStream(resultFile))) {
+                kryo.register(de.czoeller.depanalyzer.metamodel.DependencyNode.class);
+                kryo.register(Artifact.class);
+                kryo.register(DefaultArtifact.class);
+                kryo.register(DefaultArtifactHandler.class);
+                kryo.register(File.class);
+                kryo.register(org.apache.maven.artifact.versioning.VersionRange.class);
+                kryo.register(org.apache.maven.artifact.versioning.DefaultArtifactVersion.class);
+                kryo.register(org.apache.maven.artifact.versioning.ComparableVersion.class);
+                kryo.register(Class.forName("org.apache.maven.artifact.versioning.ComparableVersion$ListItem"));
+                kryo.register(Class.forName("org.apache.maven.artifact.versioning.ComparableVersion$IntegerItem"));
+                kryo.register(Class.forName("org.apache.maven.artifact.versioning.ComparableVersion$StringItem"));
+                kryo.register(Class.forName("java.util.Collections$EmptyList"));
+
+                dependencyNode = kryo.readObject(in, de.czoeller.depanalyzer.metamodel.DependencyNode.class);
+            } catch (FileNotFoundException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        } else {
+            final Core core = new Core();
+            core.analyzePOM(Config.INSTANCE.getTargetPomFile());
+            dependencyNode = core.getDependencyNode();
+        }
+
+        return dependencyNode;
     }
 
 }
