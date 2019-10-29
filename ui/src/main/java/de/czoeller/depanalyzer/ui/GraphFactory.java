@@ -108,7 +108,7 @@ public class GraphFactory {
         final File resultFile = new File("results.dar");
         de.czoeller.depanalyzer.metamodel.DependencyNode dependencyNode = null;
 
-        if(resultFile.exists()) {
+        if(resultFile.exists() && !Config.INSTANCE.hasChanged()) {
             final Kryo kryo = new Kryo();
             kryo.setRegistrationRequired(false);
             kryo.setInstantiatorStrategy(new DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));

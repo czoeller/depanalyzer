@@ -1,15 +1,16 @@
 package de.czoeller.depanalyzer.core.config;
 
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import org.apache.commons.io.FileUtils;
+
+import java.io.*;
 import java.util.Properties;
 
 public enum Config {
     INSTANCE;
 
     private final File targetPomFile;
+    private final boolean hashChanged;
 
     Config() {
         String propertiesPath = "app.properties";
@@ -17,11 +18,27 @@ public enum Config {
         Properties appProps = new Properties();
         try {
             appProps.load(new FileInputStream(propertiesPath));
-            String targetPomFileStr = getPropertySafely(appProps, "targetPomFile");
-            targetPomFile = new File(targetPomFileStr);
+
+            long hash = FileUtils.sizeOf(new File(propertiesPath));
+            long hashOld = getHash(appProps);
+            hashChanged = hash != hashOld;
+            targetPomFile = new File(getPropertySafely(appProps, "targetPomFile"));
+
+            appProps.setProperty("hash", "" + hash);
+
+            if(hashChanged)
+                appProps.store(new FileOutputStream(propertiesPath), null);
         } catch (IOException e) {
             throw new RuntimeException("Could not load Properties. Make sure there is a app.properties file at '" + propertiesPath +"'", e);
         }
+    }
+
+    private long getHash(Properties properties) {
+        final String property = properties.getProperty("hash");
+        if (null == property) {
+            return 0;
+        }
+        return Long.valueOf(property);
     }
 
     private String getPropertySafely(Properties properties, String key) {
@@ -35,5 +52,8 @@ public enum Config {
     public File getTargetPomFile() {
         return targetPomFile;
     }
-    
+
+    public boolean hasChanged() {
+        return hashChanged;
+    }
 }
