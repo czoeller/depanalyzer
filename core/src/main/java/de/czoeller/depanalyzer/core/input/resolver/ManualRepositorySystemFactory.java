@@ -1,5 +1,6 @@
 package de.czoeller.depanalyzer.core.input.resolver;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
@@ -9,6 +10,7 @@ import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.transport.file.FileTransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 
+@Slf4j
 public class ManualRepositorySystemFactory
 {
 
@@ -24,14 +26,12 @@ public class ManualRepositorySystemFactory
         locator.addService( TransporterFactory.class, FileTransporterFactory.class );
         locator.addService( TransporterFactory.class, HttpTransporterFactory.class );
 
-        locator.setErrorHandler( new DefaultServiceLocator.ErrorHandler()
-        {
+        locator.setErrorHandler(new DefaultServiceLocator.ErrorHandler() {
             @Override
-            public void serviceCreationFailed( Class<?> type, Class<?> impl, Throwable exception )
-            {
-                exception.printStackTrace();
+            public void serviceCreationFailed(Class<?> type, Class<?> impl, Throwable exception) {
+                log.error("Service creation failed", exception);
             }
-        } );
+        });
 
         return locator.getService( RepositorySystem.class );
     }
