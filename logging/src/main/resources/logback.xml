@@ -15,7 +15,7 @@
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${user.dir}/logs/app-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <maxFileSize>10MB</maxFileSize>
+            <maxFileSize>100MB</maxFileSize>
             <maxHistory>30</maxHistory>
             <totalSizeCap>1GB</totalSizeCap>
         </rollingPolicy>
@@ -30,7 +30,12 @@
         <appender-ref ref="FILE" />
     </root>
 
-    <logger level="TRACE" name="de.czoeller"/>
+    <logger level="INFO" name="de.czoeller.*"/>
+    <logger level="WARN" name="org.apache.commons.jcs"/>
+    <logger level="WARN" name="org.sonatype.ossindex"/>
+    <logger level="WARN" name="org.owasp.dependencycheck"/>
+    <logger level="WARN" name="edu.umd.cs"/>
+    <logger level="WARN" name="com.h3xstream.findsecbugs"/>
     <logger name="org.apache.http" level="WARN"/>
     <logger name="org.apache.velocity" level="WARN"/>
 </configuration>
