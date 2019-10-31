@@ -26,6 +26,7 @@ import de.czoeller.depanalyzer.ui.model.MainModel;
 import de.czoeller.depanalyzer.ui.scorer.HeatMapScorer;
 import de.czoeller.depanalyzer.ui.scorer.ScoreToHeatTransformer;
 import de.czoeller.depanalyzer.ui.transformators.EdgeStrokeTransformator;
+import de.czoeller.depanalyzer.ui.transformators.NodeDrawPaintTransformator;
 import de.czoeller.depanalyzer.ui.transformators.NodeStrokeTransformator;
 import edu.uci.ics.jung.layout.algorithms.*;
 import edu.uci.ics.jung.layout.model.Point;
@@ -47,6 +48,7 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Timer;
 import java.util.TimerTask;
 import java.util.stream.Collectors;
 
@@ -70,70 +72,79 @@ public class GraphViewerWrapper {
 
     private void init() {
         try {
-            SwingUtilities.invokeAndWait(() -> {
-                LayoutAlgorithm<GraphDependencyNode> layout = new CircleLayoutAlgorithm<>();
-
-                final Dimension vvDimension = new Dimension(500, 500);
-                final Dimension vvsDimension = new Dimension(((int) (vvDimension.getWidth() * 0.5)), ((int) (vvDimension.getHeight() * 0.5)));
-
-                // The BasicVisualizationServer<V,E> is parameterized by the edge types
-                vv = new VisualizationViewer<>(model.getGraph(), layout, vvDimension);
-                vvs = new SatelliteVisualizationViewer<>(vv, vvsDimension);
-                vv.setBackground(Color.decode("#f4f4f4"));
-                vvs.setBackground(Color.decode("#f4f4f4"));
-                HeatMapScorer<GraphDependencyNode, GraphDependencyEdge> heatMapScorer = new HeatMapScorer<>(model.getGraph());
-                ScoreToHeatTransformer<GraphDependencyNode, GraphDependencyEdge> nodeFillHeatmapTransformer = new ScoreToHeatTransformer<>(heatMapScorer);
-
-                vv.getRenderContext()
-                  .setNodeFillPaintFunction(nodeFillHeatmapTransformer);
-                vvs.getRenderContext()
-                   .setNodeStrokeFunction(new NodeStrokeTransformator());
-
-                vv.getRenderContext()
-                  .setEdgeDrawPaintFunction(e -> Color.lightGray);
-                vv.getRenderContext()
-                  .setEdgeStrokeFunction(new EdgeStrokeTransformator());
-                vv.getRenderContext()
-                  .setArrowFillPaintFunction(e -> Color.lightGray);
-                vv.getRenderContext()
-                  .setArrowDrawPaintFunction(e -> Color.lightGray);
-                vv.setNodeToolTipFunction(node -> "<html><h1>" + node.getId() + "</h1>" + node.getArtifact()
-                                                                                              .toString() + "<br />heat: " + node.getHeat() + "</html>");
-                vv.getRenderContext()
-                  .setNodeLabelFunction(n -> n.getId()
-                                              .toString());
-                vv.getRenderer()
-                  .getNodeLabelRenderer()
-                  .setPositioner(new BasicNodeLabelRenderer.InsidePositioner());
-                vv.getRenderer()
-                  .getNodeLabelRenderer()
-                  .setPosition(Renderer.NodeLabel.Position.AUTO);
-
-                vv.getRenderContext()
-                  .setNodeDrawPaintFunction(v -> vv.getPickedNodeState()
-                                                   .isPicked(v) ? Color.CYAN : Color.BLACK);
-                vv.getPickedNodeState()
-                  .addItemListener(e -> Platform.runLater(() -> selectedNodeProperty.set((GraphDependencyNode) e.getItem())));
-
-                final DefaultModalGraphMouse<GraphDependencyNode, GraphDependencyEdge> gm = new DefaultModalGraphMouse<>();
-                gm.setMode(ModalGraphMouse.Mode.PICKING);
-                vv.setGraphMouse(gm);
-
-                vv.setPreferredSize(vvDimension);
-                vvs.setPreferredSize(vvsDimension);
-                swingNodeViewer.setContent(vv);
-                swingNodeSatelliteViewer.setContent(vvs);
-
-                // Edge animation
-                AnimationTimerTask at = new AnimationTimerTask(vvs);
-                java.util.Timer timer = new java.util.Timer();
-                timer.scheduleAtFixedRate(at, 10, 30);
-            });
+            SwingUtilities.invokeAndWait(this::run);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
+    }
+
+
+    private void run() {
+        LayoutAlgorithm<GraphDependencyNode> layout = new CircleLayoutAlgorithm<>();
+
+        final Dimension vvDimension = new Dimension(500, 500);
+        final Dimension vvsDimension = new Dimension(((int) (vvDimension.getWidth() * 0.5)), ((int) (vvDimension.getHeight() * 0.5)));
+
+        // The BasicVisualizationServer<V,E> is parameterized by the edge types
+        vv = new VisualizationViewer<>(model.getGraph(), layout, vvDimension);
+        vvs = new SatelliteVisualizationViewer<>(vv, vvsDimension);
+        vv.setBackground(Color.decode("#f4f4f4"));
+        vvs.setBackground(Color.decode("#f4f4f4"));
+        final HeatMapScorer<GraphDependencyNode, GraphDependencyEdge> heatMapScorer = new HeatMapScorer<>(model.getGraph());
+        final ScoreToHeatTransformer<GraphDependencyNode, GraphDependencyEdge> nodeFillHeatmapTransformer = new ScoreToHeatTransformer<>(heatMapScorer);
+        final NodeStrokeTransformator nodeStrokeTransformator = new NodeStrokeTransformator();
+        final NodeDrawPaintTransformator nodeDrawPaintTransformator = new NodeDrawPaintTransformator(vv);
+
+        vv.getRenderContext()
+          .setNodeFillPaintFunction(nodeFillHeatmapTransformer);
+        vvs.getRenderContext()
+           .setNodeFillPaintFunction(nodeFillHeatmapTransformer);
+        vv.getRenderContext()
+          .setNodeStrokeFunction(nodeStrokeTransformator);
+        vvs.getRenderContext()
+           .setNodeStrokeFunction(nodeStrokeTransformator);
+        vv.getRenderContext()
+          .setEdgeDrawPaintFunction(e -> Color.lightGray);
+        vv.getRenderContext()
+          .setEdgeStrokeFunction(new EdgeStrokeTransformator());
+        vv.getRenderContext()
+          .setArrowFillPaintFunction(e -> Color.lightGray);
+        vv.getRenderContext()
+          .setArrowDrawPaintFunction(e -> Color.lightGray);
+        vv.setNodeToolTipFunction(node -> "<html><h1>" + node.getId() + "</h1>" + node.getArtifact()
+                                                                                      .toString() + "<br />heat: " + node.getHeat() + "</html>");
+        vv.getRenderContext()
+          .setNodeLabelFunction(n -> n.getId()
+                                      .toString());
+        vv.getRenderer()
+          .getNodeLabelRenderer()
+          .setPositioner(new BasicNodeLabelRenderer.InsidePositioner());
+        vv.getRenderer()
+          .getNodeLabelRenderer()
+          .setPosition(Renderer.NodeLabel.Position.AUTO);
+
+        vv.getRenderContext()
+          .setNodeDrawPaintFunction(nodeDrawPaintTransformator);
+        vvs.getRenderContext()
+           .setNodeDrawPaintFunction(nodeDrawPaintTransformator);
+        vv.getPickedNodeState()
+          .addItemListener(e -> Platform.runLater(() -> selectedNodeProperty.set((GraphDependencyNode) e.getItem())));
+
+        final DefaultModalGraphMouse<GraphDependencyNode, GraphDependencyEdge> gm = new DefaultModalGraphMouse<>();
+        gm.setMode(ModalGraphMouse.Mode.PICKING);
+        vv.setGraphMouse(gm);
+
+        vv.setPreferredSize(vvDimension);
+        vvs.setPreferredSize(vvsDimension);
+        swingNodeViewer.setContent(vv);
+        swingNodeSatelliteViewer.setContent(vvs);
+
+        // Edge animation
+        AnimationTimerTask at = new AnimationTimerTask(vvs);
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(at, 10, 30);
     }
 
     public GraphDependencyNode getSelectedNodeProperty() {
@@ -188,7 +199,7 @@ public class GraphViewerWrapper {
         }
     }
 
-	class AnimationTimerTask extends TimerTask {
+    class AnimationTimerTask extends TimerTask {
 
         private final double width = 0.123; // Size of the colored line.
         private final double stepsize = 0.01;

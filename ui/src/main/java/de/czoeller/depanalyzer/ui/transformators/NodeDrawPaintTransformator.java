@@ -16,23 +16,26 @@
  */
 package de.czoeller.depanalyzer.ui.transformators;
 
+import de.czoeller.depanalyzer.ui.model.GraphDependencyEdge;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
 
 import java.awt.*;
-import java.util.function.Function;
 
-public class NodeStrokeTransformator implements Function<GraphDependencyNode, Stroke> {
+public class NodeDrawPaintTransformator implements java.util.function.Function<GraphDependencyNode, Paint> {
+
+    private final VisualizationViewer<GraphDependencyNode, GraphDependencyEdge> vv;
+
+    public NodeDrawPaintTransformator(VisualizationViewer<GraphDependencyNode, GraphDependencyEdge> vv) {
+        this.vv = vv;
+    }
 
     @Override
-    public Stroke apply(GraphDependencyNode node) {
-        float dash[] = {1.0f};
-        float dash_parent[] = {1.0f};
-        final BasicStroke basicStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f);
-        final BasicStroke parentStroke = new BasicStroke(4.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash_parent, 0.0f);
-
-        if (node.isProjectNode()) {
-            return parentStroke;
+    public Paint apply(GraphDependencyNode graphDependencyNode) {
+        if(graphDependencyNode.isProjectNode()) {
+            return vv.getPickedNodeState().isPicked(graphDependencyNode) ? Color.CYAN : Color.BLUE;
+        } else {
+            return vv.getPickedNodeState().isPicked(graphDependencyNode) ? Color.CYAN : Color.BLACK;
         }
-        return new BasicStroke(1.0F);
     }
 }
