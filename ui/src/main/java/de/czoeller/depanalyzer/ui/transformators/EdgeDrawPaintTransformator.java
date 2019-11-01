@@ -20,24 +20,24 @@ import de.czoeller.depanalyzer.ui.ColorScheme;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyEdge;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
 import de.czoeller.depanalyzer.ui.swingwrapper.GraphViewerWrapper;
+import lombok.RequiredArgsConstructor;
 
 import java.awt.*;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 
+@RequiredArgsConstructor
 public class EdgeDrawPaintTransformator implements Function<GraphDependencyEdge, Paint> {
 
-    private final GraphViewerWrapper gvw;
-
-    public EdgeDrawPaintTransformator(GraphViewerWrapper graphViewerWrapper) {
-        this.gvw = graphViewerWrapper;
-    }
+    private final Map<GraphDependencyNode, Set<GraphDependencyNode>> paths;
+    private final BiPredicate<GraphDependencyEdge, Set<GraphDependencyNode>> inPath;
 
     @Override
     public Paint apply(GraphDependencyEdge edge) {
-        for (Map.Entry<GraphDependencyNode, Set<GraphDependencyNode>> es : gvw.getMPreds().entrySet()) {
-            if (gvw.isBlessed(es.getValue(), edge)) {
+        for (Map.Entry<GraphDependencyNode, Set<GraphDependencyNode>> es : paths.entrySet()) {
+            if (inPath.test(edge, es.getValue())) {
                 return ColorScheme.EDGE.TRACE_HL_COLOR;
             } else {
                 return ColorScheme.EDGE.COLOR;

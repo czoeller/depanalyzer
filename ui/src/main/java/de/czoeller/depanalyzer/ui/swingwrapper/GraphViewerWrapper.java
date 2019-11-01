@@ -35,7 +35,6 @@ import de.czoeller.depanalyzer.ui.transformators.NodeStrokeTransformator;
 import edu.uci.ics.jung.algorithms.shortestpath.BFSDistanceLabeler;
 import edu.uci.ics.jung.layout.algorithms.*;
 import edu.uci.ics.jung.layout.model.Point;
-import edu.uci.ics.jung.visualization.MultiLayerTransformer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
@@ -57,6 +56,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Timer;
 import java.util.*;
+import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -65,10 +65,18 @@ public class GraphViewerWrapper {
     private final MainModel model;
     private final SwingNode swingNodeViewer;
     private final SwingNode swingNodeSatelliteViewer;
-    private final ObjectProperty<GraphDependencyNode> selectedNodeProperty = new SimpleObjectProperty<>();
-
     private VisualizationViewer<GraphDependencyNode, GraphDependencyEdge> vv;
     private SatelliteVisualizationViewer<GraphDependencyNode, GraphDependencyEdge> vvs;
+    private final ObjectProperty<GraphDependencyNode> selectedNodeProperty = new SimpleObjectProperty<>();
+    /** Holds paths for selected node to all the project nodes */
+    @Getter
+    private final Map<GraphDependencyNode, Set<GraphDependencyNode>> pathsForProjectNodes = new HashMap<>();
+    private final BiPredicate<GraphDependencyEdge, Set<GraphDependencyNode>> areEndpointsOfThisEdgeInThePath = (e, predecessors) -> {
+        EndpointPair<GraphDependencyNode> endpoints = vv.getModel().getNetwork().incidentNodes(e);
+        GraphDependencyNode v1 = endpoints.nodeU();
+        GraphDependencyNode v2 = endpoints.nodeV();
+        return !v1.equals(v2) && predecessors.contains(v1) && predecessors.contains(v2);
+    };
 
     public GraphViewerWrapper(MainModel model, SwingNode swingNodeViewer, SwingNode swingNodeSatelliteViewer) {
         this.model = model;
@@ -80,13 +88,10 @@ public class GraphViewerWrapper {
     private void init() {
         try {
             SwingUtilities.invokeAndWait(this::run);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+        } catch (InterruptedException | InvocationTargetException e) {
+            log.warn("Exception in GraphViewerWrapper", e);
         }
     }
-
 
     private void run() {
         LayoutAlgorithm<GraphDependencyNode> layout = new CircleLayoutAlgorithm<>();
@@ -94,7 +99,6 @@ public class GraphViewerWrapper {
         final Dimension vvDimension = new Dimension(500, 500);
         final Dimension vvsDimension = new Dimension(((int) (vvDimension.getWidth() * 0.5)), ((int) (vvDimension.getHeight() * 0.5)));
 
-        // The BasicVisualizationServer<V,E> is parameterized by the edge types
         vv = new VisualizationViewer<>(model.getGraph(), layout, vvDimension);
         vvs = new SatelliteVisualizationViewer<>(vv, vvsDimension);
         vv.setBackground(ColorScheme.BG_COLOR);
@@ -115,15 +119,14 @@ public class GraphViewerWrapper {
         vv.getRenderContext()
           .setEdgeDrawPaintFunction(e -> ColorScheme.EDGE.COLOR);
         vv.getRenderContext()
-          .setEdgeStrokeFunction(new EdgeStrokeTransformator(this));
+          .setEdgeStrokeFunction(new EdgeStrokeTransformator(pathsForProjectNodes, areEndpointsOfThisEdgeInThePath));
         vv.getRenderContext()
-          .setEdgeDrawPaintFunction(new EdgeDrawPaintTransformator(this));
+          .setEdgeDrawPaintFunction(new EdgeDrawPaintTransformator(pathsForProjectNodes, areEndpointsOfThisEdgeInThePath));
         vv.getRenderContext()
           .setArrowFillPaintFunction(e -> ColorScheme.EDGE.ARROW_COLOR);
         vv.getRenderContext()
           .setArrowDrawPaintFunction(e -> ColorScheme.EDGE.ARROW_CONTOUR_COLOR);
-        vv.setNodeToolTipFunction(node -> "<html><h1>" + node.getId() + "</h1>" + node.getArtifact()
-                                                                                      .toString() + "<br />heat: " + node.getHeat() + "</html>");
+        vv.setNodeToolTipFunction(node -> "<html><h1>" + node.getId() + "</h1>" + node.getArtifact().toString() + "<br />heat: " + node.getHeat() + "</html>");
         vv.getRenderContext()
           .setNodeLabelFunction(n -> n.getId()
                                       .toString());
@@ -145,49 +148,6 @@ public class GraphViewerWrapper {
               Platform.runLater(() -> selectedNodeProperty.set(pickedNode));
           });
 
-        vv.addPostRenderPaintable(new VisualizationViewer.Paintable() {
-
-            public boolean useTransform() {
-                return true;
-            }
-
-            public void paint(Graphics g) {
-                if (mPreds == null) {
-                    return;
-                }
-
-                for (Map.Entry<GraphDependencyNode, Set<GraphDependencyNode>> es : mPreds.entrySet()) {
-
-                    // for all edges, paint edges that are in shortest path
-                    for (GraphDependencyEdge e : vv.getModel()
-                                                   .getNetwork()
-                                                   .edges()) {
-                        if (isBlessed(es.getValue(), e)) {
-                            EndpointPair<GraphDependencyNode> endpoints = vv.getModel()
-                                                                            .getNetwork()
-                                                                            .incidentNodes(e);
-                            GraphDependencyNode v1 = endpoints.nodeU();
-                            GraphDependencyNode v2 = endpoints.nodeV();
-                            Point p1 = vv.getModel()
-                                         .getLayoutModel()
-                                         .apply(v1);
-                            Point p2 = vv.getModel()
-                                         .getLayoutModel()
-                                         .apply(v2);
-                            Point2D p2d1 = vv.getRenderContext()
-                                             .getMultiLayerTransformer()
-                                             .transform(MultiLayerTransformer.Layer.LAYOUT, new Point2D.Double(p1.x, p1.y));
-                            Point2D p2d2 = vv.getRenderContext()
-                                             .getMultiLayerTransformer()
-                                             .transform(MultiLayerTransformer.Layer.LAYOUT, new Point2D.Double(p2.x, p2.y));
-                            Renderer<GraphDependencyNode, GraphDependencyEdge> renderer = vv.getRenderer();
-                            renderer.renderEdge(vv.getRenderContext(), vv.getModel(), e);
-                        }
-                    }
-                }
-            }
-        });
-
         final DefaultModalGraphMouse<GraphDependencyNode, GraphDependencyEdge> gm = new DefaultModalGraphMouse<>();
         gm.setMode(ModalGraphMouse.Mode.PICKING);
         vv.setGraphMouse(gm);
@@ -203,8 +163,6 @@ public class GraphViewerWrapper {
         timer.scheduleAtFixedRate(at, 10, 30);
     }
 
-    @Getter
-    private HashMap<GraphDependencyNode, Set<GraphDependencyNode>> mPreds = new HashMap<>();
     private void updatePath(GraphDependencyNode pickedNode) {
 
         final List<GraphDependencyNode> projectNodes = vv.getModel()
@@ -215,8 +173,8 @@ public class GraphViewerWrapper {
                                                     .collect(Collectors.toList());
 
         for (GraphDependencyNode projectNode : projectNodes) {
-            mPreds.remove(pickedNode);
-            mPreds.put(projectNode, computePred(projectNode, pickedNode));
+            pathsForProjectNodes.remove(pickedNode);
+            pathsForProjectNodes.put(projectNode, computePred(projectNode, pickedNode));
         }
 
     }
@@ -247,13 +205,6 @@ public class GraphViewerWrapper {
         }
 
         return currentPred;
-    }
-
-    public boolean isBlessed(Set<GraphDependencyNode> mPred, GraphDependencyEdge e) {
-        EndpointPair<GraphDependencyNode> endpoints = vv.getModel().getNetwork().incidentNodes(e);
-        GraphDependencyNode v1 = endpoints.nodeU();
-        GraphDependencyNode v2 = endpoints.nodeV();
-        return !v1.equals(v2) && mPred.contains(v1) && mPred.contains(v2);
     }
 
     public GraphDependencyNode getSelectedNodeProperty() {
