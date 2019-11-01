@@ -18,7 +18,6 @@ package de.czoeller.depanalyzer.ui.transformators;
 
 import de.czoeller.depanalyzer.ui.model.GraphDependencyEdge;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
-import lombok.RequiredArgsConstructor;
 
 import java.awt.*;
 import java.util.Map;
@@ -26,23 +25,22 @@ import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
-@RequiredArgsConstructor
-public class EdgeStrokeTransformator implements Function<GraphDependencyEdge, Stroke> {
+public class EdgeStrokeTransformator extends TraceBasedTransformator implements Function<GraphDependencyEdge, Stroke> {
 
     protected final Stroke THIN = new BasicStroke(1);
     protected final Stroke THICK = new BasicStroke(2);
-    private final Map<GraphDependencyNode, Set<GraphDependencyNode>> paths;
-    private final BiPredicate<GraphDependencyEdge, Set<GraphDependencyNode>> inPath;
+
+    public EdgeStrokeTransformator(Map<GraphDependencyNode, Set<GraphDependencyNode>> paths, BiPredicate<GraphDependencyEdge, Set<GraphDependencyNode>> inPath) {
+        super(paths, inPath);
+    }
 
     @Override
     public Stroke apply(GraphDependencyEdge edge) {
-        for (Map.Entry<GraphDependencyNode, Set<GraphDependencyNode>> es : paths.entrySet()) {
-            if (inPath.test(edge, es.getValue())) {
-                return THICK;
-            } else {
-                return THIN;
-            }
+        if(isInPath(edge)) {
+            return THICK;
+        } else {
+            return THIN;
         }
-        return THIN;
     }
+
 }

@@ -16,28 +16,23 @@
  */
 package de.czoeller.depanalyzer.ui.transformators;
 
-import de.czoeller.depanalyzer.ui.ColorScheme;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyEdge;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
+import lombok.RequiredArgsConstructor;
 
-import java.awt.*;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiPredicate;
-import java.util.function.Function;
 
-public class EdgeDrawPaintTransformator extends TraceBasedTransformator implements Function<GraphDependencyEdge, Paint> {
+@RequiredArgsConstructor
+public abstract class TraceBasedTransformator {
+    protected final Map<GraphDependencyNode, Set<GraphDependencyNode>> paths;
+    protected final BiPredicate<GraphDependencyEdge, Set<GraphDependencyNode>> inPath;
 
-    public EdgeDrawPaintTransformator(Map<GraphDependencyNode, Set<GraphDependencyNode>> paths, BiPredicate<GraphDependencyEdge, Set<GraphDependencyNode>> inPath) {
-        super(paths, inPath);
-    }
-
-    @Override
-    public Paint apply(GraphDependencyEdge edge) {
-        if (isInPath(edge)) {
-            return ColorScheme.EDGE.TRACE_HL_COLOR;
-        } else {
-            return ColorScheme.EDGE.COLOR;
+    protected boolean isInPath(GraphDependencyEdge edge) {
+        for (Map.Entry<GraphDependencyNode, Set<GraphDependencyNode>> es : paths.entrySet()) {
+            return inPath.test(edge, es.getValue());
         }
+        return false;
     }
 }
