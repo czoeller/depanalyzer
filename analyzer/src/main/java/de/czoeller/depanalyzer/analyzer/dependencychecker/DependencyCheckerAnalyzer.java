@@ -59,7 +59,8 @@ public class DependencyCheckerAnalyzer extends BaseAnalyzer {
     }
 
     private void init() {
-        settings.setBoolean("ossindexAnalyzerEnabled", false);
+        //if oss-index API returns 429 rate limit we can disable the service:
+        //settings.setBoolean("ossindexAnalyzerEnabled", false);
         engine = new Engine(Engine.Mode.STANDALONE, settings);
     }
 
