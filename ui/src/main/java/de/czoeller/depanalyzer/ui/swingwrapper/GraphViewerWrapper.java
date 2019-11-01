@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 import com.google.common.graph.EndpointPair;
 import com.google.common.graph.Network;
 import de.czoeller.depanalyzer.metamodel.Analyzers;
+import de.czoeller.depanalyzer.ui.ColorScheme;
 import de.czoeller.depanalyzer.ui.animation.NodeFillHighlightAnimation;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyEdge;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
@@ -96,8 +97,8 @@ public class GraphViewerWrapper {
         // The BasicVisualizationServer<V,E> is parameterized by the edge types
         vv = new VisualizationViewer<>(model.getGraph(), layout, vvDimension);
         vvs = new SatelliteVisualizationViewer<>(vv, vvsDimension);
-        vv.setBackground(Color.decode("#f4f4f4"));
-        vvs.setBackground(Color.decode("#f4f4f4"));
+        vv.setBackground(ColorScheme.BG_COLOR);
+        vvs.setBackground(ColorScheme.BG_COLOR);
         final HeatMapScorer<GraphDependencyNode, GraphDependencyEdge> heatMapScorer = new HeatMapScorer<>(model.getGraph());
         final ScoreToHeatTransformer<GraphDependencyNode, GraphDependencyEdge> nodeFillHeatmapTransformer = new ScoreToHeatTransformer<>(heatMapScorer);
         final NodeStrokeTransformator nodeStrokeTransformator = new NodeStrokeTransformator();
@@ -112,15 +113,15 @@ public class GraphViewerWrapper {
         vvs.getRenderContext()
            .setNodeStrokeFunction(nodeStrokeTransformator);
         vv.getRenderContext()
-          .setEdgeDrawPaintFunction(e -> Color.lightGray);
+          .setEdgeDrawPaintFunction(e -> ColorScheme.EDGE.COLOR);
         vv.getRenderContext()
           .setEdgeStrokeFunction(new EdgeStrokeTransformator(this));
         vv.getRenderContext()
           .setEdgeDrawPaintFunction(new EdgeDrawPaintTransformator(this));
         vv.getRenderContext()
-          .setArrowFillPaintFunction(e -> Color.lightGray);
+          .setArrowFillPaintFunction(e -> ColorScheme.EDGE.ARROW_COLOR);
         vv.getRenderContext()
-          .setArrowDrawPaintFunction(e -> Color.lightGray);
+          .setArrowDrawPaintFunction(e -> ColorScheme.EDGE.ARROW_CONTOUR_COLOR);
         vv.setNodeToolTipFunction(node -> "<html><h1>" + node.getId() + "</h1>" + node.getArtifact()
                                                                                       .toString() + "<br />heat: " + node.getHeat() + "</html>");
         vv.getRenderContext()
@@ -277,8 +278,8 @@ public class GraphViewerWrapper {
 
     public void setSearch(String search) {
         final List<GraphDependencyNode> nodes = model.getGraph().nodes().stream().filter(n -> n.getArtifact().getArtifactId().contains(search)).collect(Collectors.toList());
-        new NodeFillHighlightAnimation<>(vv, nodes, Color.yellow);
-        new NodeFillHighlightAnimation<>(vvs, nodes, Color.yellow);
+        new NodeFillHighlightAnimation<>(vv, nodes, ColorScheme.EDGE.SEARCH_HL_COLOR);
+        new NodeFillHighlightAnimation<>(vvs, nodes, ColorScheme.EDGE.SEARCH_HL_COLOR);
     }
 
     public void setAnalyzerResults(Analyzers analyzer) {
@@ -347,7 +348,7 @@ public class GraphViewerWrapper {
                       return Color.red;
                   }
 
-                  Color[] colors = {Color.gray, Color.red, Color.gray};
+                  Color[] colors = {ColorScheme.EDGE.ANIMATION_COLOR, ColorScheme.EDGE.ANIMATION_HL_COLOR, ColorScheme.EDGE.ANIMATION_COLOR};
                   float start = (float) Math.max(0.0, keyframe - width);
                   float end = (float) Math.min(1.0, keyframe + width);
                   float[] fractions = {start, (float) keyframe, end};

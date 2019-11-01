@@ -16,6 +16,7 @@
  */
 package de.czoeller.depanalyzer.ui.transformators;
 
+import de.czoeller.depanalyzer.ui.ColorScheme;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyEdge;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
 import de.czoeller.depanalyzer.ui.swingwrapper.GraphViewerWrapper;
@@ -37,11 +38,11 @@ public class EdgeDrawPaintTransformator implements Function<GraphDependencyEdge,
     public Paint apply(GraphDependencyEdge edge) {
         for (Map.Entry<GraphDependencyNode, Set<GraphDependencyNode>> es : gvw.getMPreds().entrySet()) {
             if (gvw.isBlessed(es.getValue(), edge)) {
-                return Color.orange;
+                return ColorScheme.EDGE.TRACE_HL_COLOR;
             } else {
-                return Color.gray;
+                return ColorScheme.EDGE.COLOR;
             }
         }
-        return Color.gray;
+        return ColorScheme.EDGE.COLOR;
     }
 }

@@ -16,13 +16,15 @@
  */
 package de.czoeller.depanalyzer.ui.transformators;
 
+import de.czoeller.depanalyzer.ui.ColorScheme;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyEdge;
 import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 
 import java.awt.*;
+import java.util.function.Function;
 
-public class NodeDrawPaintTransformator implements java.util.function.Function<GraphDependencyNode, Paint> {
+public class NodeDrawPaintTransformator implements Function<GraphDependencyNode, Paint> {
 
     private final VisualizationViewer<GraphDependencyNode, GraphDependencyEdge> vv;
 
@@ -33,9 +35,9 @@ public class NodeDrawPaintTransformator implements java.util.function.Function<G
     @Override
     public Paint apply(GraphDependencyNode graphDependencyNode) {
         if(graphDependencyNode.isProjectNode()) {
-            return vv.getPickedNodeState().isPicked(graphDependencyNode) ? Color.CYAN : Color.BLUE;
+            return vv.getPickedNodeState().isPicked(graphDependencyNode) ? ColorScheme.NODE.PROJECT_PICKED_CONTOUR_HL_COLOR : ColorScheme.NODE.PROJECT_CONTOUR;
         } else {
-            return vv.getPickedNodeState().isPicked(graphDependencyNode) ? Color.CYAN : Color.BLACK;
+            return vv.getPickedNodeState().isPicked(graphDependencyNode) ? ColorScheme.NODE.PICKED_CONTOUR_HL_COLOR : ColorScheme.NODE.CONTOUR;
         }
     }
 }

@@ -16,7 +16,7 @@
  */
 package de.czoeller.depanalyzer.ui.components.help;
 
-import de.czoeller.depanalyzer.ui.scorer.ScoreToHeatTransformer;
+import de.czoeller.depanalyzer.ui.ColorScheme;
 import de.czoeller.depanalyzer.ui.util.GradientUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -38,7 +38,7 @@ public class HelpController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        final java.awt.Color[] multiGradient = ScoreToHeatTransformer.multiGradient;
+        final java.awt.Color[] multiGradient = ColorScheme.NODE.HEAT_COLOR_GRADIENT;
         final List<Stop> collect = IntStream.range(0, multiGradient.length)
                                             .filter(i -> i % 25 == 0 || i == multiGradient.length - 1)
                                             .mapToObj(i -> new Stop(i/100f, GradientUtil.fromAWTColor(multiGradient[i])))
