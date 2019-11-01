@@ -19,7 +19,10 @@ package de.czoeller.depanalyzer.core.config;
 
 import org.apache.commons.io.FileUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Properties;
 
 public enum Config {
@@ -31,7 +34,7 @@ public enum Config {
     Config() {
         String propertiesPath = "app.properties";
 
-        Properties appProps = new Properties();
+        Properties appProps = new CleanProperties();
         try {
             appProps.load(new FileInputStream(propertiesPath));
 
