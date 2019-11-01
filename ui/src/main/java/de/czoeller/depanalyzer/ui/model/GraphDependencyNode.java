@@ -53,4 +53,8 @@ public class GraphDependencyNode implements HasHeat, HasArtifact {
     public List<Issue> getIssues() {
         return dependencyNode.getIssues().get(Globals.getSelectedAnalyzer());
     }
+
+    public boolean isProjectNode() {
+        return getArtifact().getGroupId().equals(Globals.analyzedProjectProperty().get().split(":")[0]);
+    }
 }

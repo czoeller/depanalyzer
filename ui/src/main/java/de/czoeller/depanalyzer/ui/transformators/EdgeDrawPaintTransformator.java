@@ -25,25 +25,23 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-public class EdgeStrokeTransformator implements Function<GraphDependencyEdge, Stroke> {
+public class EdgeDrawPaintTransformator implements Function<GraphDependencyEdge, Paint> {
 
-    protected final Stroke THIN = new BasicStroke(1);
-    protected final Stroke THICK = new BasicStroke(2);
     private final GraphViewerWrapper gvw;
 
-    public EdgeStrokeTransformator(GraphViewerWrapper graphViewerWrapper) {
+    public EdgeDrawPaintTransformator(GraphViewerWrapper graphViewerWrapper) {
         this.gvw = graphViewerWrapper;
     }
 
     @Override
-    public Stroke apply(GraphDependencyEdge edge) {
+    public Paint apply(GraphDependencyEdge edge) {
         for (Map.Entry<GraphDependencyNode, Set<GraphDependencyNode>> es : gvw.getMPreds().entrySet()) {
             if (gvw.isBlessed(es.getValue(), edge)) {
-                return THICK;
+                return Color.orange;
             } else {
-                return THIN;
+                return Color.gray;
             }
         }
-        return THIN;
+        return Color.gray;
     }
 }
