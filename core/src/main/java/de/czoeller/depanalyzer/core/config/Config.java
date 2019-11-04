@@ -17,47 +17,57 @@
 package de.czoeller.depanalyzer.core.config;
 
 
-import org.apache.commons.io.FileUtils;
+import com.google.common.hash.Hashing;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
 
 public enum Config {
     INSTANCE;
 
+    public static final String PROPERTIES_FILE = "app.properties";
     private final File targetPomFile;
     private final boolean hashChanged;
 
     Config() {
-        String propertiesPath = "app.properties";
-
-        Properties appProps = new CleanProperties();
+        final File currentDir = new File(System.getProperty("user.dir"));
+        final Properties appProps = new CleanProperties();
         try {
-            appProps.load(new FileInputStream(propertiesPath));
+            appProps.load(new FileInputStream(new File(currentDir, PROPERTIES_FILE)));
 
-            long hash = FileUtils.sizeOf(new File(propertiesPath));
-            long hashOld = getHash(appProps);
-            hashChanged = hash != hashOld;
+            String hash = calculateHash(appProps);
+            String hashOld = getHash(appProps);
+            hashChanged = !hash.equals(hashOld);
             targetPomFile = new File(getPropertySafely(appProps, "targetPomFile"));
 
-            appProps.setProperty("hash", "" + hash);
-
-            if(hashChanged)
-                appProps.store(new FileOutputStream(propertiesPath), null);
+            if(hashChanged) {
+                appProps.setProperty("hash", hash);
+                appProps.store(new FileOutputStream(PROPERTIES_FILE), null);
+            }
         } catch (IOException e) {
-            throw new RuntimeException("Could not load Properties. Make sure there is a app.properties file at '" + propertiesPath +"'", e);
+            throw new RuntimeException("Could not load Properties. Make sure there is a '" + PROPERTIES_FILE +"' file at " + currentDir.getAbsolutePath(), e);
         }
     }
 
-    private long getHash(Properties properties) {
+    String calculateHash(Properties appProps) {
+        StringBuilder buffer = new StringBuilder();
+        for (Map.Entry<Object, Object> objectEntry : appProps.entrySet()) {
+            if(objectEntry.getKey().equals("hash")) continue;
+            buffer.append(objectEntry.getValue());
+        }
+        return Hashing.sha256().hashUnencodedChars(buffer.toString()).toString();
+    }
+
+    private String getHash(Properties properties) {
         final String property = properties.getProperty("hash");
         if (null == property) {
-            return 0;
+            return "";
         }
-        return Long.valueOf(property);
+        return property;
     }
 
     private String getPropertySafely(Properties properties, String key) {

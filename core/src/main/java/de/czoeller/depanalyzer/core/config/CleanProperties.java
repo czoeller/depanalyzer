@@ -24,10 +24,16 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.TreeSet;
 
+/**
+ * This variant of Properties skips writing the date as first line to the properties file.
+ */
 public class CleanProperties extends Properties {
+
+    private static final long serialVersionUID = -152923400347590934L;
+
     private static class StripFirstLineStream extends FilterOutputStream {
 
-        private boolean firstlineseen = false;
+        private boolean firstLineSeen = false;
 
         public StripFirstLineStream(final OutputStream out) {
             super(out);
@@ -35,16 +41,14 @@ public class CleanProperties extends Properties {
 
         @Override
         public void write(final int b) throws IOException {
-            if (firstlineseen) {
+            if (firstLineSeen) {
                 super.write(b);
             } else if (b == '\n') {
-                firstlineseen = true;
+                firstLineSeen = true;
             }
         }
 
     }
-
-    private static final long serialVersionUID = 7567765340218227372L;
 
     @Override
     public synchronized Enumeration<Object> keys() {
