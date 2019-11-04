@@ -7,7 +7,11 @@ The distributed properties file uses pom.xml and the `depenalyzer` project is an
 ```
 targetPomFile=pom.xml
 ```
-After this open the project in a proper IDE like IntelliJ IDEA and find the main-Method in the `ui` module `de/czoeller/depanalyzer/ui/Application#main(String[])`. By executing the method the following steps are executed:
+After this 
+- open the project in a proper IDE like IntelliJ IDEA and find the main-Method in the `ui` module `de/czoeller/depanalyzer/ui/Application#main(String[])`.
+- or execute `mvn exec:java` (make sure mvn uses proper Java version (see Requirements))
+
+By running the application the following steps are executed:
 1. The referenced project with it's submodules is built and installed with all dependencies to your local maven repository.
 2. The maven build-reactor for this build is analyzed with the build-reactor build order of the submodules and the dependency graph.
 3. The dependency graph from maven is mapped to an internal graph. During this step a `.dot` file and a `.png` is created in the built project in the `target` directory (these files are not used for further processing but are helpful anyway).
