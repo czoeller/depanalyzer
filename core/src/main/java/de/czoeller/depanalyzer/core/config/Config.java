@@ -36,9 +36,8 @@ public enum Config {
     Config() {
         final File currentDir = new File(System.getProperty("user.dir"));
         final Properties appProps = new CleanProperties();
-        try {
-            appProps.load(new FileInputStream(new File(currentDir, PROPERTIES_FILE)));
-
+        try (final FileInputStream fis = new FileInputStream(PROPERTIES_FILE)) {
+            appProps.load(fis);
             String hash = calculateHash(appProps);
             String hashOld = getHash(appProps);
             hashChanged = !hash.equals(hashOld);

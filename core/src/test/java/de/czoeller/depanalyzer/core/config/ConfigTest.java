@@ -50,10 +50,12 @@ class ConfigTest {
 
     @BeforeEach
     void setUp()  throws IOException, URISyntaxException{
-        Files.copy(Paths.get(getClass().getClassLoader()
+        try(FileOutputStream fos = new FileOutputStream(new File(Config.PROPERTIES_FILE))) {
+            Files.copy(Paths.get(getClass().getClassLoader()
                                        .getResource(propertiesFile)
-                                       .toURI()), new FileOutputStream(new File(Config.PROPERTIES_FILE)));
-        this.config = Config.INSTANCE;
+                                       .toURI()), fos);
+            this.config = Config.INSTANCE;
+        }
     }
 
     @AfterEach
