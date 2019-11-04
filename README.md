@@ -18,3 +18,8 @@ After this open the project in a proper IDE like IntelliJ IDEA and find the main
 
 A repeated start of the application will use the `results.dar` unless it's not present or the `targetPomFile` property was changed.
 Please note that the serialized `results.dar` is not intended to be shared neither has any compatibility warranties because it is bound to the classes interfaces at time of file creation.
+
+## Requirements
+- Java, developed and tested with 1.8.
+- Graphviz (optional)
+Please note that later versions than Java 1.8 do not come with JavaFX modules. Make sure to install them before.
