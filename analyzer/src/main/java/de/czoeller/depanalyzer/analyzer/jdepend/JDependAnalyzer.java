@@ -110,7 +110,7 @@ public class JDependAnalyzer extends BaseAnalyzer {
     private boolean alreadyVisited(JavaPackage javaPackage) {
         final boolean visited = visitedPackages.containsKey(javaPackage.getName());
         if(visited) {
-            log.info("Already visited package '{}'", javaPackage.getName());
+            log.trace("Already visited package '{}'", javaPackage.getName());
         }
         return visited;
     }
