@@ -99,7 +99,8 @@ public class MainController implements Initializable {
 
         layoutSegmentedButton.getButtons().addAll(buildLayoutButtons(viewModel.layoutsProperty()));
         layoutSegmentedButton.getToggleGroup().selectedToggleProperty().addListener(ControlsUtils.safeToggleChangeListener((newValue) -> viewModel.selectedLayoutProperty().set(newValue)));
-        ControlsUtils.selectFirstToggle(layoutSegmentedButton);
+        ControlsUtils.selectFirstButton(layoutSegmentedButton);
+
 
         analyzerResultComboBox.setItems(viewModel.analyzerResultsProperty());
         analyzerResultComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> viewModel.selectedAnalyzerResultProperty().set(newValue));

@@ -27,8 +27,8 @@ import java.util.function.Function;
 
 public class ControlsUtils {
 
-    public static void selectFirstToggle(SegmentedButton layoutSegmentedButton) {
-        layoutSegmentedButton.getToggleGroup().getToggles().stream().findFirst().ifPresent(toggle -> layoutSegmentedButton.getToggleGroup().selectToggle(toggle));
+    public static void selectFirstButton(SegmentedButton layoutSegmentedButton) {
+        layoutSegmentedButton.getButtons().stream().findFirst().ifPresent(toggle -> toggle.setSelected(true));
     }
 
     /**
