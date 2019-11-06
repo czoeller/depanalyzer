@@ -79,7 +79,7 @@ public class ControlsUtils {
      * @param <T> type parameter of the listener
      * @return returns a new {@link ChangeListener} with the specified behavior.
      */
-    public static <T> ChangeListener<T> delayListener(ChangeListener<T> listener) {
+    public static <T> ChangeListener<T> delayedListener(ChangeListener<T> listener) {
         final PauseTransition pause = new PauseTransition(Duration.seconds(1));
         return (observable, oldValue, newValue) -> {
             pause.setOnFinished(event -> listener.changed(observable, oldValue, newValue));
