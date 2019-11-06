@@ -19,19 +19,18 @@ package de.czoeller.depanalyzer.analyzer;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
-import org.netbeans.api.annotations.common.StaticResource;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public abstract class ExampleArtifacts {
 
-    @StaticResource(searchClasspath = true, relative = true)
-    private static final String r = "../assets/mysql-connector-java-5.1.27.jar";
+    private static final Path MYSQL_PATH = Paths.get("..", "target", "example-artifacts", "mysql-connector-java-5.1.27.jar");
     public static final Artifact TEST_ARTIFACT_MYSQL;
 
     static {
         Artifact artifact = new DefaultArtifact("mysql","mysql-connector-java", "5.1.27", "compile", "jar", "", new DefaultArtifactHandler());
-        artifact.setFile(new File(r));
+        artifact.setFile(MYSQL_PATH.toFile());
         TEST_ARTIFACT_MYSQL = artifact;
     }
 

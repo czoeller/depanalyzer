@@ -130,7 +130,7 @@ public class SpotBugsAnalyzer extends BaseAnalyzer {
 
     private Collection<Plugin> loadPlugins() {
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        Path findSecBugsPath = Paths.get("target/spotbugs-plugins/findsecbugs-plugin-1.9.0.jar");
+        Path findSecBugsPath = Paths.get("target","spotbugs-plugins", "findsecbugs-plugin-1.9.0.jar");
         File findSecBugsFile = findSecBugsPath.toFile();
 
         if(!findSecBugsFile.exists()) {
