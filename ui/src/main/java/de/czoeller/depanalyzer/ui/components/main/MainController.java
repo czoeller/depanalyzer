@@ -18,6 +18,7 @@ package de.czoeller.depanalyzer.ui.components.main;
 
 import de.czoeller.depanalyzer.metamodel.Analyzers;
 import de.czoeller.depanalyzer.ui.GUI;
+import de.czoeller.depanalyzer.ui.Globals;
 import de.czoeller.depanalyzer.ui.components.detail.DetailController;
 import de.czoeller.depanalyzer.ui.model.Layouts;
 import de.czoeller.depanalyzer.ui.model.MainModel;
@@ -113,7 +114,7 @@ public class MainController implements Initializable {
 
         detailController.selectedNodeProperty().bind(viewModel.selectedNodePropertyProperty());
 
-        GUI.getPrimaryStage().titleProperty().bind(Bindings.concat("Dependency Analyzer - ").concat(viewModel.selectedLayoutProperty()));
+        GUI.getPrimaryStage().titleProperty().bind(Bindings.format("Dependency Analyzer - %s - %s", Globals.analyzedProjectArtifactIdProperty(), viewModel.selectedLayoutProperty()));
     }
 
     private List<ToggleButton> buildLayoutButtons(List<Layouts> layouts) {

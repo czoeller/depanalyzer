@@ -40,4 +40,8 @@ public class Globals {
         return analyzedProjectProperty;
     }
 
+    public static StringProperty analyzedProjectArtifactIdProperty() {
+        return new SimpleStringProperty(analyzedProjectProperty.get().split(":")[1]);
+    }
+
 }
