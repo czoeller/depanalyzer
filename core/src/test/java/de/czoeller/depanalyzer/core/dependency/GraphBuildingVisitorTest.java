@@ -1,9 +1,26 @@
+/*
+ * Copyright (C) 2019 czoeller
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.czoeller.depanalyzer.core.dependency;
 
 import de.czoeller.depanalyzer.core.ToStringNodeIdRenderer;
 import de.czoeller.depanalyzer.core.dependency.dot.DotGraphStyleConfigurer;
 import de.czoeller.depanalyzer.core.dependency.dot.style.StyleConfiguration;
 import de.czoeller.depanalyzer.core.graph.GraphBuilder;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import org.eclipse.aether.graph.DefaultDependencyNode;
 import org.eclipse.aether.graph.Dependency;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +28,6 @@ import org.junit.jupiter.api.Test;
 
 import static de.czoeller.depanalyzer.core.graph.GraphBuilderMatcher.hasNodesAndEdges;
 import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -57,9 +73,6 @@ class GraphBuildingVisitorTest {
                         "\"groupId:parent:jar:version:compile\" -> \"groupId:child1:jar:version:compile\"",
                         "\"groupId:parent:jar:version:compile\" -> \"groupId:child2:jar:version:test\""}));
 
-        assertThat(this.graphBuilder.getRootNode().getChildren().size(), is(2));
-        assertThat(this.graphBuilder.getRootNode().getChildren().get(0).getChildren().size(), is(0));
-        assertThat(this.graphBuilder.getRootNode().getChildren().get(1).getChildren().size(), is(0));
     }
 
     private static org.eclipse.aether.graph.DependencyNode createMavenDependencyNode(String artifactId, org.eclipse.aether.graph.DependencyNode... children) {

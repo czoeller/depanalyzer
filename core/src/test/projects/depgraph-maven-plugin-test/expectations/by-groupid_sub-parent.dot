@@ -1,0 +1,15 @@
+digraph "sub-parent" {
+  node [shape="box",style="rounded",fontname="Arial",fontsize="14"]
+  edge [fontsize="10",fontname="Arial"]
+
+  // Node Definitions:
+  "com.github.ferstl:compile"[label=<<font point-size="14">com.github.ferstl</font>>]
+  "com.google.guava:compile"[label=<<font point-size="14">com.google.guava</font>>]
+  "commons-codec:compile"[label=<<font point-size="14">commons-codec</font>>]
+  "org.apache.commons:compile"[label=<<font point-size="14">org.apache.commons</font>>]
+
+  // Edge Definitions:
+  "com.github.ferstl:compile" -> "com.google.guava:compile"
+  "com.github.ferstl:compile" -> "commons-codec:compile"
+  "com.github.ferstl:compile" -> "org.apache.commons:compile"
+}

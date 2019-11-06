@@ -11,10 +11,12 @@
     <artifactId>metamodel</artifactId>
     <dependencies>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.czoeller.depanalyzer</groupId>
+            <artifactId>logging</artifactId>
         </dependency>
     </dependencies>
 </project>

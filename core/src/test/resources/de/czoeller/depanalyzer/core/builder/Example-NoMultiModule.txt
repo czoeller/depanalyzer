@@ -1,0 +1,5 @@
+-> [INFO] Scanning for projects...
+-> [INFO]
+-> [INFO] ----------------< com.github.ferstl:single-dependency >-----------------
+-> [INFO] Building single-dependency 1.0.0-SNAPSHOT
+-> [INFO] --------------------------------[ jar ]---------------------------------

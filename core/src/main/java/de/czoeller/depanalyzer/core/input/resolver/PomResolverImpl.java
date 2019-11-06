@@ -1,18 +1,37 @@
+/*
+ * Copyright (C) 2019 czoeller
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.czoeller.depanalyzer.core.input.resolver;
 
+import de.czoeller.depanalyzer.core.NodesAndEdgesDefinitionTreeBuilder;
 import de.czoeller.depanalyzer.core.builder.ProjectBuilder;
 import de.czoeller.depanalyzer.core.dependency.AggregatingGraphFactory;
-import de.czoeller.depanalyzer.core.dependency.DependencyNode;
+import de.czoeller.depanalyzer.core.dependency.DependencyNodeIdRenderer;
 import de.czoeller.depanalyzer.core.dependency.MavenGraphAdapter;
 import de.czoeller.depanalyzer.core.dependency.dot.DotGraphStyleConfigurer;
 import de.czoeller.depanalyzer.core.dependency.dot.style.StyleConfiguration;
 import de.czoeller.depanalyzer.core.dependency.dot.style.resource.BuiltInStyleResource;
 import de.czoeller.depanalyzer.core.dependency.dot.style.resource.ClasspathStyleResource;
 import de.czoeller.depanalyzer.core.dependency.dot.style.resource.StyleResource;
-import de.czoeller.depanalyzer.core.graph.DependencyNodeIdRenderer;
 import de.czoeller.depanalyzer.core.graph.Edge;
 import de.czoeller.depanalyzer.core.graph.GraphBuilder;
 import de.czoeller.depanalyzer.core.graph.Node;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.project.MavenProject;
@@ -21,12 +40,16 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import static de.czoeller.depanalyzer.core.graph.dot.DotUtils.createDotGraphImage;
 import static de.czoeller.depanalyzer.core.graph.dot.DotUtils.writeGraphFile;
 
+@Slf4j
 public class PomResolverImpl implements PomResolver {
 
     private StyleConfiguration loadStyleConfiguration() {
@@ -61,37 +84,32 @@ public class PomResolverImpl implements PomResolver {
                                                                                 .withType(true)
                                                                                 .withScope(true);
 
-        final GraphBuilder<DependencyNode> graphBuilder = GraphBuilder.create(nodeIdRenderer);
-        //final TextGraphStyleConfigurer textGraphStyleConfigurer = new TextGraphStyleConfigurer();
-        //textGraphStyleConfigurer.showGroupIds(true);
-        //textGraphStyleConfigurer.showArtifactIds(true);
-        //textGraphStyleConfigurer.configure(graphBuilder);
-
         final StyleConfiguration styleConfiguration = loadStyleConfiguration();
         final DotGraphStyleConfigurer dotGraphStyleConfigurer = new DotGraphStyleConfigurer(styleConfiguration);
-        dotGraphStyleConfigurer.showGroupIds(true);
-        dotGraphStyleConfigurer.showArtifactIds(true);
-        dotGraphStyleConfigurer.configure(graphBuilder);
+        final GraphBuilder<DependencyNode> graphBuilder = dotGraphStyleConfigurer.showGroupIds(false)
+                                                                                 .showArtifactIds(true)
+                                                                                 .repeatTransitiveDependencies(false)
+                                                                                 .showVersionsOnEdges(false)
+                                                                                 .configure(GraphBuilder.create(nodeIdRenderer));
 
-
-        final AggregatingGraphFactory graphFactory = new AggregatingGraphFactory(mavenGraphAdapter, projectSupplier, graphBuilder, true, false);
+        final AggregatingGraphFactory graphFactory = new AggregatingGraphFactory(mavenGraphAdapter, projectSupplier, graphBuilder, true, true);
 
 
         String dependencyGraph = graphFactory.createGraph(project);
-        final DependencyNode rootNode = graphBuilder.getRootNode();
         try {
-            Path graphFilePath = Paths.get("exm.dot");
-            Path graphFilePathPNG = Paths.get("exm.png");
+            Path graphFilePath = Paths.get( pomFile.getAbsoluteFile().getParent(), "target", project.getArtifactId() + ".dot");
+            Path graphFilePathPNG = Paths.get( pomFile.getAbsoluteFile().getParent(),"target", project.getArtifactId() + ".png");
             writeGraphFile(dependencyGraph, graphFilePath);
             createDotGraphImage(graphFilePathPNG, dependencyGraph);
 
-            System.out.println(dependencyGraph);
+            log.debug("Dependency graph: {}", dependencyGraph);
 
             final Map<String, Node<DependencyNode>> nodeDefinitions = graphBuilder.getNodeDefinitions();
-            final Set<Node<DependencyNode>> nodes = new HashSet<>(nodeDefinitions.values());
             final Set<Edge> edges = graphBuilder.getEdges();
 
-            return new PomResolverResult(rootNode, nodeDefinitions, edges);
+            final val builder = new NodesAndEdgesDefinitionTreeBuilder(nodeDefinitions, edges);
+
+            return new PomResolverResult(builder.build(), nodeDefinitions, edges);
         } catch (IOException e) {
             e.printStackTrace();
         }

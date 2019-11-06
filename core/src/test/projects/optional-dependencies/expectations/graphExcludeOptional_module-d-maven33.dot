@@ -1,0 +1,11 @@
+digraph "module-d" {
+  node [shape="box",style="rounded",fontname="Arial",fontsize="14"]
+  edge [fontsize="10",fontname="Arial"]
+
+  // Node Definitions:
+  "com.github.ferstl:module-d:jar"[label=<module-d>]
+  "commons-codec:commons-codec:jar"[label=<commons-codec>]
+
+  // Edge Definitions:
+  "com.github.ferstl:module-d:jar" -> "commons-codec:commons-codec:jar"
+}

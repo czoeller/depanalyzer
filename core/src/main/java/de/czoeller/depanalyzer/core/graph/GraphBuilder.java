@@ -1,9 +1,28 @@
+/*
+ * Copyright (c) 2014 - 2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Modifications copyright (C) 2019 czoeller
+ * - added getter for nodeDefinitions and edges
+ * - use TextFormatter as default
+ */
 package de.czoeller.depanalyzer.core.graph;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import de.czoeller.depanalyzer.core.dependency.DependencyNode;
 import de.czoeller.depanalyzer.core.graph.text.TextGraphFormatter;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import lombok.Getter;
 
 import java.util.*;
@@ -29,7 +48,6 @@ public final class GraphBuilder<T extends DependencyNode> {
     private NodeRenderer<? super T> nodeNameRenderer;
     private EdgeRenderer<? super T> edgeRenderer;
     private boolean omitSelfReferences;
-    private T rootNode;
 
     public static <T extends DependencyNode> GraphBuilder<T> create(NodeRenderer<? super T> nodeIdRenderer) {
         return new GraphBuilder<T>(nodeIdRenderer);
@@ -85,23 +103,9 @@ public final class GraphBuilder<T extends DependencyNode> {
     public GraphBuilder<T> addNode(T node) {
         String nodeId = this.nodeIdRenderer.render(node);
         String nodeName = this.nodeNameRenderer.render(node);
-        final Node<T> newNode = new Node<>(nodeId, nodeName, node);
-        if( null != this.nodeDefinitions.get(nodeId) ) {
-            newNode.nodeObject.merge(this.nodeDefinitions.get(nodeId).nodeObject);
-        }
-        this.nodeDefinitions.put(nodeId, newNode);
-        if (rootNode == null) {
-            rootNode = newNode.nodeObject;
-        }
+        this.nodeDefinitions.put(nodeId, new Node<>(nodeId, nodeName, node));
+
         return this;
-    }
-
-    public void setRootNode(T node) {
-        this.rootNode = node;
-    }
-
-    public T getRootNode() {
-        return rootNode;
     }
 
     public GraphBuilder<T> addEdge(T from, T to) {
@@ -172,7 +176,6 @@ public final class GraphBuilder<T extends DependencyNode> {
             Edge edge = new Edge(fromNodeId, toNodeId, this.edgeRenderer.render(fromNode, toNode), permanent);
             this.edges.add(edge);
             this.reachabilityMap.registerEdge(fromNodeId, toNodeId);
-            nodeDefinitions.get(fromNodeId).nodeObject.getChildren().add(nodeDefinitions.get(toNodeId).nodeObject);
         }
     }
 

@@ -1,4 +1,18 @@
-
+/*
+ * Copyright (c) 2014 - 2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.czoeller.depanalyzer.core.dependency.dot.style;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -9,7 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import de.czoeller.depanalyzer.core.dependency.NodeResolution;
+import de.czoeller.depanalyzer.metamodel.NodeResolution;
 import de.czoeller.depanalyzer.core.dependency.dot.style.resource.StyleResource;
 import de.czoeller.depanalyzer.core.graph.dot.DotAttributeBuilder;
 import org.apache.maven.artifact.Artifact;
@@ -21,7 +35,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static de.czoeller.depanalyzer.core.dependency.NodeResolution.*;
+import static de.czoeller.depanalyzer.metamodel.NodeResolution.*;
 
 public class StyleConfiguration {
 

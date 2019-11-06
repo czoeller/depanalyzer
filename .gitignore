@@ -44,3 +44,6 @@ buildNumber.properties
 .mvn/wrapper/maven-wrapper.jar
 
 *.ser
+report
+logs/
+*.dar

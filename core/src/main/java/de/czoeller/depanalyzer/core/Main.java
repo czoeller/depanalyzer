@@ -1,41 +1,29 @@
+/*
+ * Copyright (C) 2019 czoeller
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.czoeller.depanalyzer.core;
 
-import de.czoeller.depanalyzer.analyzer.Analyzer;
-import de.czoeller.depanalyzer.analyzer.impl.DummyAnalyzerImpl;
-import de.czoeller.depanalyzer.core.dependency.DependencyNode;
-import de.czoeller.depanalyzer.core.input.resolver.PomResolver;
-import de.czoeller.depanalyzer.core.input.resolver.PomResolverImpl;
-import de.czoeller.depanalyzer.metamodel.Artifact;
-import de.czoeller.depanalyzer.metamodel.Issue;
+import de.czoeller.depanalyzer.core.config.Config;
+import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
-import java.util.List;
-import java.util.Map;
-
+@Slf4j
 public class Main {
 
-    private PomResolver pomResolver;
-    private DependencyNode dependencyNode;
-
-    public Main() {
-        this.pomResolver = new PomResolverImpl();
-        readPOM();
-        analyze();
-    }
-
     public static void main(String[] args) {
-        new Main();
+        new Core().analyzePOM(Config.INSTANCE.getTargetPomFile());
     }
 
-    private void readPOM() {
-        final File pomFile = new File("core/pom.xml");
-        this.dependencyNode = this.pomResolver.resolvePom(pomFile).getRootNode();
-    }
-
-    private void analyze() {
-        final Analyzer dummyAnalyzer = new DummyAnalyzerImpl();
-        final Artifact artifact = new Artifact(this.dependencyNode.getArtifact().getFile().getAbsolutePath());
-        final Map<Artifact, List<Issue>> issues = dummyAnalyzer.analyze(artifact);
-        System.out.println(issues);
-    }
 }

@@ -4,7 +4,7 @@
     "style": "rounded",
     "default-font": {
       "size": 14,
-      "name": "Times New Roman"
+      "name": "Arial"
     },
     "optional-font": {
       "size": 10
@@ -28,7 +28,7 @@
   "default-edge": {
     "font": {
       "size": 10,
-      "name": "Times New Roman"
+      "name": "Arial"
     }
   },
   "edge-resolution-styles": {

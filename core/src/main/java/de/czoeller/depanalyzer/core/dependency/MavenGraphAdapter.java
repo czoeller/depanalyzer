@@ -1,7 +1,26 @@
+/*
+ * Copyright (c) 2014 - 2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Modifications copyright (C) 2019 czoeller
+ * - changed node resolution to use aether
+ */
 package de.czoeller.depanalyzer.core.dependency;
 
 import de.czoeller.depanalyzer.core.graph.GraphBuilder;
 import de.czoeller.depanalyzer.core.input.resolver.DependencyNodeResolver;
+import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.OrArtifactFilter;
 import org.apache.maven.model.Dependency;
@@ -29,7 +48,7 @@ public final class MavenGraphAdapter {
         this.dependencyNodeResolver = dependencyNodeResolver;
     }
 
-    public org.eclipse.aether.graph.DependencyNode buildDependencyGraph(MavenProject project, GraphBuilder<DependencyNode> graphBuilder) {
+    public void buildDependencyGraph(MavenProject project, GraphBuilder<DependencyNode> graphBuilder) {
         DefaultDependencyResolutionRequest request = new DefaultDependencyResolutionRequest();
         request.setMavenProject(project);
         //request.setRepositorySession(getVerboseRepositorySession(project));
@@ -40,8 +59,6 @@ public final class MavenGraphAdapter {
 
             GraphBuildingVisitor visitor = new GraphBuildingVisitor(graphBuilder);
             root.accept(visitor);
-
-            return root;
         } catch (DependencyCollectionException e) {
             throw new DependencyGraphException(e);
         }
