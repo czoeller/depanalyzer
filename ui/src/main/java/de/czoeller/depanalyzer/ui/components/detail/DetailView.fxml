@@ -27,7 +27,8 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
   -->
-<AnchorPane prefHeight="315.0" prefWidth="318.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.czoeller.depanalyzer.ui.components.detail.DetailController">
+
+<AnchorPane prefHeight="315.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.czoeller.depanalyzer.ui.components.detail.DetailController">
    <children>
        <GridPane fx:id="gridPane" hgap="25.0" maxHeight="1.7976931348623157E308" maxWidth="600.0" prefWidth="284.0" vgap="1.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
@@ -38,6 +39,7 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -47,14 +49,17 @@
                <Label text="groupId:" GridPane.rowIndex="0" />
                <Label text="artifactId:" GridPane.rowIndex="1" />
                <Label text="version:" GridPane.rowIndex="2" />
-               <Label text="#Issues:" GridPane.rowIndex="3" />
+            <Label text="License:" GridPane.rowIndex="3" />
+               <Label text="#Issues:" GridPane.rowIndex="4" />
+            <Label text="Heat:" GridPane.rowIndex="5" />
+            <Label text="Issues:" GridPane.rowIndex="6" />
                <Text fx:id="groupIdText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.columnIndex="1" />
                <Text fx:id="artifactIdText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                <Text fx:id="versionText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-               <Text fx:id="nrIssuesText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <Label text="Heat:" GridPane.rowIndex="4" />
-            <Label text="Issues:" GridPane.rowIndex="5" />
-            <TableView fx:id="issuesTableView" minHeight="120.0" minWidth="120.0" onSort="#onSort" prefHeight="200.0" prefWidth="200.0" tableMenuButtonVisible="true" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="6" GridPane.valignment="BOTTOM" GridPane.vgrow="ALWAYS">
+            <Text fx:id="licenseText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+               <Text fx:id="nrIssuesText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Text fx:id="heatText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <TableView fx:id="issuesTableView" minHeight="120.0" minWidth="120.0" onSort="#onSort" prefHeight="200.0" prefWidth="200.0" tableMenuButtonVisible="true" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="7" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
                 <columns>
                 <TableColumn fx:id="severityColumn" editable="false" maxWidth="80.0" prefWidth="70.0" text="Severity">
                     <cellValueFactory>
@@ -71,7 +76,6 @@
                     <fx:reference source="severityColumn" />
                 </sortOrder>
             </TableView>
-            <Text fx:id="heatText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.columnIndex="1" GridPane.rowIndex="4" />
            </children>
       </GridPane>
    </children>

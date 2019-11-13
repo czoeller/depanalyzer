@@ -28,6 +28,7 @@ public class DetailViewModel {
     private final ReadOnlyStringWrapper groupId = new ReadOnlyStringWrapper(this, "groupId");
     private final ReadOnlyStringWrapper artifactId = new ReadOnlyStringWrapper(this, "artifactId");
     private final ReadOnlyStringWrapper version = new ReadOnlyStringWrapper(this, "version");
+    private final ReadOnlyStringWrapper license = new ReadOnlyStringWrapper(this, "license");
     private final ReadOnlyIntegerWrapper nrIssues = new ReadOnlyIntegerWrapper(this, "nrIssues");
     private final ReadOnlyDoubleWrapper heat = new ReadOnlyDoubleWrapper(this, "heat");
     private final ObservableList<IssueTableViewModel> issues = FXCollections.observableArrayList();
@@ -38,6 +39,7 @@ public class DetailViewModel {
             groupId.set(newValue.getDependencyNode().getArtifact().getGroupId());
             artifactId.set(newValue.getDependencyNode().getArtifact().getArtifactId());
             version.set(newValue.getDependencyNode().getArtifact().getVersion());
+            license.set(newValue.getDependencyNode().getArtifact().getMetadataList().toString());
             nrIssues.set(newValue.getIssues().size());
             heat.set(newValue.getHeat());
             initialize();
@@ -94,6 +96,18 @@ public class DetailViewModel {
 
     public void setVersion(String version) {
         this.version.set(version);
+    }
+
+    public String getLicense() {
+        return license.get();
+    }
+
+    public ReadOnlyStringProperty licenseProperty() {
+        return license.getReadOnlyProperty();
+    }
+
+    public void setLicense(String license) {
+        this.license.set(license);
     }
 
     public Integer getNrIssues() {

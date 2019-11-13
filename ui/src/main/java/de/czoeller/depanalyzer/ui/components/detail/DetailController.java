@@ -32,6 +32,7 @@ public class DetailController implements Initializable {
     public Text groupIdText;
     public Text artifactIdText;
     public Text versionText;
+    public Text licenseText;
     public Text nrIssuesText;
     public Text heatText;
     public TableView<IssueTableViewModel> issuesTableView;
@@ -43,6 +44,7 @@ public class DetailController implements Initializable {
         groupIdText.textProperty().bind(viewModel.groupIdProperty());
         artifactIdText.textProperty().bind(viewModel.artifactIdProperty());
         versionText.textProperty().bind(viewModel.versionProperty());
+        licenseText.textProperty().bind(viewModel.licenseProperty());
         nrIssuesText.textProperty().bind(viewModel.nrIssuesProperty().asString());
         heatText.textProperty().bind(viewModel.heatProperty().asString());
         issuesTableView.setItems(viewModel.getIssues());
@@ -51,7 +53,6 @@ public class DetailController implements Initializable {
     public ObjectProperty<GraphDependencyNode> selectedNodeProperty() {
         return viewModel.selectedNodeProperty();
     }
-
 
     @FXML
     public void onSort(SortEvent<TableView<IssueTableViewModel>> tableViewSortEvent) {
