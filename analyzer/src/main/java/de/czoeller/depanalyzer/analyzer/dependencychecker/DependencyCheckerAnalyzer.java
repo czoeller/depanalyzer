@@ -62,6 +62,36 @@ public class DependencyCheckerAnalyzer extends BaseAnalyzer {
         //if oss-index API returns 429 rate limit we can disable the service:
         //settings.setBoolean("ossindexAnalyzerEnabled", false);
         engine = new Engine(Engine.Mode.STANDALONE, settings);
+
+        settings.setBoolean("analyzer.jar.enabled", true);
+        settings.setBoolean("analyzer.archive.enabled", true);
+        settings.setBoolean("analyzer.node.package.enabled", true);
+        settings.setBoolean("analyzer.node.audit.enabled", true);
+        settings.setBoolean("analyzer.golang.dep.enabled", true);
+        settings.setBoolean("analyzer.retirejs.enabled", false);
+        settings.setBoolean("analyzer.retirejs.filternonvulnerable", false);
+        settings.setBoolean("analyzer.golang.mod.enabled", false);
+        settings.setBoolean("analyzer.python.distribution.enabled", false);
+        settings.setBoolean("analyzer.python.package.enabled", false);
+        settings.setBoolean("analyzer.ruby.gemspec.enabled", false);
+        settings.setBoolean("analyzer.bundle.audit.enabled", false);
+        settings.setBoolean("analyzer.autoconf.enabled", false);
+        settings.setBoolean("analyzer.cmake.enabled", false);
+        settings.setBoolean("analyzer.assembly.enabled", false);
+        settings.setBoolean("analyzer.nuspec.enabled", false);
+        settings.setBoolean("analyzer.nugetconf.enabled", false);
+        settings.setBoolean("analyzer.msbuildproject.enabled", false);
+        settings.setBoolean("analyzer.cocoapods.enabled", false);
+        settings.setBoolean("analyzer.swift.package.manager.enabled", false);
+        settings.setBoolean("analyzer.cpe.enabled", true);
+        settings.setBoolean("analyzer.cpesuppression.enabled", true);
+        settings.setBoolean("analyzer.dependencybundling.enabled", true);
+        settings.setBoolean("analyzer.dependencymerging.enabled", true);
+        settings.setBoolean("analyzer.falsepositive.enabled", true);
+        settings.setBoolean("analyzer.filename.enabled", true);
+        settings.setBoolean("analyzer.hint.enabled", true);
+        settings.setBoolean("analyzer.nvdcve.enabled", true);
+        settings.setBoolean("analyzer.vulnerabilitysuppression.enabled", true);
     }
 
     @Override
