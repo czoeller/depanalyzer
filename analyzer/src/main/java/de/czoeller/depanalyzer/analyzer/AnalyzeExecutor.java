@@ -68,7 +68,7 @@ public class AnalyzeExecutor {
             throw new RuntimeException(e);
         }
 
-        final CompletableFuture<List<List<AnalyzerResult>>> collect = StreamSupport.stream(Iterables.partition(dependencyNodes, 10).spliterator(), false)
+        final CompletableFuture<List<List<AnalyzerResult>>> collect = StreamSupport.stream(Iterables.partition(dependencyNodes, 25).spliterator(), false)
                                                                                    .map(chunk -> new AnalyzeTask(delegates, context, chunk))
                                                                                    .map(CompletableFuture::supplyAsync)
                                                                                    .collect(CompletableFutureCollector.collectResult());
