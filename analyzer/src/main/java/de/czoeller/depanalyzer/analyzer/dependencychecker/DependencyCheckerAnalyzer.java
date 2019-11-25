@@ -63,6 +63,7 @@ public class DependencyCheckerAnalyzer extends BaseAnalyzer {
         //settings.setBoolean("ossindexAnalyzerEnabled", false);
         engine = new Engine(Engine.Mode.STANDALONE, settings);
 
+        settings.setInt("max.download.threads", 4);
         settings.setBoolean("analyzer.jar.enabled", true);
         settings.setBoolean("analyzer.archive.enabled", true);
         settings.setBoolean("analyzer.node.package.enabled", false);
