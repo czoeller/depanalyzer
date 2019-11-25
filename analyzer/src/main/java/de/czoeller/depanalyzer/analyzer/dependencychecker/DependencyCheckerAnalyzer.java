@@ -65,10 +65,10 @@ public class DependencyCheckerAnalyzer extends BaseAnalyzer {
 
         settings.setBoolean("analyzer.jar.enabled", true);
         settings.setBoolean("analyzer.archive.enabled", true);
-        settings.setBoolean("analyzer.node.package.enabled", true);
-        settings.setBoolean("analyzer.node.audit.enabled", true);
-        settings.setBoolean("analyzer.golang.dep.enabled", true);
-        settings.setBoolean("analyzer.retirejs.enabled", false);
+        settings.setBoolean("analyzer.node.package.enabled", false);
+        settings.setBoolean("analyzer.node.audit.enabled", false);
+        settings.setBoolean("analyzer.golang.dep.enabled", false);
+        settings.setBoolean("analyzer.retirejs.enabled", true);
         settings.setBoolean("analyzer.retirejs.filternonvulnerable", false);
         settings.setBoolean("analyzer.golang.mod.enabled", false);
         settings.setBoolean("analyzer.python.distribution.enabled", false);
