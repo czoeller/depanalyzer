@@ -22,8 +22,10 @@ import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
+import org.jboss.shrinkwrap.resolver.api.NoResolvedResultException;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.MavenResolvedArtifact;
+import org.jboss.shrinkwrap.resolver.api.maven.coordinate.MavenCoordinate;
 import org.jboss.shrinkwrap.resolver.api.maven.embedded.BuiltProject;
 import org.jboss.shrinkwrap.resolver.api.maven.embedded.EmbeddedMaven;
 
@@ -128,24 +130,38 @@ public class ProjectBuilder {
         }
     }
 
-    private void resolveArtifact(Model model1, MavenProject project1) {
-        final MavenResolvedArtifact[] artifact = Maven.configureResolver()
-                                                      .useLegacyLocalRepo(true)
-                                                      .withMavenCentralRepo(false)
-                                                      .loadPomFromFile(model1.getPomFile())
-                                                      .resolve(model1.getGroupId() + ":" + model1.getArtifactId() + ":" + model1.getVersion())
-                                                      .withoutTransitivity().asResolvedArtifact();
-        final MavenResolvedArtifact a1 = artifact[0];
-        final DefaultArtifact defaultArtifact = new DefaultArtifact(a1.getCoordinate()
-                                                                      .getGroupId(), a1.getCoordinate()
-                                                                                       .getArtifactId(), a1.getCoordinate()
-                                                                                                           .getVersion(), a1.getScope()
-                                                                                                                            .toString(), a1.getCoordinate()
-                                                                                                                                           .getType()
-                                                                                                                                           .toString(), a1.getCoordinate()
-                                                                                                                                                          .getClassifier(), new DefaultArtifactHandler());
-        defaultArtifact.setFile(a1.asFile());
-        project1.setArtifact(defaultArtifact);
+    private void resolveArtifact(Model model, MavenProject project) {
+
+        final String identifier = String.format("%s:%s:%s", model.getGroupId(), model.getArtifactId(), model.getVersion());
+
+        try {
+            final MavenResolvedArtifact[] resolvedArtifacts = Maven.configureResolver()
+                                                                   .useLegacyLocalRepo(true)
+                                                                   .withMavenCentralRepo(false)
+                                                                   .loadPomFromFile(model.getPomFile())
+                                                                   .resolve(identifier)
+                                                                   .withoutTransitivity()
+                                                                   .asResolvedArtifact();
+
+            final MavenResolvedArtifact artifact = resolvedArtifacts[0];
+
+            final MavenCoordinate coordinate = artifact.getCoordinate();
+            final DefaultArtifact defaultArtifact = new DefaultArtifact(coordinate.getGroupId(),
+                    coordinate.getArtifactId(),
+                    coordinate.getVersion(),
+                    artifact.getScope().toString(),
+                    coordinate.getType().toString(),
+                    coordinate.getClassifier(),
+                    new DefaultArtifactHandler());
+            defaultArtifact.setFile(artifact.asFile());
+            project.setArtifact(defaultArtifact);
+
+        } catch (NoResolvedResultException e) {
+            log.warn("Could not resolve artifacts for {}", identifier);
+
+            project.setArtifact(new DefaultArtifact(model.getGroupId(), model.getArtifactId(), model.getVersion(), "compile", "jar", "jar", new DefaultArtifactHandler()));
+        }
+
     }
 
 }
