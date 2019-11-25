@@ -111,11 +111,10 @@ public class DependencyCheckerAnalyzer extends BaseAnalyzer {
                 try {
                     analyzeResult = runScan("report", new String[]{"html"}, "Test Application", files, new String[]{}, 0, 11);
                 } catch (ReportException | ExceptionCollection e) {
-                    //throw new AnalyzerException("Could not analyze", e);
+                    throw new AnalyzerException("Could not analyze", e);
                 }
             }
         }
-
         for (Dependency dependency : analyzeResult) {
             for (Vulnerability vulnerability : dependency.getVulnerabilities()) {
                 if(dependency.getFileName().equals(node.getArtifact().getFile().getName())) {
