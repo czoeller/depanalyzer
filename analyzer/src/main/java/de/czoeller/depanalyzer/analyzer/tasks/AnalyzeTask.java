@@ -63,7 +63,12 @@ public class AnalyzeTask implements Supplier<List<AnalyzerResult>> {
             for (DependencyNode node : chunk) {
                 if(node.getTypes().contains("pom")) {
                     log.trace("Skipping analyze with {} for dependency of type pom '{}'", analyzerInstance.getClass().getSimpleName(), node.toString());
+                } else if(null == node.getArtifact().getFile()) {
+                    log.trace("Skipping analyze with {} for dependency with empty artifact file '{}'", analyzerInstance.getClass().getSimpleName(), node.toString());
+                } else if(node.getArtifact().getFile().getName().contains("pom.xml")) {
+                    log.trace("Skipping analyze with {} for dependency with pom.xml artifact file '{}'", analyzerInstance.getClass().getSimpleName(), node.toString());
                 } else {
+
                     final List<Issue> issues = analyzerInstance.analyze(node);
                     if(!issues.isEmpty()) {
                         log.info("{} with analyzer '{}' found #{} issues", Thread.currentThread().getName(), analyzerInstance, issues.size());
