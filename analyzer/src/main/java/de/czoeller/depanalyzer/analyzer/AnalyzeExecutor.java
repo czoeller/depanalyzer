@@ -62,8 +62,12 @@ public class AnalyzeExecutor {
                 analysisDir.mkdir();
             }
             FileUtils.cleanDirectory(analysisDir);
-            dependencyNodes.stream().map(DependencyNode::getArtifact).map(Artifact::getFile).forEach(f -> createSymbolicLink(f, analysisDir));
-            dependencyNodes.stream().map(DependencyNode::getArtifact).forEach(a -> a.setFile(new File(analysisDir, a.getFile().getName())));
+            dependencyNodes.stream()
+                           .map(DependencyNode::getArtifact)
+                           .filter(a -> null != a.getFile())
+                           .filter(a -> !a.getFile().getName().contains("pom.xml"))
+                           .map(Artifact::getFile)
+                           .forEach(f -> createSymbolicLink(f, analysisDir));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
