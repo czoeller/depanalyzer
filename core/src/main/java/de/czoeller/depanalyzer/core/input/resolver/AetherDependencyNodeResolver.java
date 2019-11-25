@@ -60,14 +60,10 @@ public class AetherDependencyNodeResolver implements DependencyNodeResolver {
         CollectResult collectResult = null;
         collectResult = system.collectDependencies(session, collectRequest );
 
-        resolveArtifacts(session, system, collectResult);
-
-        return collectResult.getRoot();
-    }
-
-    private void resolveArtifacts(RepositorySystemSession session, RepositorySystem system, CollectResult collectResult) {
         final DependencyNode root = collectResult.getRoot();
         resolveArtifacts(session, system, root);
+
+        return root;
     }
 
     /**
