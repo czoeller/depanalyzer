@@ -103,8 +103,7 @@ public class ProjectBuilder {
             }
         }
         log.error("Could not find proper java.");
-        System.exit(1);
-        return null;
+        throw new RuntimeException("Could not find proper java.");
     }
 
     private Optional<File> findJava8(String javaHome) {

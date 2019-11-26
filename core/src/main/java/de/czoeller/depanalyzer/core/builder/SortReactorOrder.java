@@ -47,7 +47,7 @@ public class SortReactorOrder {
 
             if(!modulesAfterSort.equals(modules)) {
                 log.error("The reactor order could not be reconstructed! This would lead to wrong handling in the reachability map of the graph building component.");
-                System.exit(1);
+                throw new RuntimeException("The reactor order could not be reconstructed! This would lead to wrong handling in the reachability map of the graph building component.");
             }
         }
     }

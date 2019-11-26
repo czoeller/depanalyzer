@@ -135,7 +135,7 @@ public class SpotBugsAnalyzer extends BaseAnalyzer {
 
         if(!findSecBugsFile.exists()) {
             log.error("Could not find find-secbugs plugin. This would lead to incomplete analyze results.");
-            System.exit(1);
+            throw new RuntimeException("Could not find find-secbugs plugin. This would lead to incomplete analyze results.");
         }
 
         List<String> pluginJarPathList = Lists.newArrayList();
