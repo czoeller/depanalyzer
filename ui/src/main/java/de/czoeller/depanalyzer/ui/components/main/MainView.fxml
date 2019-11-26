@@ -1,23 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
-<?import javafx.embed.swing.SwingNode?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
-<?import org.controlsfx.control.HyperlinkLabel?>
-<?import org.controlsfx.control.SegmentedButton?>
-
 <!--
   ~ Copyright (C) 2019 czoeller
   ~
@@ -34,6 +16,25 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
   -->
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.embed.swing.SwingNode?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.HyperlinkLabel?>
+<?import org.controlsfx.control.SegmentedButton?>
 
 <AnchorPane prefHeight="700.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.czoeller.depanalyzer.ui.components.main.MainController">
     <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -101,15 +102,21 @@
            <bottom>
               <HBox alignment="BOTTOM_LEFT" prefWidth="200.0" spacing="5.0">
                  <children>
-                    <Button mnemonicParsing="false" onAction="#pickModeAction" text="Pick Mode">
+                    <Button onAction="#pickModeAction" text="_Pick Mode">
                        <graphic>
                           <FontAwesomeIconView glyphName="CROSSHAIRS" glyphStyle="-fx-fill: linear-gradient(#70b4e5 0%, #247cbc 70%, #2c85c1 85%);" />
                        </graphic>
+                        <tooltip>
+                            <Tooltip text="(CTRL+P)" />
+                        </tooltip>
                     </Button>
-                    <Button mnemonicParsing="false" onAction="#transformModeAction" text="Transform Mode">
+                    <Button onAction="#transformModeAction" text="_Transform Mode">
                        <graphic>
                           <FontAwesomeIconView glyphName="ARROWS_ALT" glyphStyle="-fx-fill: linear-gradient(#70b4e5 0%, #247cbc 70%, #2c85c1 85%);" />
                        </graphic>
+                       <tooltip>
+                           <Tooltip text="(CTRL+T)" />
+                       </tooltip>
                     </Button>
                  </children>
                  <padding>
