@@ -238,6 +238,21 @@ public class GraphViewerWrapper {
         vv.repaint();
     }
 
+    public void setLabelProvider(LabelProviders newLabelProvider) {
+
+        switch (newLabelProvider) {
+            case ID:
+                vv.getRenderContext().setNodeLabelFunction(n -> n.getId().toString());
+                break;
+            case ARTIFACT_ID:
+                vv.getRenderContext().setNodeLabelFunction(n -> n.getArtifact().getArtifactId());
+                break;
+            default:
+                throw new IllegalStateException("No label provider for '" + newLabelProvider + "'");
+        }
+        vv.repaint();
+    }
+
     private static LayoutAlgorithm<GraphDependencyNode> createLayout(Layouts layoutType) {
         switch (layoutType) {
             case CIRCLE:
@@ -311,4 +326,19 @@ public class GraphViewerWrapper {
         }
     }
 
+    public enum LabelProviders {
+        ID("id"),
+        ARTIFACT_ID("artifactId");
+
+        LabelProviders(String name) {
+            this.name = name;
+        }
+
+        private final String name;
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
 }

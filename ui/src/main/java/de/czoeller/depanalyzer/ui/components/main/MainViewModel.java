@@ -39,8 +39,10 @@ public class MainViewModel {
     private final MainModel model;
     private ListProperty<Layouts> layoutsProperty = new SimpleListProperty<>();
     private ListProperty<Analyzers> analyzerResultsProperty = new SimpleListProperty<>();
+    private ListProperty<GraphViewerWrapper.LabelProviders> labelProversProperty = new SimpleListProperty<>();
     private ObjectProperty<Layouts> selectedLayoutProperty = new SimpleObjectProperty<>();
     private ObjectProperty<Analyzers> selectedAnalyzerResultProperty = new SimpleObjectProperty<>();
+    private ObjectProperty<GraphViewerWrapper.LabelProviders> selectedLabelProviderProperty = new SimpleObjectProperty<>();
     private ObjectProperty<GraphDependencyNode> selectedNodeProperty = new SimpleObjectProperty<>();
     private StringProperty searchTextProperty = new SimpleStringProperty();
     private StringProperty analyzedProjectProperty = new SimpleStringProperty();
@@ -51,13 +53,15 @@ public class MainViewModel {
         this.graphViewerWrapper = new GraphViewerWrapper(model, swingNodeViewer, swingNodeSatelliteViewer);
         this.layoutsProperty.set(FXCollections.observableArrayList(Layouts.values()));
         this.analyzerResultsProperty.set(FXCollections.observableArrayList(Analyzers.values()));
+        this.labelProversProperty.set(FXCollections.observableArrayList(GraphViewerWrapper.LabelProviders.values()));
         this.analyzedProjectProperty.bind(Globals.analyzedProjectProperty());
 
         selectedNodePropertyProperty().bind(graphViewerWrapper.selectedNodePropertyProperty());
         // Actions
         this.selectedLayoutProperty.addListener(safeChangeListener($ -> changeLayoutAction()));
-        this.selectedAnalyzerResultProperty.addListener(safeChangeListener($ -> changeAnalyzerResults()));
+        this.selectedAnalyzerResultProperty.addListener(safeChangeListener($ -> changeAnalyzerResultsAction()));
         this.searchTextProperty.addListener(delayedListener(safeChangeListener($ -> changeSearchTextAction())));
+        this.selectedLabelProviderProperty.addListener(safeChangeListener($ -> changeLabelAction()));
     }
 
     public GraphDependencyNode getSelectedNodeProperty() {
@@ -96,6 +100,10 @@ public class MainViewModel {
         return analyzerResultsProperty;
     }
 
+    public ObservableList<GraphViewerWrapper.LabelProviders> labelProvidersProperty() {
+        return labelProversProperty;
+    }
+
     public ObjectProperty<Layouts> selectedLayoutProperty() {
         return selectedLayoutProperty;
     }
@@ -108,8 +116,16 @@ public class MainViewModel {
         return selectedAnalyzerResultProperty;
     }
 
+    public ObjectProperty<GraphViewerWrapper.LabelProviders> selectedLabelProviderProperty() {
+        return selectedLabelProviderProperty;
+    }
+
     public Analyzers getSelectedAnalyzerResult() {
         return selectedAnalyzerResultProperty.get();
+    }
+
+    public GraphViewerWrapper.LabelProviders getSelectedLabelProvider() {
+        return selectedLabelProviderProperty.get();
     }
 
     public List<String> getAvailableNodeNames() {
@@ -128,11 +144,13 @@ public class MainViewModel {
         graphViewerWrapper.setSelectedLayout(getSelectedLayout());
     }
 
-    private void changeAnalyzerResults() {
+    private void changeAnalyzerResultsAction() {
         graphViewerWrapper.setAnalyzerResults(getSelectedAnalyzerResult());
     }
 
     public void changeSearchTextAction() {
         graphViewerWrapper.setSearch(getSearchText());
     }
+
+    public void changeLabelAction() { graphViewerWrapper.setLabelProvider(getSelectedLabelProvider()); }
 }

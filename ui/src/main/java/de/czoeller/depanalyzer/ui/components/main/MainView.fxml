@@ -33,6 +33,7 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
   -->
+
 <AnchorPane prefHeight="700.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.czoeller.depanalyzer.ui.components.main.MainController">
     <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
     <children>
@@ -49,6 +50,7 @@
                     <RowConstraints />
                     <RowConstraints />
                     <RowConstraints />
+                     <RowConstraints />
                  </rowConstraints>
                  <children>
                      <Label text="Analyzed project:" />
@@ -60,6 +62,8 @@
                     <SegmentedButton fx:id="layoutSegmentedButton" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                     <Label text="Analyzer Result:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
                     <ComboBox fx:id="analyzerResultComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                     <Label text="Label:" GridPane.rowIndex="4" />
+                     <ComboBox fx:id="labelProvidersComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                  </children>
                  <BorderPane.margin>
                     <Insets bottom="15.0" />

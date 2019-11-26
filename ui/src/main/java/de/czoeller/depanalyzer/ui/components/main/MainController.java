@@ -22,6 +22,7 @@ import de.czoeller.depanalyzer.ui.Globals;
 import de.czoeller.depanalyzer.ui.components.detail.DetailController;
 import de.czoeller.depanalyzer.ui.model.Layouts;
 import de.czoeller.depanalyzer.ui.model.MainModel;
+import de.czoeller.depanalyzer.ui.swingwrapper.GraphViewerWrapper;
 import de.czoeller.depanalyzer.ui.util.ControlsUtils;
 import javafx.beans.binding.Bindings;
 import javafx.embed.swing.SwingNode;
@@ -54,6 +55,9 @@ public class MainController implements Initializable {
 
     @FXML
     public ComboBox<Analyzers> analyzerResultComboBox;
+
+    @FXML
+    public ComboBox<GraphViewerWrapper.LabelProviders> labelProvidersComboBox;
 
     @FXML
     public Label analyzedProjectLabel;
@@ -106,6 +110,10 @@ public class MainController implements Initializable {
         analyzerResultComboBox.setItems(viewModel.analyzerResultsProperty());
         analyzerResultComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> viewModel.selectedAnalyzerResultProperty().set(newValue));
         analyzerResultComboBox.getSelectionModel().selectFirst();
+
+        labelProvidersComboBox.setItems(viewModel.labelProvidersProperty());
+        labelProvidersComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> viewModel.selectedLabelProviderProperty().set(newValue));
+        labelProvidersComboBox.getSelectionModel().selectFirst();
 
         // Sizes
         leftPane.prefWidthProperty().set(1);
