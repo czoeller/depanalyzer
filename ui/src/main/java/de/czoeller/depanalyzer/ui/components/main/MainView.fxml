@@ -15,6 +15,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.HyperlinkLabel?>
 <?import org.controlsfx.control.SegmentedButton?>
 
 <!--
@@ -38,6 +39,7 @@
     <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
     <children>
         <fx:include source="../menu/Menu.fxml" />
+         <HyperlinkLabel fx:id="statsLink" onAction="#showStats" text="[?]" />
         <BorderPane fx:id="borderPane" VBox.vgrow="ALWAYS">
             <top>
               <GridPane fx:id="gridPane" hgap="25" maxWidth="900.0" vgap="15">

@@ -20,14 +20,18 @@ import de.czoeller.depanalyzer.metamodel.Analyzers;
 import de.czoeller.depanalyzer.ui.GUI;
 import de.czoeller.depanalyzer.ui.Globals;
 import de.czoeller.depanalyzer.ui.components.detail.DetailController;
+import de.czoeller.depanalyzer.ui.components.stats.StatsController;
 import de.czoeller.depanalyzer.ui.model.Layouts;
 import de.czoeller.depanalyzer.ui.model.MainModel;
 import de.czoeller.depanalyzer.ui.swingwrapper.GraphViewerWrapper;
 import de.czoeller.depanalyzer.ui.util.ControlsUtils;
 import javafx.beans.binding.Bindings;
 import javafx.embed.swing.SwingNode;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -35,14 +39,21 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import org.controlsfx.control.HyperlinkLabel;
+import org.controlsfx.control.PopOver;
 import org.controlsfx.control.SegmentedButton;
+import org.netbeans.api.annotations.common.StaticResource;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 public class MainController implements Initializable {
+
+    @FXML
+    public HyperlinkLabel statsLink;
 
     @FXML
     public GridPane gridPane;
@@ -87,11 +98,15 @@ public class MainController implements Initializable {
     public DetailController detailController;
 
     private MainViewModel viewModel;
+    private PopOver popOver = new PopOver();
+
+    private static final @StaticResource
+    String statsView = "de/czoeller/depanalyzer/ui/components/stats/StatsView.fxml";
+    private MainModel model;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-        final MainModel model = GUI.getUIModel();
+        model = GUI.getUIModel();
         viewModel = new MainViewModel(model, swingNodeViewer, swingNodeSatelliteViewer);
 
         // Bindings
@@ -106,9 +121,9 @@ public class MainController implements Initializable {
         layoutSegmentedButton.getToggleGroup().selectedToggleProperty().addListener(ControlsUtils.safeToggleChangeListener((newValue) -> viewModel.selectedLayoutProperty().set(newValue)));
         ControlsUtils.selectFirstButton(layoutSegmentedButton);
 
-
         analyzerResultComboBox.setItems(viewModel.analyzerResultsProperty());
         analyzerResultComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> viewModel.selectedAnalyzerResultProperty().set(newValue));
+        analyzerResultComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> popOver.hide());
         analyzerResultComboBox.getSelectionModel().selectFirst();
 
         labelProvidersComboBox.setItems(viewModel.labelProvidersProperty());
@@ -143,4 +158,27 @@ public class MainController implements Initializable {
         viewModel.transformModeAction();
     }
 
+    @FXML
+    public void showStats(ActionEvent actionEvent) {
+
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(statsView));
+        try {
+            Parent root = loader.load();
+            StatsController ctrl = loader.getController();
+            ctrl.setModel(model);
+            ctrl.postInitialize();
+
+            popOver = new PopOver(root);
+            popOver.setTitle("Stats");
+            popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
+            popOver.setAutoHide(false);
+            popOver.setCloseButtonEnabled(true);
+            popOver.setHeaderAlwaysVisible(true);
+            popOver.setCornerRadius(4);
+            popOver.show(statsLink);
+
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not load Stats Controller", e);
+        }
+    }
 }
