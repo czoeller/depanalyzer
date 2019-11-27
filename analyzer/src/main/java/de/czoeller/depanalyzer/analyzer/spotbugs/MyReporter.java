@@ -22,10 +22,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.bcel.classfile.JavaClass;
 
 @Slf4j
-public class MyReporter extends TextUIBugReporter {
+class MyReporter extends TextUIBugReporter {
 
+    private static final String BUG_CATEGORY_SECURITY = "SECURITY";
     private final BugCollection bugs;
-    private int i;
 
     MyReporter(BugCollection bugs) {
         this.bugs = bugs;
@@ -35,11 +35,13 @@ public class MyReporter extends TextUIBugReporter {
     @Override
     protected void doReportBug(BugInstance bugInstance) {
         BugPattern bugPattern = bugInstance.getBugPattern();
-        i++;
-        if (bugPattern.getCategory().equals("SECURITY")) {
+        if (isSecurityBug(bugPattern)) {
             bugs.add(bugInstance);
         }
+    }
 
+    private boolean isSecurityBug(BugPattern bugPattern) {
+        return bugPattern.getCategory().equals(BUG_CATEGORY_SECURITY);
     }
 
     public void finish() {
@@ -53,15 +55,13 @@ public class MyReporter extends TextUIBugReporter {
                 log.info("message: {}}", bug.getMessage());
             }
         }
-
     }
 
     public void observeClass(JavaClass javaClass) {
-        // TODO Auto-generated method stub
-
+        // Nothing to do
     }
     public void observeClass(ClassDescriptor classDescriptor) {
-        // TODO Auto-generated method stub
+        // Nothing to do
     }
 
     public BugCollection getBugCollection() {
