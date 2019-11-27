@@ -36,10 +36,10 @@ public class DetailViewModel {
 
     public DetailViewModel() {
         selectedNode.addListener((observable, oldValue, newValue) -> {
-            groupId.set(newValue.getDependencyNode().getArtifact().getGroupId());
-            artifactId.set(newValue.getDependencyNode().getArtifact().getArtifactId());
-            version.set(newValue.getDependencyNode().getArtifact().getVersion());
-            license.set(newValue.getDependencyNode().getArtifact().getMetadataList().toString());
+            groupId.set(newValue.getArtifact().getGroupId());
+            artifactId.set(newValue.getArtifact().getArtifactId());
+            version.set(newValue.getArtifact().getVersion());
+            license.set(newValue.getArtifact().getMetadataList().toString());
             nrIssues.set(newValue.getIssues().size());
             heat.set(newValue.getHeat());
             initialize();

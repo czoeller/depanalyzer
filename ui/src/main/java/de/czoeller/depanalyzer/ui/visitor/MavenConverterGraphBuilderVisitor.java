@@ -48,7 +48,7 @@ public class MavenConverterGraphBuilderVisitor implements DependencyVisitor {
             rootNode = node;
         }
 
-        graphNode.setPrimaryLevel(path.size());
+        graphNode.setDepth(path.size());
         path.push(node);
 
         node.getChildren()

@@ -26,12 +26,12 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = "id")
-@Data
 public class GraphDependencyNode implements HasHeat, HasArtifact {
     private static long idCounter = 0;
     private final DependencyNode dependencyNode;
     @Setter
-    private Integer primaryLevel = 0;
+    @Getter
+    private Integer depth = 0;
     @Getter
     private final Long id;
 
@@ -56,5 +56,9 @@ public class GraphDependencyNode implements HasHeat, HasArtifact {
 
     public boolean isProjectNode() {
         return getArtifact().getGroupId().equals(Globals.analyzedProjectProperty().get().split(":")[0]);
+    }
+
+    public String getIdentifier() {
+        return dependencyNode.getIdentifier();
     }
 }

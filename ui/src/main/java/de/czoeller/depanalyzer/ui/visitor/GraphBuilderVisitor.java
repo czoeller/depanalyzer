@@ -50,7 +50,7 @@ public class GraphBuilderVisitor implements ModelDependencyNodeVisitor {
             rootNode = node;
         }
 
-        graphNode.setPrimaryLevel(path.size());
+        graphNode.setDepth(path.size());
         path.push(node);
 
         node.getChildren()

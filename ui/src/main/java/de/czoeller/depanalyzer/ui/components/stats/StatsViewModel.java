@@ -53,12 +53,12 @@ class StatsViewModel {
         final Optional<GraphDependencyNode> maxDepth = model.getGraph()
                                                        .nodes()
                                                        .stream()
-                                                       .max(Comparator.comparing(GraphDependencyNode::getPrimaryLevel));
+                                                       .max(Comparator.comparing(GraphDependencyNode::getDepth));
         log.info("Nr nodes: {}", nrNodes);
         log.info("Project nodes: {}", nrProjectNodes);
         log.info("Nr issue nodes: {}", nrIssueNodes);
 
-        final String deepestNode = String.format("%d (%s)", maxDepth.get().getPrimaryLevel(), maxDepth.get().getDependencyNode().getIdentifier());
+        final String deepestNode = String.format("%d (%s)", maxDepth.get().getDepth(), maxDepth.get().getIdentifier());
         log.info("Deepest node: ", maxDepth.get().getPrimaryLevel() + deepestNode);
 
         nrNodesProperty.set(nrNodes);
