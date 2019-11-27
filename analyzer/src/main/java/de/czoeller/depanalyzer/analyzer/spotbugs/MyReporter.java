@@ -34,7 +34,6 @@ public class MyReporter extends TextUIBugReporter {
 
     @Override
     protected void doReportBug(BugInstance bugInstance) {
-        new Trigger().fun();
         BugPattern bugPattern = bugInstance.getBugPattern();
         i++;
         if (bugPattern.getCategory().equals("SECURITY")) {
