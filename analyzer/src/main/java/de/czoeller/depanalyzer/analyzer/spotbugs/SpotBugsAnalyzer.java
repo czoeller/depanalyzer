@@ -103,9 +103,6 @@ public class SpotBugsAnalyzer extends BaseAnalyzer {
         findBugs.setDetectorFactoryCollection(DetectorFactoryCollection.instance());
         findBugs.setBugReporter(bugReporter);
         final UserPreferences defaultUserPreferences = UserPreferences.createDefaultUserPreferences();
-        //Map<String, Boolean> plugins = new LinkedHashMap<>();
-        //plugins.put("target/lib/findsecbugs-plugin-1.9.0.jar", false);
-        //defaultUserPreferences.setCustomPlugins(plugins);
         defaultUserPreferences.setEffort(UserPreferences.EFFORT_MAX);
         findBugs.setUserPreferences(defaultUserPreferences);
 
@@ -122,9 +119,9 @@ public class SpotBugsAnalyzer extends BaseAnalyzer {
         } catch (InterruptedException e) {
             log.debug("Analyzer interrupted", e);
         } finally {
-            //resetCustomPluginList(customPlugins);
+            resetCustomPluginList(customPlugins);
         }
-        //final BugCollection bugCollection = findBugs.getBugReporter().getBugCollection();
+
         return issues;
     }
 
@@ -150,7 +147,7 @@ public class SpotBugsAnalyzer extends BaseAnalyzer {
                     log.info("Loading findbugs plugin: " + path);
                 }
             } catch (PluginException e) {
-                log.warn("Failed to load plugin for custom detector: " + path);
+                log.warn("Failed to load plugin for the custom detector: " + path);
                 log.debug("Cause of failure", e);
             } catch (DuplicatePluginIdException e) {
                 log.debug("Plugin already loaded: exception ignored: " + e.getMessage());
