@@ -82,8 +82,8 @@ public class SpotBugsAnalyzer extends BaseAnalyzer {
         }
 
         log.debug("Analyzing node {}", node.getIdentifier());
-
-        Collection<Plugin> customPlugins = loadPlugins();
+        
+        loadPlugins();
         disableUpdateChecksOnEveryPlugin();
         Project project = new Project();
         project.addFile(node.getArtifact().getFile().getAbsolutePath());
@@ -103,9 +103,6 @@ public class SpotBugsAnalyzer extends BaseAnalyzer {
         findBugs.setDetectorFactoryCollection(DetectorFactoryCollection.instance());
         findBugs.setBugReporter(bugReporter);
         final UserPreferences defaultUserPreferences = UserPreferences.createDefaultUserPreferences();
-        //Map<String, Boolean> plugins = new LinkedHashMap<>();
-        //plugins.put("target/lib/findsecbugs-plugin-1.9.0.jar", false);
-        //defaultUserPreferences.setCustomPlugins(plugins);
         defaultUserPreferences.setEffort(UserPreferences.EFFORT_MAX);
         findBugs.setUserPreferences(defaultUserPreferences);
 
@@ -121,10 +118,8 @@ public class SpotBugsAnalyzer extends BaseAnalyzer {
             log.debug("IO exception while analyzing", e);
         } catch (InterruptedException e) {
             log.debug("Analyzer interrupted", e);
-        } finally {
-            //resetCustomPluginList(customPlugins);
         }
-        //final BugCollection bugCollection = findBugs.getBugReporter().getBugCollection();
+
         return issues;
     }
 
@@ -166,14 +161,6 @@ public class SpotBugsAnalyzer extends BaseAnalyzer {
     private static void disableUpdateChecksOnEveryPlugin() {
         for (Plugin plugin : Plugin.getAllPlugins()) {
             plugin.setMyGlobalOption("noUpdateChecks", "true");
-        }
-    }
-
-    private static void resetCustomPluginList(Collection<Plugin> customPlugins) {
-        if (customPlugins != null) {
-            for (Plugin plugin : customPlugins) {
-                Plugin.removeCustomPlugin(plugin);
-            }
         }
     }
 
