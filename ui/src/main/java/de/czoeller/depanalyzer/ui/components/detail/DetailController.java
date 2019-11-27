@@ -20,12 +20,14 @@ import de.czoeller.depanalyzer.ui.model.GraphDependencyNode;
 import javafx.beans.property.ObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.SortEvent;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
 import javafx.scene.text.Text;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class DetailController implements Initializable {
 
@@ -48,6 +50,40 @@ public class DetailController implements Initializable {
         nrIssuesText.textProperty().bind(viewModel.nrIssuesProperty().asString());
         heatText.textProperty().bind(viewModel.heatProperty().asString());
         issuesTableView.setItems(viewModel.getIssues());
+        issuesTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        final KeyCodeCombination keyCodeCopy = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_ANY);
+        issuesTableView.setOnKeyPressed(event -> {
+            if (keyCodeCopy.match(event)) {
+                copySelectionToClipboard(issuesTableView);
+            }
+        });
+    }
+
+    public static void copySelectionToClipboard(final TableView<?> table) {
+        final Set<Integer> rows = new TreeSet<>();
+        for (final TablePosition<?, ?> tablePosition : table.getSelectionModel().getSelectedCells()) {
+            rows.add(tablePosition.getRow());
+        }
+        final StringBuilder strb = new StringBuilder();
+        boolean firstRow = true;
+        for (final Integer row : rows) {
+            if (!firstRow) {
+                strb.append('\n');
+            }
+            firstRow = false;
+            boolean firstCol = true;
+            for (final TableColumn<?, ?> column : table.getColumns()) {
+                if (!firstCol) {
+                    strb.append('\t');
+                }
+                firstCol = false;
+                final Object cellData = column.getCellData(row);
+                strb.append(cellData == null ? "" : cellData.toString());
+            }
+        }
+        final ClipboardContent clipboardContent = new ClipboardContent();
+        clipboardContent.putString(strb.toString());
+        Clipboard.getSystemClipboard().setContent(clipboardContent);
     }
 
     public ObjectProperty<GraphDependencyNode> selectedNodeProperty() {
