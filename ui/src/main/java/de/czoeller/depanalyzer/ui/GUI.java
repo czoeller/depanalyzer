@@ -38,7 +38,7 @@ public class GUI extends javafx.application.Application {
 
     private static final @StaticResource String mainView = "de/czoeller/depanalyzer/ui/components/main/MainView.fxml";
 
-    public static Stage primaryStage;
+    private static Stage primaryStage;
 
     @Override
     public void start(Stage stage) throws IOException {

@@ -100,8 +100,7 @@ public class MainController implements Initializable {
     private MainViewModel viewModel;
     private PopOver popOver = new PopOver();
 
-    private static final @StaticResource
-    String statsView = "de/czoeller/depanalyzer/ui/components/stats/StatsView.fxml";
+    private static final @StaticResource String statsView = "de/czoeller/depanalyzer/ui/components/stats/StatsView.fxml";
     private MainModel model;
 
     @Override
@@ -160,7 +159,6 @@ public class MainController implements Initializable {
 
     @FXML
     public void showStats(ActionEvent actionEvent) {
-
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(statsView));
         try {
             Parent root = loader.load();
@@ -176,7 +174,6 @@ public class MainController implements Initializable {
             popOver.setHeaderAlwaysVisible(true);
             popOver.setCornerRadius(4);
             popOver.show(statsLink);
-
         } catch (IOException e) {
             throw new IllegalStateException("Could not load Stats Controller", e);
         }
