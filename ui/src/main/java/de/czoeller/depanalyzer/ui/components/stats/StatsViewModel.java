@@ -59,7 +59,7 @@ class StatsViewModel {
         log.info("Nr issue nodes: {}", nrIssueNodes);
 
         final String deepestNode = String.format("%d (%s)", maxDepth.get().getDepth(), maxDepth.get().getIdentifier());
-        log.info("Deepest node: ", maxDepth.get().getPrimaryLevel() + deepestNode);
+        log.info("Deepest node: {}", maxDepth.get().getDepth() + deepestNode);
 
         nrNodesProperty.set(nrNodes);
         nrProjectNodesProperty.set(nrProjectNodes);
