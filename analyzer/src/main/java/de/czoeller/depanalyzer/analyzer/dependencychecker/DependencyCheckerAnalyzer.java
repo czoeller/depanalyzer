@@ -61,7 +61,6 @@ public class DependencyCheckerAnalyzer extends BaseAnalyzer {
     private void init() {
         //if oss-index API returns 429 rate limit we can disable the service:
         //settings.setBoolean("ossindexAnalyzerEnabled", false);
-        engine = new Engine(Engine.Mode.STANDALONE, settings);
 
         settings.setInt("max.download.threads", 4);
         settings.setBoolean("analyzer.jar.enabled", true);
@@ -93,6 +92,8 @@ public class DependencyCheckerAnalyzer extends BaseAnalyzer {
         settings.setBoolean("analyzer.hint.enabled", true);
         settings.setBoolean("analyzer.nvdcve.enabled", true);
         settings.setBoolean("analyzer.vulnerabilitysuppression.enabled", true);
+
+        engine = new Engine(Engine.Mode.STANDALONE, settings);
     }
 
     @Override
