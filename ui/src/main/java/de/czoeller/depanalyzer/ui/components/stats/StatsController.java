@@ -33,10 +33,11 @@ public class StatsController implements Initializable {
     @FXML
     public Label nrNodesWithIssueLabel;
     @FXML
+    public Label nrIssuesLabel;
+    @FXML
     public Label deepestNodeLabel;
 
     private StatsViewModel viewModel;
-
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -47,6 +48,7 @@ public class StatsController implements Initializable {
         nrNodesLabel.textProperty().bind(viewModel.nrNodesProperty().asString());
         nrProjectNodesLabel.textProperty().bind(viewModel.nrProjectNodesProperty().asString());
         nrNodesWithIssueLabel.textProperty().bind(viewModel.nrNodesWithIssueProperty().asString());
+        nrIssuesLabel.textProperty().bind(viewModel.nrIssuesProperty().asString());
         deepestNodeLabel.textProperty().bind(viewModel.deepestNodeProperty());
     }
 

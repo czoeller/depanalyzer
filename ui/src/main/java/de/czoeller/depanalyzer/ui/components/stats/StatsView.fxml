@@ -36,16 +36,19 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" />
         </rowConstraints>
          <children>
             <Label text="#Nodes:" />
             <Label text="#Project Nodes:" GridPane.rowIndex="1" />
             <Label text="#Nodes with issue:" GridPane.rowIndex="2" />
-            <Label text="Deepest node:" GridPane.rowIndex="3" />
+            <Label text="#Issues" GridPane.rowIndex="3" />
+            <Label text="Deepest node:" GridPane.rowIndex="4" />
             <Label fx:id="nrNodesLabel" maxWidth="1.7976931348623157E308" text="Label" GridPane.columnIndex="1" />
             <Label fx:id="nrProjectNodesLabel" maxWidth="1.7976931348623157E308" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label fx:id="nrNodesWithIssueLabel" maxWidth="1.7976931348623157E308" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label fx:id="deepestNodeLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label fx:id="deepestNodeLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Label fx:id="nrIssuesLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
          </children>
          <padding>
             <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />

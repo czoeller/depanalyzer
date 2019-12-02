@@ -33,6 +33,7 @@ class StatsViewModel {
     private ReadOnlyLongWrapper nrNodesProperty = new ReadOnlyLongWrapper();
     private ReadOnlyLongWrapper nrProjectNodesProperty = new ReadOnlyLongWrapper();
     private ReadOnlyLongWrapper nrNodesWithIssueProperty = new ReadOnlyLongWrapper();
+    private ReadOnlyLongWrapper nrIssuesProperty = new ReadOnlyLongWrapper();
     private ReadOnlyStringWrapper deepestNodeProperty = new ReadOnlyStringWrapper();
 
     StatsViewModel(MainModel model) {
@@ -50,20 +51,28 @@ class StatsViewModel {
                                           .stream()
                                           .filter(n -> !n.getIssues().isEmpty())
                                           .count();
+        final long nrIssues = model.getGraph()
+                                          .nodes()
+                                          .stream()
+                                          .filter(n -> !n.getIssues().isEmpty())
+                                          .map(n -> n.getIssues().size())
+                                          .reduce(0, Integer::sum);
         final Optional<GraphDependencyNode> maxDepth = model.getGraph()
                                                        .nodes()
                                                        .stream()
                                                        .max(Comparator.comparing(GraphDependencyNode::getDepth));
         log.info("Nr nodes: {}", nrNodes);
         log.info("Project nodes: {}", nrProjectNodes);
-        log.info("Nr issue nodes: {}", nrIssueNodes);
+        log.info("Nr nodes with issue: {}", nrIssueNodes);
+        log.info("Nr issues: {}", nrIssues);
 
         final String deepestNode = String.format("%d (%s)", maxDepth.get().getDepth(), maxDepth.get().getIdentifier());
-        log.info("Deepest node: {}", maxDepth.get().getDepth() + deepestNode);
+        log.info("Deepest node: {}", deepestNode);
 
         nrNodesProperty.set(nrNodes);
         nrProjectNodesProperty.set(nrProjectNodes);
         nrNodesWithIssueProperty.set(nrIssueNodes);
+        nrIssuesProperty.set(nrIssues);
         deepestNodeProperty.set(deepestNode);
     }
 
@@ -77,6 +86,10 @@ class StatsViewModel {
 
     ReadOnlyLongProperty nrNodesWithIssueProperty() {
         return nrNodesWithIssueProperty.getReadOnlyProperty();
+    }
+
+    ReadOnlyLongProperty nrIssuesProperty() {
+        return nrIssuesProperty.getReadOnlyProperty();
     }
 
     ReadOnlyStringProperty deepestNodeProperty() {
