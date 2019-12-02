@@ -96,7 +96,7 @@ public class GraphViewerWrapper {
     private void run() {
         LayoutAlgorithm<GraphDependencyNode> layout = new CircleLayoutAlgorithm<>();
 
-        final Dimension vvDimension = new Dimension(500, 500);
+        final Dimension vvDimension = new Dimension(400, 480);
         final Dimension vvsDimension = new Dimension(((int) (vvDimension.getWidth() * 0.5)), ((int) (vvDimension.getHeight() * 0.5)));
 
         vv = new VisualizationViewer<>(model.getGraph(), layout, vvDimension);
