@@ -119,12 +119,25 @@ public class DependencyCheckerAnalyzer extends BaseAnalyzer {
         for (Dependency dependency : analyzeResult) {
             for (Vulnerability vulnerability : dependency.getVulnerabilities()) {
                 if(dependency.getFileName().equals(node.getArtifact().getFile().getName())) {
-                    issues.add(new CVEIssue(Issue.Severity.HIGH, vulnerability.getDescription()));
+                    final Issue.Severity severity = getSeverity(vulnerability);
+                    final String description = String.format("%s: %s", vulnerability.getName(), vulnerability.getDescription());
+                    issues.add(new CVEIssue(severity, description));
                 }
             }
         }
 
         return issues;
+    }
+
+    private Issue.Severity getSeverity(Vulnerability vulnerability) {
+        Issue.Severity severity = Issue.Severity.LOW;
+        if( null != vulnerability.getCvssV3() ) {
+            severity = Issue.Severity.map(vulnerability.getCvssV3().getBaseScore());
+        } else if (null != vulnerability.getCvssV2()) {
+            severity = Issue.Severity.map(vulnerability.getCvssV2().getScore());
+        }
+
+        return severity;
     }
 
     private List<Dependency> runScan(String reportDirectory, String[] outputFormats, String applicationName, String[] files,

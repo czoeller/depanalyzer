@@ -38,5 +38,18 @@ public abstract class Issue {
             }
             return HIGH;
         }
+
+        public static Severity map(float score) {
+            if (score >= 0 && score < 4) {
+                return LOW;
+            }
+            else if (score >= 4 && score < 7) {
+                return MEDIUM;
+            }
+            else if (score >= 7) {
+                return HIGH;
+            }
+            return HIGH;
+        }
     }
 }
