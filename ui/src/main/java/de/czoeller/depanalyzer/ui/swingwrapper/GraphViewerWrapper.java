@@ -247,6 +247,9 @@ public class GraphViewerWrapper {
             case ARTIFACT_ID:
                 vv.getRenderContext().setNodeLabelFunction(n -> n.getArtifact().getArtifactId());
                 break;
+            case IMPORTANT_ARTIFACT_ID:
+                vv.getRenderContext().setNodeLabelFunction(n -> n.getHeat() > 20 ? n.getArtifact().getArtifactId() : "");
+                break;
             default:
                 throw new IllegalStateException("No label provider for '" + newLabelProvider + "'");
         }
@@ -328,7 +331,8 @@ public class GraphViewerWrapper {
 
     public enum LabelProviders {
         ID("id"),
-        ARTIFACT_ID("artifactId");
+        ARTIFACT_ID("artifactId"),
+        IMPORTANT_ARTIFACT_ID("optimized artifactId");
 
         LabelProviders(String name) {
             this.name = name;
