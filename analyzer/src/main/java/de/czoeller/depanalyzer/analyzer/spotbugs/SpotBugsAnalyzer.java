@@ -82,7 +82,7 @@ public class SpotBugsAnalyzer extends BaseAnalyzer {
         }
 
         log.debug("Analyzing node {}", node.getIdentifier());
-        
+
         loadPlugins();
         disableUpdateChecksOnEveryPlugin();
         Project project = new Project();
@@ -109,7 +109,8 @@ public class SpotBugsAnalyzer extends BaseAnalyzer {
         try {
             findBugs.execute();
             for (BugInstance bug : bugs) {
-                issues.add(new SpotBugsIssue(Severity.map(bug.getPriority()), bug.getMessage()));
+                String message = String.format("%s %s", bug.getMessage(), bug.getPrimarySourceLineAnnotation());
+                issues.add(new SpotBugsIssue(Severity.map(bug.getPriority()), message));
             }
             if(!issues.isEmpty()) {
                 log.info("found bugs: {}", bugs);
