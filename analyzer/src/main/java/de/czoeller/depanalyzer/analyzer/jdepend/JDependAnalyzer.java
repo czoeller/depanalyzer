@@ -89,7 +89,7 @@ public class JDependAnalyzer extends BaseAnalyzer {
                     final float instability = javaPackage.instability();
                     if(instability >= INSTABILITY_THRESHOLD) {
                         log.info("Found instability issue in package '{}'", javaPackage);
-                        issues.add(new MetricIssue(Issue.Severity.LOW, String.format("instability of pkg '%s': %.2f", javaPackage.getName(), instability), instability));
+                        issues.add(new MetricIssue(getSeverity(instability), String.format("instability of pkg '%s': %.2f", javaPackage.getName(), instability), instability));
                     }
                 } else {
                     log.trace("Skip analyzing package '{}'", javaPackage);
@@ -100,6 +100,17 @@ public class JDependAnalyzer extends BaseAnalyzer {
         }
 
         return issues;
+    }
+
+    private Issue.Severity getSeverity(float instability) {
+       Issue.Severity severity = Issue.Severity.LOW;
+       if(instability >= 0.90) {
+           severity = Issue.Severity.HIGH;
+       } else if(instability >= 0.80) {
+           severity = Issue.Severity.MEDIUM;
+       }
+
+        return severity;
     }
 
     private boolean shouldAnalyzePackage(JavaPackage javaPackage) {
