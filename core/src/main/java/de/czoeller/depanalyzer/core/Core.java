@@ -71,7 +71,7 @@ public class Core {
                 new DependencyCheckerAnalyzer(context),
                 new SpotBugsAnalyzer(context)
         );
-        final List<AnalyzerResult> analyzerResults = analyzeExecutor.analyze(dependencyNode, context);
+        final List<AnalyzerResult> analyzerResults = analyzeExecutor.analyze(dependencyNode);
 
         for (AnalyzerResult analyzerResult : analyzerResults) {
             log.info("found #{} issues for analyzer type '{}': {}", analyzerResult.getNodeIssuesMap().size(), analyzerResult.getAnalyzerType(), analyzerResult.getNodeIssuesMap());

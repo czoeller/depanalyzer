@@ -17,7 +17,6 @@
 package de.czoeller.depanalyzer.analyzer.dependencychecker;
 
 import com.google.common.collect.Lists;
-import de.czoeller.depanalyzer.analyzer.Analyzer;
 import de.czoeller.depanalyzer.analyzer.AnalyzerContext;
 import de.czoeller.depanalyzer.analyzer.AnalyzerException;
 import de.czoeller.depanalyzer.analyzer.BaseAnalyzer;
@@ -45,17 +44,11 @@ public class DependencyCheckerAnalyzer extends BaseAnalyzer {
 
     private Engine engine = null;
 
-    private static DependencyCheckerAnalyzer INSTANCE;
     private static List<Dependency> analyzeResult = null;
-
-    public DependencyCheckerAnalyzer() {
-        init();
-    }
 
     public DependencyCheckerAnalyzer(AnalyzerContext context) {
         super(context);
         init();
-        INSTANCE = this;
     }
 
     private void init() {
@@ -97,26 +90,18 @@ public class DependencyCheckerAnalyzer extends BaseAnalyzer {
     }
 
     @Override
-    public Analyzer newInstance(AnalyzerContext context) {
-        synchronized(DependencyCheckerAnalyzer.class) {
-            return INSTANCE;
-        }
-    }
-
-    @Override
     public List<Issue> analyze(DependencyNode node) throws AnalyzerException {
         List<Issue> issues = Lists.newArrayList();
 
-        synchronized(DependencyCheckerAnalyzer.class) {
-            if (analyzeResult == null) {
-                String[] files = new String[] { "target/jar-analysis" };
-                try {
-                    analyzeResult = runScan("report", new String[]{"html"}, "Test Application", files, new String[]{}, 0, 11);
-                } catch (ReportException | ExceptionCollection e) {
-                    throw new AnalyzerException("Could not analyze", e);
-                }
+        if (analyzeResult == null) {
+            String[] files = new String[] { "target/jar-analysis" };
+            try {
+                analyzeResult = runScan("report", new String[]{"html"}, "Test Application", files, new String[]{}, 0, 11);
+            } catch (ReportException | ExceptionCollection e) {
+                throw new AnalyzerException("Could not analyze", e);
             }
         }
+
         for (Dependency dependency : analyzeResult) {
             for (Vulnerability vulnerability : dependency.getVulnerabilities()) {
                 if(dependency.getFileName().equals(node.getArtifact().getFile().getName())) {

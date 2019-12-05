@@ -17,11 +17,9 @@
 package de.czoeller.depanalyzer.analyzer.jdepend;
 
 import com.google.common.collect.Lists;
-import de.czoeller.depanalyzer.analyzer.Analyzer;
 import de.czoeller.depanalyzer.analyzer.AnalyzerContext;
 import de.czoeller.depanalyzer.analyzer.AnalyzerException;
 import de.czoeller.depanalyzer.analyzer.BaseAnalyzer;
-import de.czoeller.depanalyzer.analyzer.dependencychecker.DependencyCheckerAnalyzer;
 import de.czoeller.depanalyzer.metamodel.Analyzers;
 import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.metamodel.Issue;
@@ -44,22 +42,12 @@ public class JDependAnalyzer extends BaseAnalyzer {
     public static final double DISTANCE_THRESHOLD = 0.3;
 
     private JDepend jdepend;
-    private static JDependAnalyzer INSTANCE;
     private static Collection<JavaPackage> analyzeResult = null;
     private static Map<String, List<String>> jarPackagesMap = new HashMap<>();
-
-    /**
-     * Required to obtain instance reflective.
-     * TODO: remove reflective instantiation
-     */
-    public JDependAnalyzer() {
-        init();
-    }
 
     public JDependAnalyzer(AnalyzerContext context) {
         super(context);
         init();
-        INSTANCE = this;
     }
 
     private void init() {
@@ -72,34 +60,24 @@ public class JDependAnalyzer extends BaseAnalyzer {
     }
 
     @Override
-    public Analyzer newInstance(AnalyzerContext context) {
-        synchronized(DependencyCheckerAnalyzer.class) {
-            return INSTANCE;
-        }
-    }
-
-    @Override
     public List<Issue> analyze(DependencyNode node)  {
         final List<Issue> issues = Lists.newArrayList();
 
-
-        synchronized(JDependAnalyzer.class) {
-            if (analyzeResult == null) {
-                try {
-                    Files.list(Paths.get("target", "jar-analysis"))
-                         .forEach(f -> {
-                             try {
-                                 jdepend.addDirectory(f.toFile().getAbsolutePath());
-                                 jarPackagesMap.put(f.toFile().getName(), getPackagesInJar(f.toFile().getAbsolutePath()));
-                             } catch (IOException e) {
-                                 throw new AnalyzerException("Could not analyze", e);
-                             }
-                         });
-                } catch (IOException e) {
-                    throw new AnalyzerException("Could not analyze", e);
-                }
-                analyzeResult = jdepend.analyze();
+        if (analyzeResult == null) {
+            try {
+                Files.list(Paths.get("target", "jar-analysis"))
+                     .forEach(f -> {
+                         try {
+                             jdepend.addDirectory(f.toFile().getAbsolutePath());
+                             jarPackagesMap.put(f.toFile().getName(), getPackagesInJar(f.toFile().getAbsolutePath()));
+                         } catch (IOException e) {
+                             throw new AnalyzerException("Could not analyze", e);
+                         }
+                     });
+            } catch (IOException e) {
+                throw new AnalyzerException("Could not analyze", e);
             }
+            analyzeResult = jdepend.analyze();
         }
 
         final List<JavaPackage> filteredPackages = analyzeResult.stream().filter(this::shouldAnalyzePackage).collect(Collectors.toList());

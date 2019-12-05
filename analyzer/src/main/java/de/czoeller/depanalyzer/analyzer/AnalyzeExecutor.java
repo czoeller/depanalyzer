@@ -50,7 +50,7 @@ public class AnalyzeExecutor {
         this.delegates = Lists.newArrayList(Arrays.asList(delegates));
     }
 
-    public List<AnalyzerResult> analyze(DependencyNode node, AnalyzerContext context) throws AnalyzerException {
+    public List<AnalyzerResult> analyze(DependencyNode node) throws AnalyzerException {
 
         val dependencyNodes = node.flattened().filter(distinctByKey(DependencyNode::getIdentifier)).collect(Collectors.toList());
 
@@ -72,25 +72,23 @@ public class AnalyzeExecutor {
 
         final LinkedList<DependencyNode> nodesList = new LinkedList<>(dependencyNodes);
 
-        final CompletableFuture<List<List<AnalyzerResult>>> collect = delegates.stream()
-                                                                               .map(analyzer -> new AnalyzeTask(analyzer, context, nodesList))
+        final CompletableFuture<List<AnalyzerResult>> collect = delegates.stream()
+                                                                               .map(analyzer -> new AnalyzeTask(analyzer, nodesList))
                                                                                .map(CompletableFuture::supplyAsync)
                                                                                .collect(CompletableFutureCollector.collectResult());
 
         collect.join();
-        final List<List<AnalyzerResult>> results;
+        final List<AnalyzerResult> results;
         final Map<Analyzers, AnalyzerResult> mergedResultsByAnalyzerType = new HashMap<>();
 
         try {
             results = collect.get();
-            for (List<AnalyzerResult> result : results) {
-                for (AnalyzerResult analyzerResult : result) {
-                    for (Map.Entry<String, List<Issue>> entry : analyzerResult.getNodeIssuesMap().entrySet() ) {
-                        if(!mergedResultsByAnalyzerType.containsKey(analyzerResult.getAnalyzerType())) {
-                            mergedResultsByAnalyzerType.put(analyzerResult.getAnalyzerType(), analyzerResult);
-                        } else {
-                            mergedResultsByAnalyzerType.get(analyzerResult.getAnalyzerType()).getNodeIssuesMap().put(entry.getKey(), entry.getValue());
-                        }
+            for (AnalyzerResult analyzerResult : results) {
+                for (Map.Entry<String, List<Issue>> entry : analyzerResult.getNodeIssuesMap().entrySet() ) {
+                    if(!mergedResultsByAnalyzerType.containsKey(analyzerResult.getAnalyzerType())) {
+                        mergedResultsByAnalyzerType.put(analyzerResult.getAnalyzerType(), analyzerResult);
+                    } else {
+                        mergedResultsByAnalyzerType.get(analyzerResult.getAnalyzerType()).getNodeIssuesMap().put(entry.getKey(), entry.getValue());
                     }
                 }
             }

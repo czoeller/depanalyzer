@@ -17,7 +17,6 @@
 package de.czoeller.depanalyzer.analyzer.spotbugs;
 
 import com.google.common.collect.Lists;
-import de.czoeller.depanalyzer.analyzer.Analyzer;
 import de.czoeller.depanalyzer.analyzer.AnalyzerContext;
 import de.czoeller.depanalyzer.analyzer.AnalyzerException;
 import de.czoeller.depanalyzer.analyzer.BaseAnalyzer;
@@ -45,14 +44,6 @@ public class SpotBugsAnalyzer extends BaseAnalyzer {
 
     private FindBugs2 findBugs;
 
-    /**
-     * Required to obtain instance reflective.
-     * TODO: remove reflective instantiation
-     */
-    public SpotBugsAnalyzer() {
-        init();
-    }
-
     public SpotBugsAnalyzer(AnalyzerContext context) {
         super(context);
         init();
@@ -63,17 +54,12 @@ public class SpotBugsAnalyzer extends BaseAnalyzer {
     }
 
     @Override
-    public Analyzer newInstance(AnalyzerContext context) {
-        return new SpotBugsAnalyzer(context);
-    }
-
-    @Override
     public Analyzers getType() {
         return Analyzers.SPOTBUGS;
     }
 
     @Override
-    public  List<Issue> analyze(DependencyNode node) throws AnalyzerException {
+    public List<Issue> analyze(DependencyNode node) throws AnalyzerException {
         List<Issue> issues = Lists.newArrayList();
 
         if(!shouldAnalyzeNode(node)) {

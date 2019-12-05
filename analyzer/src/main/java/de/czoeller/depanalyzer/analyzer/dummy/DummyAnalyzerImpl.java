@@ -18,7 +18,6 @@ package de.czoeller.depanalyzer.analyzer.dummy;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-import de.czoeller.depanalyzer.analyzer.Analyzer;
 import de.czoeller.depanalyzer.analyzer.AnalyzerContext;
 import de.czoeller.depanalyzer.analyzer.AnalyzerException;
 import de.czoeller.depanalyzer.analyzer.BaseAnalyzer;
@@ -34,12 +33,6 @@ import java.util.List;
 
 public class DummyAnalyzerImpl extends BaseAnalyzer {
 
-    /**
-     * Required to obtain instance reflective.
-     * TODO: remove reflective instantiation
-     */
-    public DummyAnalyzerImpl() {}
-
     public DummyAnalyzerImpl(AnalyzerContext context) {
         super(context);
     }
@@ -47,11 +40,6 @@ public class DummyAnalyzerImpl extends BaseAnalyzer {
     @Override
     public Analyzers getType() {
         return Analyzers.DUMMY;
-    }
-
-    @Override
-    public Analyzer newInstance(AnalyzerContext context) {
-        return new DummyAnalyzerImpl(context);
     }
 
     @Override

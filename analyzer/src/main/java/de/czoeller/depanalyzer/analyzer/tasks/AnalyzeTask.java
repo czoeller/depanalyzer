@@ -19,7 +19,6 @@ package de.czoeller.depanalyzer.analyzer.tasks;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import de.czoeller.depanalyzer.analyzer.Analyzer;
-import de.czoeller.depanalyzer.analyzer.AnalyzerContext;
 import de.czoeller.depanalyzer.metamodel.AnalyzerResult;
 import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.metamodel.Issue;
@@ -30,58 +29,49 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 @Slf4j
-public class AnalyzeTask implements Supplier<List<AnalyzerResult>> {
+public class AnalyzeTask implements Supplier<AnalyzerResult> {
 
     private final Analyzer analyzer;
-    private final AnalyzerContext context;
     private final List<DependencyNode> chunk;
 
     /**
      * Performs different analysis on a given chunk on nodes.
      * @param analyzer
-     * @param context
      * @param chunk
      */
-    public AnalyzeTask(Analyzer analyzer, AnalyzerContext context, List<DependencyNode> chunk) {
+    public AnalyzeTask(Analyzer analyzer, List<DependencyNode> chunk) {
         this.analyzer = analyzer;
-        this.context = context;
         this.chunk = chunk;
     }
 
     @Override
-    public List<AnalyzerResult> get() {
-        List<AnalyzerResult> results = Lists.newArrayList();
+    public AnalyzerResult get() {
+        final Map<String, List<Issue>> nodeIssues = Maps.newHashMap();
 
         log.debug("{} starting to analyze with analyzer {} a list of nodes with size #{} namely: {}", Thread.currentThread().getName(), analyzer.getType().toString(), chunk.size(), chunk);
 
-            log.trace("{} starting to analyze with analyzer '{}'", Thread.currentThread().getName(), analyzer);
+        log.trace("{} starting to analyze with analyzer '{}'", Thread.currentThread().getName(), analyzer);
 
-            final Map<String, List<Issue>> nodeIssues = Maps.newHashMap();
-            final Analyzer analyzerInstance = analyzer.newInstance(context);
-
-            for (DependencyNode node : chunk) {
-                if(node.getTypes().contains("pom")) {
-                    log.trace("Skipping analyze with {} for dependency of type pom '{}'", analyzerInstance.getClass().getSimpleName(), node.toString());
-                } else if(null == node.getArtifact().getFile()) {
-                    log.trace("Skipping analyze with {} for dependency with empty artifact file '{}'", analyzerInstance.getClass().getSimpleName(), node.toString());
-                } else if(node.getArtifact().getFile().getName().contains("pom.xml")) {
-                    log.trace("Skipping analyze with {} for dependency with pom.xml artifact file '{}'", analyzerInstance.getClass().getSimpleName(), node.toString());
+        for (DependencyNode node : chunk) {
+            if(node.getTypes().contains("pom")) {
+                log.trace("Skipping analyze with {} for dependency of type pom '{}'", analyzer.getClass().getSimpleName(), node.toString());
+            } else if(null == node.getArtifact().getFile()) {
+                log.trace("Skipping analyze with {} for dependency with empty artifact file '{}'", analyzer.getClass().getSimpleName(), node.toString());
+            } else if(node.getArtifact().getFile().getName().contains("pom.xml")) {
+                log.trace("Skipping analyze with {} for dependency with pom.xml artifact file '{}'", analyzer.getClass().getSimpleName(), node.toString());
+            } else {
+                final List<Issue> issues = analyzer.analyze(node);
+                if(!issues.isEmpty()) {
+                    log.info("{} with analyzer '{}' found #{} issues", Thread.currentThread().getName(), analyzer, issues.size());
+                    nodeIssues.putIfAbsent(node.getIdentifier(), Lists.newArrayList());
+                    nodeIssues.get(node.getIdentifier()).addAll(issues);
                 } else {
-
-                    final List<Issue> issues = analyzerInstance.analyze(node);
-                    if(!issues.isEmpty()) {
-                        log.info("{} with analyzer '{}' found #{} issues", Thread.currentThread().getName(), analyzerInstance, issues.size());
-                        nodeIssues.putIfAbsent(node.getIdentifier(), Lists.newArrayList());
-                        nodeIssues.get(node.getIdentifier()).addAll(issues);
-                    } else {
-                        log.info("{} with analyzer '{}' found no issues", Thread.currentThread().getName(), analyzerInstance);
-                    }
+                    log.info("{} with analyzer '{}' found no issues", Thread.currentThread().getName(), analyzer);
                 }
             }
+        }
 
-            results.add(new AnalyzerResult(analyzer.getType(), nodeIssues));
-
-        return results;
+        return new AnalyzerResult(this.analyzer.getType(), nodeIssues);
     }
 }
 
