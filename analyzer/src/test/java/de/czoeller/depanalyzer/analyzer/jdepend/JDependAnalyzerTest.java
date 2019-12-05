@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.czoeller.depanalyzer.analyzer.jdepend.JDependAnalyzer.INSTABILITY_THRESHOLD;
+import static de.czoeller.depanalyzer.analyzer.jdepend.JDependAnalyzer.DISTANCE_THRESHOLD;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class JDependAnalyzerTest {
@@ -55,7 +55,7 @@ class JDependAnalyzerTest {
                                           .map(i -> (MetricIssue) i)
                                           .map(MetricIssue::getInstability)
                                           .collect(Collectors.toList());
-        assertThat(instabilities).allMatch(i -> i >= INSTABILITY_THRESHOLD);
+        assertThat(instabilities).allMatch(i -> i >= DISTANCE_THRESHOLD);
     }
 
     @DisplayName("TestToString")

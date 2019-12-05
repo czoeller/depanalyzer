@@ -21,6 +21,7 @@ import de.czoeller.depanalyzer.analyzer.Analyzer;
 import de.czoeller.depanalyzer.analyzer.AnalyzerContext;
 import de.czoeller.depanalyzer.analyzer.AnalyzerException;
 import de.czoeller.depanalyzer.analyzer.BaseAnalyzer;
+import de.czoeller.depanalyzer.analyzer.dependencychecker.DependencyCheckerAnalyzer;
 import de.czoeller.depanalyzer.metamodel.Analyzers;
 import de.czoeller.depanalyzer.metamodel.DependencyNode;
 import de.czoeller.depanalyzer.metamodel.Issue;
@@ -30,20 +31,22 @@ import jdepend.framework.JavaPackage;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 @Slf4j
 public class JDependAnalyzer extends BaseAnalyzer {
 
-    public static final double INSTABILITY_THRESHOLD = 0.75;
+    public static final double DISTANCE_THRESHOLD = 0.3;
 
     private JDepend jdepend;
-
-    private Map<String, Boolean> visitedPackages = new HashMap<>();
+    private static JDependAnalyzer INSTANCE;
+    private static Collection<JavaPackage> analyzeResult = null;
+    private static Map<String, List<String>> jarPackagesMap = new HashMap<>();
 
     /**
      * Required to obtain instance reflective.
@@ -56,6 +59,7 @@ public class JDependAnalyzer extends BaseAnalyzer {
     public JDependAnalyzer(AnalyzerContext context) {
         super(context);
         init();
+        INSTANCE = this;
     }
 
     private void init() {
@@ -69,44 +73,117 @@ public class JDependAnalyzer extends BaseAnalyzer {
 
     @Override
     public Analyzer newInstance(AnalyzerContext context) {
-        return new JDependAnalyzer(context);
+        synchronized(DependencyCheckerAnalyzer.class) {
+            return INSTANCE;
+        }
     }
 
     @Override
     public List<Issue> analyze(DependencyNode node)  {
-        List<Issue> issues = Lists.newArrayList();
-        try {
-            jdepend.addDirectory(node.getArtifact().getFile().getAbsolutePath());
-            final Collection<JavaPackage> packageList = jdepend.analyze();
+        final List<Issue> issues = Lists.newArrayList();
 
-            final List<JavaPackage> filteredPackages = packageList.stream().filter(this::shouldAnalyzePackage).collect(Collectors.toList());
 
-            for (JavaPackage javaPackage : filteredPackages) {
-                log.trace("Analyzing package '{}'", javaPackage);
-                visitedPackages.put(javaPackage.getName(), true);
-                if (javaPackage.getName().contains(getContext().getTargetGroupId())) {
+        synchronized(JDependAnalyzer.class) {
+            if (analyzeResult == null) {
+                try {
+                    Files.list(Paths.get("target", "jar-analysis"))
+                         .forEach(f -> {
+                             try {
+                                 jdepend.addDirectory(f.toFile().getAbsolutePath());
+                                 jarPackagesMap.put(f.toFile().getName(), getPackagesInJar(f.toFile().getAbsolutePath()));
+                             } catch (IOException e) {
+                                 throw new AnalyzerException("Could not analyze", e);
+                             }
+                         });
+                } catch (IOException e) {
+                    throw new AnalyzerException("Could not analyze", e);
+                }
+                analyzeResult = jdepend.analyze();
+            }
+        }
+
+        final List<JavaPackage> filteredPackages = analyzeResult.stream().filter(this::shouldAnalyzePackage).collect(Collectors.toList());
+
+        for (JavaPackage javaPackage : filteredPackages) {
+            log.trace("Analyzing package '{}'", javaPackage);
+
+            if (javaPackage.getName().contains(getContext().getTargetGroupId())) {
+                if (originatesFromPackage(node, javaPackage)) {
                     log.trace("Analyzing package internals of '{}'", javaPackage);
-                    final float instability = javaPackage.instability();
-                    if(instability >= INSTABILITY_THRESHOLD) {
-                        log.info("Found instability issue in package '{}'", javaPackage);
-                        issues.add(new MetricIssue(getSeverity(instability), String.format("instability of pkg '%s': %.2f", javaPackage.getName(), instability), instability));
+                    final float distance = javaPackage.distance();
+                    if (distance >= DISTANCE_THRESHOLD) {
+                        log.info("Found distance issue in package '{}'", javaPackage);
+                        issues.add(new MetricIssue(getSeverity(distance), String.format("distance of pkg '%s': %.2f (A: %.2f I: %.2f)", javaPackage.getName(), distance, javaPackage.abstractness(), javaPackage.instability()), distance));
                     }
                 } else {
-                    log.trace("Skip analyzing package '{}'", javaPackage);
+                    log.trace("Skip analyzing package '{}' because to issue originates from a different package and not the current jar ('{}')", javaPackage, node.getArtifact().getFile().getName());
                 }
+            } else {
+                log.trace("Skip analyzing package '{}'", javaPackage);
             }
-        } catch (IOException e) {
-            throw new AnalyzerException("Failed to analyze artifact", e);
         }
 
         return issues;
     }
 
-    private Issue.Severity getSeverity(float instability) {
+    /**
+     * JDepend analyzes the specified jars at once. It provides {@link JavaPackage} as interface but doesn't know where this package lives.
+     * So the mapping Jar <-> Package is not there. To change this we process all JARs and store a list of its packages.
+     * When JDepend gives us a {@link JavaPackage} we can lookup the package name on our maps to finally find the Jar.
+     * If the jar of the {@link DependencyNode} that is currently queried and our guess of the jar where the package lives match then we made the Jar <-> Package relation.
+     * @param node
+     * @param javaPackage
+     * @return
+     */
+    private boolean originatesFromPackage(DependencyNode node, JavaPackage javaPackage) {
+        final String jarNameOfCurrentRequestedNode = node.getArtifact().getFile().getName();
+
+        final Map<String, Integer> similarityPerJarMap = new HashMap<>();
+        for (Map.Entry<String, List<String>> entry : jarPackagesMap.entrySet()) {
+
+            final Map<String, Integer> similarityPerPackagesMap = new HashMap<>();
+            for (String pkg : entry.getValue()) {
+                if( pkg.startsWith(javaPackage.getName()) ) {
+                    similarityPerPackagesMap.put(pkg, javaPackage.getName().length());
+                }
+            }
+
+            if(!similarityPerPackagesMap.isEmpty()) {
+                // Get best match for Jar <- Package
+                final Integer value = Collections.max(similarityPerPackagesMap.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getValue();
+                similarityPerJarMap.put(entry.getKey(), value);
+            }
+        }
+
+        final String jarNameThePackageLivesIn = Collections.max(similarityPerJarMap.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey();
+
+        final boolean isEqual = jarNameThePackageLivesIn.equals(jarNameOfCurrentRequestedNode);
+
+        return isEqual;
+    }
+
+    public static List<String> getPackagesInJar(String jarPath) {
+        List<String> packages = Lists.newArrayList();
+        try {
+            JarFile jarFile = new JarFile(jarPath);
+            Enumeration<JarEntry> entryEnumeration = jarFile.entries();
+            while (entryEnumeration.hasMoreElements()) {
+                final JarEntry jarEntry = entryEnumeration.nextElement();
+                if(jarEntry.isDirectory()) {
+                    packages.add(jarEntry.getName().replaceAll("/", "."));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return packages;
+    }
+
+    private Issue.Severity getSeverity(float distance) {
        Issue.Severity severity = Issue.Severity.LOW;
-       if(instability >= 0.90) {
+       if(distance >= 0.90) {
            severity = Issue.Severity.HIGH;
-       } else if(instability >= 0.80) {
+       } else if(distance >= 0.75) {
            severity = Issue.Severity.MEDIUM;
        }
 
@@ -114,15 +191,7 @@ public class JDependAnalyzer extends BaseAnalyzer {
     }
 
     private boolean shouldAnalyzePackage(JavaPackage javaPackage) {
-        return !alreadyVisited(javaPackage) && !javaPackage.getName().startsWith("java.") && javaPackage.getName()
-                                                            .contains(getContext().getTargetGroupId());
+        return !javaPackage.getName().startsWith("java.");
     }
 
-    private boolean alreadyVisited(JavaPackage javaPackage) {
-        final boolean visited = visitedPackages.containsKey(javaPackage.getName());
-        if(visited) {
-            log.trace("Already visited package '{}'", javaPackage.getName());
-        }
-        return visited;
-    }
 }
