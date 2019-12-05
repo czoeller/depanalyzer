@@ -16,7 +16,6 @@
  */
 package de.czoeller.depanalyzer.analyzer;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import de.czoeller.depanalyzer.analyzer.tasks.AnalyzeTask;
 import de.czoeller.depanalyzer.analyzer.util.CompletableFutureCollector;
@@ -41,7 +40,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Slf4j
 public class AnalyzeExecutor {
@@ -72,10 +70,12 @@ public class AnalyzeExecutor {
             throw new RuntimeException(e);
         }
 
-        final CompletableFuture<List<List<AnalyzerResult>>> collect = StreamSupport.stream(Iterables.partition(dependencyNodes, 25).spliterator(), false)
-                                                                                   .map(chunk -> new AnalyzeTask(delegates, context, chunk))
-                                                                                   .map(CompletableFuture::supplyAsync)
-                                                                                   .collect(CompletableFutureCollector.collectResult());
+        final LinkedList<DependencyNode> nodesList = new LinkedList<>(dependencyNodes);
+
+        final CompletableFuture<List<List<AnalyzerResult>>> collect = delegates.stream()
+                                                                               .map(analyzer -> new AnalyzeTask(analyzer, context, nodesList))
+                                                                               .map(CompletableFuture::supplyAsync)
+                                                                               .collect(CompletableFutureCollector.collectResult());
 
         collect.join();
         final List<List<AnalyzerResult>> results;

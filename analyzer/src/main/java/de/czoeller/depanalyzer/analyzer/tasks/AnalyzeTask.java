@@ -32,18 +32,18 @@ import java.util.function.Supplier;
 @Slf4j
 public class AnalyzeTask implements Supplier<List<AnalyzerResult>> {
 
-    private final List<Analyzer> analyzers;
+    private final Analyzer analyzer;
     private final AnalyzerContext context;
     private final List<DependencyNode> chunk;
 
     /**
      * Performs different analysis on a given chunk on nodes.
-     * @param analyzers
+     * @param analyzer
      * @param context
      * @param chunk
      */
-    public AnalyzeTask(List<Analyzer> analyzers, AnalyzerContext context, List<DependencyNode> chunk) {
-        this.analyzers = analyzers;
+    public AnalyzeTask(Analyzer analyzer, AnalyzerContext context, List<DependencyNode> chunk) {
+        this.analyzer = analyzer;
         this.context = context;
         this.chunk = chunk;
     }
@@ -52,9 +52,8 @@ public class AnalyzeTask implements Supplier<List<AnalyzerResult>> {
     public List<AnalyzerResult> get() {
         List<AnalyzerResult> results = Lists.newArrayList();
 
-        log.debug("{} starting to analyze with #{} analyzers a chunk of nodes with size #{} namely: {}", Thread.currentThread().getName(), analyzers.size(), chunk.size(), chunk);
+        log.debug("{} starting to analyze with analyzer {} a list of nodes with size #{} namely: {}", Thread.currentThread().getName(), analyzer.getType().toString(), chunk.size(), chunk);
 
-        for (Analyzer analyzer : analyzers) {
             log.trace("{} starting to analyze with analyzer '{}'", Thread.currentThread().getName(), analyzer);
 
             final Map<String, List<Issue>> nodeIssues = Maps.newHashMap();
@@ -79,8 +78,9 @@ public class AnalyzeTask implements Supplier<List<AnalyzerResult>> {
                     }
                 }
             }
+
             results.add(new AnalyzerResult(analyzer.getType(), nodeIssues));
-        }
+
         return results;
     }
 }

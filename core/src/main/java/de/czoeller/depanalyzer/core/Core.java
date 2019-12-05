@@ -74,7 +74,7 @@ public class Core {
         final List<AnalyzerResult> analyzerResults = analyzeExecutor.analyze(dependencyNode, context);
 
         for (AnalyzerResult analyzerResult : analyzerResults) {
-            log.info("found issues for analyzer type '{}': {}", analyzerResult.getAnalyzerType(), analyzerResults);
+            log.info("found #{} issues for analyzer type '{}': {}", analyzerResult.getNodeIssuesMap().size(), analyzerResult.getAnalyzerType(), analyzerResult.getNodeIssuesMap());
             setIssuesToNodes(analyzerResult);
         }
 
