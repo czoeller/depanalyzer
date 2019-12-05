@@ -41,6 +41,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class Core {
@@ -88,16 +89,14 @@ public class Core {
     }
 
     private void setIssuesToNodes(AnalyzerResult analyzerResult) {
-        final Map<String, List<Issue>> nodeIssuesMap = analyzerResult.getNodeIssuesMap();
-        dependencyNode.flattened()
-                      .filter(distinctByKey(DependencyNode::getIdentifier))
-                      .forEach(n -> {
-            final String key = n.getIdentifier();
-            if(nodeIssuesMap.containsKey(key)) {
-                final List<Issue> issues = nodeIssuesMap.get(n.getIdentifier());
-                n.addIssues(analyzerResult.getAnalyzerType(), issues);
-            }
-        });
+        final List<DependencyNode> collect = dependencyNode.flattened()
+                                                           .filter(distinctByKey(DependencyNode::getIdentifier))
+                                                           .collect(Collectors.toList());
+
+        analyzerResult.getNodeIssuesMap()
+                      .forEach((key, issues) -> collect.stream()
+                                                   .filter(node -> node.getIdentifier().equals(key))
+                                                   .forEach(node -> node.addIssues(analyzerResult.getAnalyzerType(), issues)));
     }
 
     private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {

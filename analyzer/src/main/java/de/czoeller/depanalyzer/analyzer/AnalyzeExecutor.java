@@ -20,11 +20,8 @@ import com.google.common.collect.Lists;
 import de.czoeller.depanalyzer.analyzer.tasks.AnalyzeTask;
 import de.czoeller.depanalyzer.analyzer.util.CompletableFutureCollector;
 import de.czoeller.depanalyzer.metamodel.AnalyzerResult;
-import de.czoeller.depanalyzer.metamodel.Analyzers;
 import de.czoeller.depanalyzer.metamodel.DependencyNode;
-import de.czoeller.depanalyzer.metamodel.Issue;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 
@@ -33,7 +30,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -52,7 +52,9 @@ public class AnalyzeExecutor {
 
     public List<AnalyzerResult> analyze(DependencyNode node) throws AnalyzerException {
 
-        val dependencyNodes = node.flattened().filter(distinctByKey(DependencyNode::getIdentifier)).collect(Collectors.toList());
+        final List<DependencyNode> dependencyNodes = node.flattened()
+                                                         .filter(distinctByKey(DependencyNode::getIdentifier))
+                                                         .collect(Collectors.toList());
 
         final File analysisDir = new File("target/jar-analysis");
         try {
@@ -72,30 +74,17 @@ public class AnalyzeExecutor {
 
         final LinkedList<DependencyNode> nodesList = new LinkedList<>(dependencyNodes);
 
-        final CompletableFuture<List<AnalyzerResult>> collect = delegates.stream()
+        final CompletableFuture<List<AnalyzerResult>> analyzerTasks = delegates.stream()
                                                                                .map(analyzer -> new AnalyzeTask(analyzer, nodesList))
                                                                                .map(CompletableFuture::supplyAsync)
                                                                                .collect(CompletableFutureCollector.collectResult());
-
-        collect.join();
-        final List<AnalyzerResult> results;
-        final Map<Analyzers, AnalyzerResult> mergedResultsByAnalyzerType = new HashMap<>();
-
         try {
-            results = collect.get();
-            for (AnalyzerResult analyzerResult : results) {
-                for (Map.Entry<String, List<Issue>> entry : analyzerResult.getNodeIssuesMap().entrySet() ) {
-                    if(!mergedResultsByAnalyzerType.containsKey(analyzerResult.getAnalyzerType())) {
-                        mergedResultsByAnalyzerType.put(analyzerResult.getAnalyzerType(), analyzerResult);
-                    } else {
-                        mergedResultsByAnalyzerType.get(analyzerResult.getAnalyzerType()).getNodeIssuesMap().put(entry.getKey(), entry.getValue());
-                    }
-                }
-            }
+            analyzerTasks.join();
+            return analyzerTasks.get();
         } catch (InterruptedException | ExecutionException e) {
             log.error("Failed to analyze", e);
         }
-        return new ArrayList<>(mergedResultsByAnalyzerType.values());
+        throw new IllegalStateException("Could not get analyzer results");
     }
 
     private void createSymbolicLink(File source, File analysisDir) {
