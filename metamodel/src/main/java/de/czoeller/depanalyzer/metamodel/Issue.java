@@ -19,10 +19,12 @@ package de.czoeller.depanalyzer.metamodel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
 @RequiredArgsConstructor
+@ToString
 public abstract class Issue {
     private final Severity severity;
     private final String description;

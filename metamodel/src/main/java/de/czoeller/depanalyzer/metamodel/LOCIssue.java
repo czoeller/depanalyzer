@@ -17,8 +17,10 @@
 package de.czoeller.depanalyzer.metamodel;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
+@ToString(callSuper = true)
 public class LOCIssue extends Issue {
     private final int loc;
 
