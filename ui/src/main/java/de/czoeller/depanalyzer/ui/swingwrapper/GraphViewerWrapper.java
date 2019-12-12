@@ -28,7 +28,7 @@ import de.czoeller.depanalyzer.ui.model.Layouts;
 import de.czoeller.depanalyzer.ui.model.MainModel;
 import de.czoeller.depanalyzer.ui.scorer.HeatMapScorer;
 import de.czoeller.depanalyzer.ui.scorer.ScoreToHeatTransformer;
-import de.czoeller.depanalyzer.ui.transformators.EdgeDrawPaintTransformator;
+import de.czoeller.depanalyzer.ui.transformators.*;
 import de.czoeller.depanalyzer.ui.transformators.EdgeStrokeTransformator;
 import de.czoeller.depanalyzer.ui.transformators.NodeDrawPaintTransformator;
 import de.czoeller.depanalyzer.ui.transformators.NodeStrokeTransformator;
@@ -248,7 +248,7 @@ public class GraphViewerWrapper {
                 vv.getRenderContext().setNodeLabelFunction(n -> n.getArtifact().getArtifactId());
                 break;
             case IMPORTANT_ARTIFACT_ID:
-                vv.getRenderContext().setNodeLabelFunction(n -> n.getHeat() > 20 ? n.getArtifact().getArtifactId() : "");
+                vv.getRenderContext().setNodeLabelFunction(new HeatBasedLabelProvider(vv.getModel().getNetwork()));
                 break;
             default:
                 throw new IllegalStateException("No label provider for '" + newLabelProvider + "'");
