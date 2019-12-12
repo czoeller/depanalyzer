@@ -22,10 +22,10 @@ import lombok.ToString;
 @Data
 @ToString(callSuper = true)
 public class MetricIssue extends Issue {
-    private final float instability;
+    private final float distance;
 
-    public MetricIssue(Severity severity, String description, float instability) {
+    public MetricIssue(Severity severity, String description, float distance) {
         super(severity, description);
-        this.instability = instability;
+        this.distance = distance;
     }
 }

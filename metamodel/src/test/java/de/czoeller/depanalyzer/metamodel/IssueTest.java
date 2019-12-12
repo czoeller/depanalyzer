@@ -27,7 +27,7 @@ class IssueTest {
     @Test
     void testToString() {
         assertThat(new CVEIssue(Issue.Severity.LOW, "Test").toString()).isEqualTo("CVEIssue(super=Issue(severity=LOW, description=Test))");
-        assertThat(new MetricIssue(Issue.Severity.LOW, "Test", 0.5f).toString()).isEqualTo("MetricIssue(super=Issue(severity=LOW, description=Test), instability=0.5)");
+        assertThat(new MetricIssue(Issue.Severity.LOW, "Test", 0.5f).toString()).isEqualTo("MetricIssue(super=Issue(severity=LOW, description=Test), distance=0.5)");
         assertThat(new LOCIssue(Issue.Severity.LOW, "Test", 12).toString()).isEqualTo("LOCIssue(super=Issue(severity=LOW, description=Test), loc=12)");
         assertThat(new SpotBugsIssue(Issue.Severity.LOW, "Test").toString()).isEqualTo("SpotBugsIssue(super=Issue(severity=LOW, description=Test))");
     }

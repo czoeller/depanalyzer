@@ -55,7 +55,7 @@ class JDependAnalyzerTest {
     void instabilityOfAllIssuesIsGreaterThan() {
         final List<Float> distances = issues.stream()
                                           .map(i -> (MetricIssue) i)
-                                          .map(MetricIssue::getInstability)
+                                          .map(MetricIssue::getDistance)
                                           .collect(Collectors.toList());
         assertThat(distances).allMatch(i -> i >= DISTANCE_THRESHOLD);
     }

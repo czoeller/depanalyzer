@@ -73,7 +73,7 @@ public class GraphFactory {
             if(i % 3 == 0) {
                 for (int j = 0; j < i; j++) {
                     int x = (i % (j + 1) % 3);
-                    dependencyNode.addIssues(Analyzers.METRICS, Lists.newArrayList(new MetricIssue(Issue.Severity.values()[x], "Example Metrics descroption", 0.9f)));
+                    dependencyNode.addIssues(Analyzers.METRICS, Lists.newArrayList(new MetricIssue(Issue.Severity.values()[x], "Example Metrics description", 0.9f)));
                 }
             } else if(i % 10 == 0) {
                 for (int j = 0; j < i; j++) {
