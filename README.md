@@ -25,5 +25,7 @@ Please note that the serialized `results.dar` is not intended to be shared neith
 
 ## Requirements
 - Java, developed and tested with 1.8.
-- Graphviz (optional)
+- Graphviz must be installed (for dot)
+- Symlinks must be allowed for the user (On Windows: Disable UAC or follow: Local Security Policies for User Rights Assignment, Security Setting for Create symbolic links.  Open Control Panel->Administrative Tools and open Local Security Policy. From there, open Local Policies->User Rights Assignment->Create Symbolic Links -> Restart Computer.)
+
 Please note that later versions than Java 1.8 do not come with JavaFX modules. Make sure to install them before.
