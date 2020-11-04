@@ -1,5 +1,8 @@
 # depanalyzer
 This project analyzes a dependency graph of a maven pom file. The dependency graph is enriched with information from SpotBugs, Dependency Checker & JDepend. The information is visualized in an interactive dependency graph with found issues in a JavaFX Desktop Application.
+![demo](https://user-images.githubusercontent.com/2690708/98106849-f984ed80-1e99-11eb-8caa-4ca7a9d9b44b.png)
+
+[Demo (8MB)](https://user-images.githubusercontent.com/2690708/98107287-99427b80-1e9a-11eb-80d4-7df582214938.gif)
 
 ## Usage
 The is a properties file called `app.properties` in the root of the project. Configure a project to analyze by setting the path of `targetPomFile` to a pom file.
